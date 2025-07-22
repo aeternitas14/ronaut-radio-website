@@ -1,0 +1,4 @@
+date	size'/'remotesize	flags(request:Update,Range state:File response:Modified,Chunked,gZipped)	statuscode	status ('servermsg')	MIME	Etag|Date	URL	localfile	(from URL)
+14:27:00	64/64	---MCZ	200	added ('OK')	text/plain	date:Sun,%2020%20Jul%202025%2022:24:52%20GMT	https://www.thelotradio.com/robots.txt		(from )
+14:27:01	23009/23009	---MCZ	200	added ('OK')	text/html	date:Wed,%2025%20Jun%202025%2018:21:47%20GMT	https://www.thelotradio.com/	the-lot-radio-httrack/www.thelotradio.com/index.html	(from )
+14:27:02	2991/2991	---MCZ	200	added ('OK')	text/html	date:Wed,%2025%20Jun%202025%2018:31:41%20GMT	https://www.thelotradio.com/showform	the-lot-radio-httrack/www.thelotradio.com/showform.html	(from https://www.thelotradio.com/)

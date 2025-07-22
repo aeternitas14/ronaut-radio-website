@@ -1,0 +1,5 @@
+# HTTrack Website Copier Cookie File
+# This file format is compatible with Netscape cookies
+.www.thelotradio.com	TRUE	/	FALSE	1999999999	_cfuvid	oJeRDx9A2zA7A3chF8LxIOp_GCRBd2efiVPd.e0iDVg-1753133221237-0.0.1.1-604800000
+www.thelotradio.com	TRUE	/	FALSE	1999999999	SameSite	None
+
