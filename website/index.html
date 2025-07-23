@@ -112,7 +112,7 @@
   margin-bottom: 20px;
   padding-left: 20px;
   padding-right: 20px;
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -123,7 +123,7 @@
   margin-bottom: 20px;
   padding-left: 20px;
   padding-right: 20px;
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -137,7 +137,7 @@
 
 /* Enhanced text styling */
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   text-align: center;
 }
 
@@ -151,7 +151,7 @@ body {
 
 /* Style the main description */
 .main-description {
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   font-size: 18px;
   line-height: 1.8;
   text-align: center;
@@ -167,7 +167,7 @@ body {
 
 /* The Lot Radio Share Button Styling */
 #btn-share {
-    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-family: Oswald, sans-serif;
     margin-top: 0;
     padding-left: 15px;
     padding-right: 15px;
@@ -210,7 +210,7 @@ body {
     margin-bottom: 0;
     padding-left: 10px;
     padding-right: 10px;
-    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-family: Oswald, sans-serif;
     font-size: 14px;
 }
 
@@ -220,7 +220,7 @@ body {
 }
 
 .text-block-11 {
-    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-family: Oswald, sans-serif;
 }
 
 .w-container {
@@ -278,7 +278,7 @@ body {
   border: 2px solid #333;
   background: #111;
   color: white;
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   font-size: 14px;
   border-radius: 5px;
 }
@@ -419,7 +419,7 @@ body {
 }
 /* Style headings */
 h1, h2, h3 {
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   text-align: center;
   margin: 20px auto;
 }
@@ -445,8 +445,8 @@ h1, h2, h3 {
     </div>
   </div>
 </div><div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
-  <h1 style="font-family: "Helvetica Neue", Arial, sans-serif; font-size: 28px; font-weight: 100; letter-spacing: 4px; margin: 20px 0; color: #333; text-align: center;">RONAUT RADIO</h1>
-  <p style="font-family: "Helvetica Neue", Arial, sans-serif; font-size: 14px; font-weight: 400; letter-spacing: 1px; margin: 10px 0 0 0; text-align: center; text-transform: uppercase;">Los Angeles • Vinyl Only • Live Shows</p>
+  <h1 style="font-family: Oswald, sans-serif; font-size: 48px; font-weight: 300; letter-spacing: 2px; margin: 0; text-align: center;">RONAUT RADIO</h1>
+  <p style="font-family: Oswald, sans-serif; font-size: 14px; font-weight: 400; letter-spacing: 1px; margin: 10px 0 0 0; text-align: center; text-transform: uppercase;">Los Angeles • Vinyl Only • Live Shows</p>
 </div><div class="div-block">
 </div>
 
@@ -574,11 +574,48 @@ h1, h2, h3 {
                         text: "Check out Ronaut Radio Live Stream:",
                         url: "https://ronautradio.la",
                     });
+                });
+            });                sharePopup.addEventListener('click', function(e) {
+                    if (e.target === sharePopup) {
+                        sharePopup.classList.add('hidden');
+                    }
+                });
+                
+                // Close popup with Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !sharePopup.classList.contains('hidden')) {
+                        sharePopup.classList.add('hidden');
+                    }
+                });
+            });                    } else {
+                        // If Web Share API not supported, show copy link option
+                        showCopyLinkDialog();
+                    }
+                });
+                
+                function showCopyLinkDialog() {
+                    const link = 'https://ronautradio.la';
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(link).then(function() {
+                            alert('Link copied to clipboard: ' + link);
+                        }).catch(function() {
+                            prompt('Copy this link to share Ronaut Radio:', link);
+                        });
+                    } else {
+                        prompt('Copy this link to share Ronaut Radio:', link);
+                    }
+                }
+            });                });
+            });
+        </script>
+        <style>
+            #button-container button:disabled {
+                background: #000;
                 color: #fff;
             }
             
             #button-container button {
-                font-family: "Helvetica Neue", Arial, sans-serif;
+                font-family: Oswald, sans-serif;
                 margin-top: 0;
                 padding-left: 15px;
                 padding-right: 15px;
@@ -604,6 +641,10 @@ h1, h2, h3 {
         <!-- <a href="http://www.twitter.com/ronautradio" target="_blank" class="w-inline-block"><img src="6065e48787c63189c61f2aab_social-twitter.svg" loading="lazy" alt=""/></a> -->
     </div>
     <div class="w-container">
+        <p class="paragraph">We are Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation.<br/>Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels.<br/>Experience authentic sound from analog records, curated by passionate collectors and DJs.<br/>‍<br/><strong>Please use this </strong><a href="showform.html" target="_blank"><strong>form</strong></a><strong> to submit your vinyl show proposals.</strong><br/><br/>Support independent radio and great music. <br/>‍<br/></p>
+        <div class="w-layout-blockcontainer container-11 w-container"><a href="https://livepeer.studio/?utm_source=ronautradio&amp;utm_medium=referral" target="_blank" class="w-inline-block"><img src="65e740514f5a9a89f5bd342c_studio-logo-black.svg" loading="lazy" alt=""/></a>
+            <div class="text-block-11">Livestream powered by Livepeer Studio</div>
+        </div>
     </div>
     <!-- App store links removed to prevent redirecting to The Lot Radio's app -->
     <div class="w-container">
@@ -633,7 +674,7 @@ h1, h2, h3 {
     </div>
 
     <div class="w-container">
-        <p class="paragraph">We are an independent, non-profit, online radio station live streaming 24/7 from Los Angeles.<br/>Expect a continuous stream of the best and most varied music Los Angeles has to offer.<br/>‍<br/><strong>Please use this </strong><a href="mailto:ronautradiola@hotmail.com"><strong>ronautradiola@hotmail.com</strong></a><strong> to submit show proposals.</strong>‍<br/></p>
+        <p class="paragraph">We are an independent, non-profit, online radio station live streaming 24/7 from Los Angeles.<br/>Expect a continuous stream of the best and most varied music Los Angeles has to offer.<br/>‍<br/><strong>Please use this </strong><a href="#" target="_blank"><strong>form</strong></a><strong> to submit show proposal.</strong><br/><br/>Visit our <a href="#" target="_blank">online store</a> or make a <a href="#" target="_blank">donation</a> to our non-profit. <br/>‍<br/></p>
         
         <div class="w-layout-blockcontainer container-11 w-container">
             <a href="https://livepeer.studio/?utm_source=ronautradio&utm_medium=referral" target="_blank" class="w-inline-block">
@@ -645,8 +686,8 @@ h1, h2, h3 {
 
 <!-- SCHEDULE SECTION -->
 <div class="w-container" style="margin-top: 60px; margin-bottom: 40px;">
-  <h2 style="font-family: "Helvetica Neue", Arial, sans-serif; font-size: 36px; font-weight: 300; letter-spacing: 2px; margin-bottom: 30px; text-align: center; color: #333;">UPCOMING SHOWS</h2>
-  <div id="calendar" style="max-width: 900px; margin: 0 auto; font-family: "Helvetica Neue", Arial, sans-serif;"></div>
+  <h2 style="font-family: Oswald, sans-serif; font-size: 36px; font-weight: 300; letter-spacing: 2px; margin-bottom: 30px; text-align: center; color: #333;">UPCOMING SHOWS</h2>
+  <div id="calendar" style="max-width: 900px; margin: 0 auto; font-family: Oswald, sans-serif;"></div>
 </div>    </div>
     <div class="section">
         <!-- Shop link removed - add your own when ready -->
@@ -981,7 +1022,7 @@ h1, h2, h3 {
   margin-bottom: 20px;
   padding-left: 20px;
   padding-right: 20px;
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -992,7 +1033,7 @@ h1, h2, h3 {
   margin-bottom: 20px;
   padding-left: 20px;
   padding-right: 20px;
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   font-size: 16px;
   line-height: 1.6;
 }
@@ -1006,7 +1047,7 @@ h1, h2, h3 {
 
 /* Enhanced text styling */
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   text-align: center;
 }
 
@@ -1020,7 +1061,7 @@ body {
 
 /* Style the main description */
 .main-description {
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   font-size: 18px;
   line-height: 1.8;
   text-align: center;
@@ -1036,7 +1077,7 @@ body {
 
 /* The Lot Radio Share Button Styling */
 #btn-share {
-    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-family: Oswald, sans-serif;
     margin-top: 0;
     padding-left: 15px;
     padding-right: 15px;
@@ -1079,7 +1120,7 @@ body {
     margin-bottom: 0;
     padding-left: 10px;
     padding-right: 10px;
-    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-family: Oswald, sans-serif;
     font-size: 14px;
 }
 
@@ -1089,7 +1130,7 @@ body {
 }
 
 .text-block-11 {
-    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-family: Oswald, sans-serif;
 }
 
 .w-container {
@@ -1147,7 +1188,7 @@ body {
   border: 2px solid #333;
   background: #111;
   color: white;
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   font-size: 14px;
   border-radius: 5px;
 }
@@ -1288,14 +1329,14 @@ body {
 }
 /* Style headings */
 h1, h2, h3 {
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: Oswald, sans-serif;
   text-align: center;
   margin: 20px auto;
 }
 
 <!-- SCHEDULE SECTION -->
 <div class="w-container" style="margin-top: 60px; margin-bottom: 40px;">
-  <h2 style="font-family: "Helvetica Neue", Arial, sans-serif; font-size: 36px; font-weight: 300; letter-spacing: 2px; margin-bottom: 30px; text-align: center;">UPCOMING SHOWS</h2>
-  <div id="calendar" style="max-width: 900px; margin: 0 auto; font-family: "Helvetica Neue", Arial, sans-serif;"></div>
+  <h2 style="font-family: Oswald, sans-serif; font-size: 36px; font-weight: 300; letter-spacing: 2px; margin-bottom: 30px; text-align: center;">UPCOMING SHOWS</h2>
+  <div id="calendar" style="max-width: 900px; margin: 0 auto; font-family: Oswald, sans-serif;"></div>
 </div></body>
 </html>
