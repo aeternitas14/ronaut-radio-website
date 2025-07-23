@@ -731,7 +731,7 @@ h1, h2, h3 {
                 document.addEventListener('DOMContentLoaded', function() {
                     var calendarEl = document.getElementById('calendar');
                     var calendar = new FullCalendar.Calendar(calendarEl, {
-                        headerToolbar: 'true',
+                timeZone: 'America/Los_Angeles',                        headerToolbar: 'true',
                         initialView: 'listWeek',
                         firstDay: '1',
                         nowIndicator: 'true',
@@ -749,7 +749,7 @@ h1, h2, h3 {
                             });
                         },
                         eventSources: [{
-                            googleCalendarId: 'YOUR_GOOGLE_CALENDAR_ID_HERE@group.calendar.google.com' // Replace with your calendar ID
+                            googleCalendarId: 'heffcoi@gmail.com' // Replace with your calendar ID
                         }, ],
                         eventClick: function(info) {
                             info.jsEvent.preventDefault(); // don't let the browser navigate
