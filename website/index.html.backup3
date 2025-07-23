@@ -166,30 +166,29 @@ h1, h2, h3 {
 }
 </style></head>
 <body>
-<!-- FULL-WIDTH MEDIA PLAYER AT TOP -->
-<div id="top-player-container" style="width: 100%; background: black; position: relative; z-index: 1000;">
-  <div id="now-playing" style="color: white; font-size: 14px; padding: 10px 0; text-align: center; background: rgba(0,0,0,0.8);">Loading track info...</div>
-  <div id="player-container" style="position: relative; width: 100%; overflow: hidden; background: black; padding-top: 56.25%;">
-    <video
-      id="ronaut-player"
-      class="video-js vjs-default-skin"
-      controls
-      autoplay
-      muted
-      playsinline
-      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-    >
-      <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
-    </video>
-    <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-      <div id="logo" style="color: white; font-size: 24px; font-weight: bold; position: absolute; top: 20px; left: 20px;">RONAUT RADIO</div>
-      <div id="ticker" style="color: white; font-size: 16px; position: absolute; bottom: 20px; left: 20px;">Loading current set...</div>
-    </div>
-  </div>
-</div><div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
+<div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
   <h1 style="font-family: Oswald, sans-serif; font-size: 48px; font-weight: 300; letter-spacing: 2px; margin: 0; text-align: center;">RONAUT RADIO</h1>
   <p style="font-family: Oswald, sans-serif; font-size: 14px; font-weight: 400; letter-spacing: 1px; margin: 10px 0 0 0; text-align: center; text-transform: uppercase;">Los Angeles • Vinyl Only • Live Shows</p>
 </div><div class="div-block">
+    <div id="now-playing" style="color:white; font-size: 14px; padding-top: 10px; text-align: center;">Loading track info...</div>
+    <div id="player-container">
+      <video
+        id="ronaut-player"
+        class="video-js vjs-default-skin"
+        controls
+        autoplay
+        muted
+        playsinline
+        width="640"
+        height="360"
+      >
+        <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
+      </video>
+      <div id="overlay">
+        <div id="logo">RONAUT RADIO</div>
+        <div id="ticker">Loading current set...</div>
+      </div>
+    </div> <!-- end of player-container -->
 </div>
 
 <style>
@@ -314,35 +313,17 @@ h1, h2, h3 {
                 }
             }, false);
             window.addEventListener('load', function() {
-                document.getElementById('btn-share').addEventListener('click', function() {
-                    if (navigator.share) {
-                        navigator.share({
-                            title: 'Check out Ronaut Radio',
-                            text: 'Check out Ronaut Radio Live Stream:',
-                            url: 'https://ronautradio.la',
-                        }).catch(function(error) {
-                            // If native share fails, show copy link option
-                            showCopyLinkDialog();
-                        });
-                    } else {
-                        // If Web Share API not supported, show copy link option
-                        showCopyLinkDialog();
-                    }
-                });
-                
-                function showCopyLinkDialog() {
-                    const link = 'https://ronautradio.la';
-                    if (navigator.clipboard) {
-                        navigator.clipboard.writeText(link).then(function() {
-                            alert('Link copied to clipboard: ' + link);
-                        }).catch(function() {
-                            prompt('Copy this link to share Ronaut Radio:', link);
-                        });
-                    } else {
-                        prompt('Copy this link to share Ronaut Radio:', link);
-                    }
+                if (!navigator.share) {
+                    document.querySelector('.share-container').innerHTML = 'Web Share API not supported in this browser';
+                    return;
                 }
-            });                });
+                document.getElementById('btn-share').addEventListener('click', function() {
+                    navigator.share({
+                        title: 'Check out Ronaut Radio',
+                        text: 'Check out Ronaut Radio Live Stream:',
+                        url: 'https://ronautradio.la',
+                    });
+                });
             });
         </script>
         <style>
@@ -777,27 +758,7 @@ h1, h2, h3 {
 }
 </style>        </head>
         <body>
-<!-- FULL-WIDTH MEDIA PLAYER AT TOP -->
-<div id="top-player-container" style="width: 100%; background: black; position: relative; z-index: 1000;">
-  <div id="now-playing" style="color: white; font-size: 14px; padding: 10px 0; text-align: center; background: rgba(0,0,0,0.8);">Loading track info...</div>
-  <div id="player-container" style="position: relative; width: 100%; overflow: hidden; background: black; padding-top: 56.25%;">
-    <video
-      id="ronaut-player"
-      class="video-js vjs-default-skin"
-      controls
-      autoplay
-      muted
-      playsinline
-      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-    >
-      <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
-    </video>
-    <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-      <div id="logo" style="color: white; font-size: 24px; font-weight: bold; position: absolute; top: 20px; left: 20px;">RONAUT RADIO</div>
-      <div id="ticker" style="color: white; font-size: 16px; position: absolute; bottom: 20px; left: 20px;">Loading current set...</div>
-    </div>
-  </div>
-</div><div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
+<div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
   <h1 style="font-family: Oswald, sans-serif; font-size: 48px; font-weight: 300; letter-spacing: 2px; margin: 0; text-align: center;">RONAUT RADIO</h1>
   <p style="font-family: Oswald, sans-serif; font-size: 14px; font-weight: 400; letter-spacing: 1px; margin: 10px 0 0 0; text-align: center; text-transform: uppercase;">Los Angeles • Vinyl Only • Live Shows</p>
 </div>            <div id='calendar'></div>
