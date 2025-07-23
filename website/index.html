@@ -218,6 +218,107 @@
 <div id="debug-json" style="position: fixed; bottom: 0; right: 0; background: black; color: lime; padding: 5px; font-size: 12px; font-family: monospace; z-index: 9999;">
   DEBUG: Waiting for data...
 </div>
+<div id="chat-container">
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+</div>
+<style>
+    #chat-container {
+        font-family: "Times New Roman", serif;
+        border: 2px solid black;
+        background-color: white;
+        width: 100%;
+        max-width: 600px;
+        height: 350px;
+        margin: 20px auto;
+        display: flex;
+        flex-direction: column;
+    }
+    #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 10px;
+        overflow-y: scroll;
+        flex-grow: 1;
+        color: black;
+    }
+    #messages li {
+        padding: 5px 10px;
+    }
+    #messages .username {
+        color: red;
+        font-weight: bold;
+    }
+    #form {
+        display: flex;
+        padding: 10px;
+    }
+    #input {
+        border: 2px solid black;
+        background-color: white;
+        color: black;
+        padding: 10px;
+        width: 100%;
+        margin-right: 10px;
+    }
+    #form button {
+        background: black;
+        border: none;
+        padding: 10px;
+        color: white;
+    }
+</style>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+    let username = '';
+    let hasJoined = false;
+
+    input.addEventListener('focus', () => {
+        if (!hasJoined) {
+            const enteredUsername = prompt("Please enter your name to join the chat");
+            if (enteredUsername) {
+                username = enteredUsername;
+                socket.emit('join', username);
+                hasJoined = true;
+            } else {
+                input.blur(); // Remove focus if the user cancels
+            }
+        }
+    });
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!hasJoined) {
+            alert("Please click on the chat input and enter a name to join.");
+            return;
+        }
+        if (input.value) {
+            socket.emit('chat message', input.value);
+            input.value = '';
+        }
+    });
+
+    socket.on('chat message', function(data) {
+        const item = document.createElement('li');
+        const usernameSpan = document.createElement('span');
+        usernameSpan.className = 'username';
+        usernameSpan.textContent = data.username + ": ";
+        
+        const messageText = document.createTextNode(data.message);
+        
+        item.appendChild(usernameSpan);
+        item.appendChild(messageText);
+        
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+    });
+</script>
     <div class="html-embed-9 w-embed w-iframe w-script">
         <div id="button-container"></div>
         <div class="share-container">
@@ -316,19 +417,30 @@
             }
         </style>
     </div>
-    <div class="container-2 w-container"><a href="http://www.instagram.com/thelotradio" target="_blank" class="link-block w-inline-block"><img src="6065dc53271cd689405645e3_social-instagram.svg" loading="lazy" alt="" class="image"/></a><a href="http://www.facebook.com/thelotradio" target="_blank" class="w-inline-block"><img src="6065e3ca47bb418dbc19f3ea_social-facebook.svg" loading="lazy" alt="" class="image-2"/></a><a href="http://www.soundcloud.com/thelotradio" target="_blank" class="w-inline-block"><img src="6065e41429ff79264e86b0d7_social-soundcloud.svg" loading="lazy" alt="" class="image-3"/></a><a href="http://www.mixcloud.com/thelotradio" target="_blank" class="w-inline-block"><img src="6065e43e39b94578e5cc3ea1_social-mixcloud.svg" loading="lazy" alt="" class="image-4"/></a><a href="http://www.youtube.com/thelotradio" target="_blank" class="w-inline-block"><img src="6065e46287c6313a761f2885_social-youtube.svg" loading="lazy" alt="" class="image-5"/></a><a href="http://www.twitter.com/thelotradio" target="_blank" class="w-inline-block"><img src="6065e48787c63189c61f2aab_social-twitter.svg" loading="lazy" alt=""/></a></div>
+    <!-- Social media links - UPDATE THESE WITH YOUR OWN ACCOUNTS -->
+    <div class="container-2 w-container">
+        <!-- Uncomment and update these with your actual social media accounts -->
+        <!-- <a href="http://www.instagram.com/ronautradio" target="_blank" class="link-block w-inline-block"><img src="6065dc53271cd689405645e3_social-instagram.svg" loading="lazy" alt="" class="image"/></a> -->
+        <!-- <a href="http://www.facebook.com/ronautradio" target="_blank" class="w-inline-block"><img src="6065e3ca47bb418dbc19f3ea_social-facebook.svg" loading="lazy" alt="" class="image-2"/></a> -->
+        <!-- <a href="http://www.soundcloud.com/ronautradio" target="_blank" class="w-inline-block"><img src="6065e41429ff79264e86b0d7_social-soundcloud.svg" loading="lazy" alt="" class="image-3"/></a> -->
+        <!-- <a href="http://www.mixcloud.com/ronautradio" target="_blank" class="w-inline-block"><img src="6065e43e39b94578e5cc3ea1_social-mixcloud.svg" loading="lazy" alt="" class="image-4"/></a> -->
+        <!-- <a href="http://www.youtube.com/ronautradio" target="_blank" class="w-inline-block"><img src="6065e46287c6313a761f2885_social-youtube.svg" loading="lazy" alt="" class="image-5"/></a> -->
+        <!-- <a href="http://www.twitter.com/ronautradio" target="_blank" class="w-inline-block"><img src="6065e48787c63189c61f2aab_social-twitter.svg" loading="lazy" alt=""/></a> -->
+    </div>
     <div class="w-container">
-        <p class="paragraph">We are an independent, non-profit, online radio station live streaming 24/7 from a reclaimed shipping container on an empty lot in NYC.<br/>Expect a continuous stream of the best and most varied music New York City has to offer.<br/>‍<br/><strong>Please use this </strong><a href="showform.html" target="_blank"><strong>form</strong></a><strong> to submit show proposal.</strong><br/><br/>Visit our <a href="http://shop.thelotradio.com/" target="_blank">online store</a> or make a <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=TNGKXZ2B2Z6LL&amp;source=url" target="_blank">donation</a> to our non-profit. <br/>‍<br/></p>
+        <p class="paragraph">We are Ronaut Radio - an independent online radio station streaming the best music 24/7.<br/>Discover new sounds and classic favorites from our carefully curated playlists.<br/>‍<br/><strong>Please use this </strong><a href="showform.html" target="_blank"><strong>form</strong></a><strong> to submit show proposals.</strong><br/><br/>Support independent radio and great music. <br/>‍<br/></p>
         <div class="w-layout-blockcontainer container-11 w-container"><a href="https://livepeer.studio/?utm_source=thelotradio&amp;utm_medium=referral" target="_blank" class="w-inline-block"><img src="65e740514f5a9a89f5bd342c_studio-logo-black.svg" loading="lazy" alt=""/></a>
             <div class="text-block-11">Livestream powered by Livepeer Studio</div>
         </div>
     </div>
-    <div class="container-3 w-container"><a href="https://apps.apple.com/us/app/the-lot-radio/id1091128189" target="_blank" class="w-inline-block"><img src="6065e68843296a25524e24a0_Download_on_the_App_Store_Badge_US-UK_RGB_wht_092917.svg" loading="lazy" alt="" class="image-6"/></a><a href="https://play.google.com/store/apps/details?id=com.thelotradio.streamer" target="_blank" class="w-inline-block"><img src="614a4a4fa3f4a0117fcbc821_en_badge_web_generic.png" loading="lazy" srcset="614a4a4fa3f4a0117fcbc821_en_badge_web_generic-p-500.png 500w, 614a4a4fa3f4a0117fcbc821_en_badge_web_generic.png 646w" sizes="100vw" alt="" class="image-6"/></a><a href="https://support.sonos.com/en-us/services/the-lot-radio" target="_blank" class="w-inline-block"><img src="648b2a9a9dd9c46ab6c31b6c_wws-logo.png" loading="lazy" alt="" class="image-6"/></a></div>
+    <!-- App store links removed to prevent redirecting to The Lot Radio's app -->
     <div class="w-container">
-        <div class="html-embed w-embed w-iframe"><iframe src="https://thelotradio.substack.com/embed" width="400" height="165" style="border:0px solid #EEE; background:white;" frameborder="0" scrolling="no"></iframe></div>
-        <p class="paragraph-2">RONAUT RADIO KIOSK<br/>Ronaut Radio has an outdoor space accessible to the public everyday where you can buy coffee, beer, wine and snacks to be enjoyed on-site or to go.<br/>We are open EVERYDAY from 10AM to MIDNIGHT<br/><a href="https://goo.gl/maps/uQZ78UenCRp5XvJU6" target="_blank">17 Nassau Ave, Brooklyn, NY 11222<br/></a></p>
+        <!-- Newsletter signup removed - add your own when ready -->
+        <p class="paragraph-2">RONAUT RADIO KIOSK<br/>Independent online radio streaming the best music 24/7.<br/>We are open EVERYDAY from 10AM to MIDNIGHT<br/><a href="https://goo.gl/maps/uQZ78UenCRp5XvJU6" target="_blank">17 Nassau Ave, Brooklyn, NY 11222<br/></a></p>
     </div>
-    <div class="section"><a href="https://shop.thelotradio.com/" target="_blank" class="link-2"><strong>shop.thelotradio.com</strong></a><a href="https://makingtimeisrad.com/" target="_blank" class="link-2"><strong><br/></strong></a>
+    <div class="section">
+        <!-- Shop link removed - add your own when ready -->
+        <!-- <a href="https://shop.ronautradio.com/" target="_blank" class="link-2"><strong>shop.ronautradio.com</strong></a> -->
         <div class="html-embed-10 w-embed w-script">
             <div id='collection-component-1618238023055'></div>
             <script type="text/javascript">
