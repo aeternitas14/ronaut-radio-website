@@ -237,7 +237,6 @@ h1, h2, h3 {
 <body>
 <!-- FULL-WIDTH MEDIA PLAYER AT TOP -->
 <div id="top-player-container" style="width: 100%; background: black; position: relative; z-index: 1000;">
-  <div id="now-playing" style="color: white; font-size: 14px; padding: 10px 0; text-align: center; background: rgba(0,0,0,0.8);">Loading track info...</div>
   <div id="player-container" style="position: relative; width: 100%; overflow: hidden; background: black; padding-top: 56.25%;">
     <video
       id="ronaut-player"
@@ -254,7 +253,6 @@ h1, h2, h3 {
       <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
         <source src="https://stream.ronautradio.la/live/audio/stream.mp3" type="audio/mpeg" />    </video>
     <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-      <div id="logo" style="color: white; font-size: 24px; font-weight: bold; position: absolute; top: 20px; left: 20px;">RONAUT RADIO</div>
       <div id="ticker" style="color: white; font-size: 16px; position: absolute; bottom: 20px; left: 20px;">Loading current set...</div>
     </div>
   </div>
@@ -333,10 +331,8 @@ h1, h2, h3 {
       document.getElementById("now-playing").textContent = nowPlayingText;
       document.getElementById("ticker").textContent      = nowPlayingText;
       document.getElementById("ticker").style.display    = 'block';
-      document.getElementById("debug-json").textContent = "DEBUG: " + JSON.stringify(data);
     } catch (err) {
       console.error("Failed to fetch now playing:", err);
-      document.getElementById("debug-json").textContent = "DEBUG ERROR: " + err;
     }
   }
 
@@ -370,9 +366,6 @@ h1, h2, h3 {
     video.play().catch(() => {});
   }
 </script>
-<div id="debug-json" style="position: fixed; bottom: 0; right: 0; background: black; color: lime; padding: 5px; font-size: 12px; font-family: monospace; z-index: 9999;">
-  DEBUG: Waiting for data...
-</div>
 <!-- Chat functionality removed as requested -->
     <div class="html-embed-9 w-embed w-iframe w-script">
         <div id="button-container"></div>
