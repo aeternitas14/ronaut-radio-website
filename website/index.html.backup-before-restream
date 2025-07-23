@@ -162,45 +162,6 @@ body {
 
 
 
-
-/* RESTREAM Scrolling Banner */
-.restream-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 30px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  font-family: Oswald, sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 2px;
-  overflow: hidden;
-  z-index: 10001;
-  display: flex;
-  align-items: center;
-}
-
-.restream-text {
-  white-space: nowrap;
-  animation: scroll-left 20s linear infinite;
-  padding-left: 100%;
-}
-
-@keyframes scroll-left {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-/* Adjust media player position to account for banner */
-#top-player-container {
-  margin-top: 30px !important;
-}
 /* Cool Share Button Styling */
 .cool-share-btn {
   background: linear-gradient(45deg, #000, #333) !important;
@@ -418,12 +379,7 @@ h1, h2, h3 {
 }
 </style></head>
 <body>
-<!-- RESTREAM SCROLLING TEXT -->
-<div class="restream-banner">
-  <div class="restream-text">
-    RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM
-  </div>
-</div><!-- FULL-WIDTH MEDIA PLAYER AT TOP -->
+<!-- FULL-WIDTH MEDIA PLAYER AT TOP -->
 <div id="top-player-container" style="width: 100%; background: black; position: relative; z-index: 1000;">
   <div id="player-container" style="position: relative; width: 100%; overflow: hidden; background: black; padding-top: 56.25%;">
     <video
@@ -1088,45 +1044,6 @@ body {
 
 
 
-
-/* RESTREAM Scrolling Banner */
-.restream-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 30px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  font-family: Oswald, sans-serif;
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 2px;
-  overflow: hidden;
-  z-index: 10001;
-  display: flex;
-  align-items: center;
-}
-
-.restream-text {
-  white-space: nowrap;
-  animation: scroll-left 20s linear infinite;
-  padding-left: 100%;
-}
-
-@keyframes scroll-left {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-/* Adjust media player position to account for banner */
-#top-player-container {
-  margin-top: 30px !important;
-}
 /* Cool Share Button Styling */
 .cool-share-btn {
   background: linear-gradient(45deg, #000, #333) !important;
