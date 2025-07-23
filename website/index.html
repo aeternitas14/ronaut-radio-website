@@ -5,13 +5,13 @@
 <head>
     <meta charset="utf-8" />
     <title>Ronaut Radio</title>
-    <meta content="We are an independent, non-profit, online radio station live streaming 24/7 from a reclaimed shipping container on an empty lot in NYC. Expect a continuous stream of the best and most varied music New York City has to offer." name="description" />
+    <meta content="Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation. Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels." name="description" />
     <meta content="Ronaut Radio" property="og:title" />
-    <meta content="We are an independent, non-profit, online radio station live streaming 24/7 from a reclaimed shipping container on an empty lot in NYC. Expect a continuous stream of the best and most varied music New York City has to offer." property="og:description" />
-    <meta content="https://recordings-cdn-s.lp-playback.studio/hls/85c28sa2o8wppm58/6f3a9b09-acb2-4a0a-9546-0cd47fdf3cd5/source/latest.png" property="og:image" />
+    <meta content="Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation. Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels." property="og:description" />
+    <meta content="https://via.placeholder.com/1200x630/000000/FFFFFF?text=RONAUT+RADIO+%7C+Los+Angeles+Vinyl+Only" property="og:image" />
     <meta content="Ronaut Radio" property="twitter:title" />
-    <meta content="We are an independent, non-profit, online radio station live streaming 24/7 from a reclaimed shipping container on an empty lot in NYC. Expect a continuous stream of the best and most varied music New York City has to offer." property="twitter:description" />
-    <meta content="https://recordings-cdn-s.lp-playback.studio/hls/85c28sa2o8wppm58/6f3a9b09-acb2-4a0a-9546-0cd47fdf3cd5/source/latest.png" property="twitter:image" />
+    <meta content="Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation. Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels." property="twitter:description" />
+    <meta content="https://via.placeholder.com/1200x630/000000/FFFFFF?text=RONAUT+RADIO+%7C+Los+Angeles+Vinyl+Only" property="twitter:image" />
     <meta property="og:type" content="website" />
     <meta content="summary_large_image" name="twitter:card" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
@@ -244,10 +244,13 @@ h1, h2, h3 {
       autoplay
       muted
       playsinline
+      webkit-playsinline
+      x5-playsinline
+      preload="none"
       style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
     >
       <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
-    </video>
+        <source src="https://stream.ronautradio.la/live/audio/stream.mp3" type="audio/mpeg" />    </video>
     <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
       <div id="logo" style="color: white; font-size: 24px; font-weight: bold; position: absolute; top: 20px; left: 20px;">RONAUT RADIO</div>
       <div id="ticker" style="color: white; font-size: 16px; position: absolute; bottom: 20px; left: 20px;">Loading current set...</div>
@@ -339,7 +342,15 @@ h1, h2, h3 {
   setInterval(updateNowPlaying, 10000);
 
   const video = document.getElementById('ronaut-player');
-  if (Hls.isSupported()) {
+  
+  // iPhone background playback support
+  video.addEventListener('loadstart', function() {
+    // Enable background playback on iOS
+    if (video.webkitEnterFullscreen) {
+      video.setAttribute('x5-video-player-type', 'h5');
+      video.setAttribute('x5-video-player-fullscreen', 'true');
+    }
+  });  if (Hls.isSupported()) {
     const hls = new Hls();
     hls.loadSource('https://stream.ronautradio.la/live/hls/stream.m3u8');
     hls.attachMedia(video);
