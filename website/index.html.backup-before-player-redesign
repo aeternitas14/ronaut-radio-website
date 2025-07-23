@@ -163,55 +163,6 @@ body {
 
 
 
-
-/* The Lot Radio Style Media Player */
-@keyframes pulse {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Custom video controls styling like The Lot Radio */
-#ronaut-player {
-  background: #000 !important;
-}
-
-#ronaut-player::-webkit-media-controls-panel {
-  background: linear-gradient(transparent, rgba(0,0,0,0.8)) !important;
-}
-
-#ronaut-player::-webkit-media-controls-play-button,
-#ronaut-player::-webkit-media-controls-pause-button {
-  background-color: rgba(255,255,255,0.9) !important;
-  border-radius: 50% !important;
-  margin-left: 10px !important;
-}
-
-#ronaut-player::-webkit-media-controls-volume-slider {
-  background: rgba(255,255,255,0.3) !important;
-}
-
-#ronaut-player::-webkit-media-controls-current-time-display,
-#ronaut-player::-webkit-media-controls-time-remaining-display {
-  color: white !important;
-  font-family: Oswald, sans-serif !important;
-  font-size: 12px !important;
-}
-
-/* Enhanced player container */
-#top-player-container {
-  border-bottom: 2px solid #333 !important;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
-}
 /* RESTREAM Scrolling Banner */
 .restream-banner {
   position: fixed;
@@ -490,14 +441,8 @@ h1, h2, h3 {
       <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
         <source src="https://stream.ronautradio.la/live/audio/stream.mp3" type="audio/mpeg" />    </video>
     <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-      <!-- LIVE Indicator like The Lot Radio -->
-      <div class="live-indicator" style="position: absolute; top: 15px; left: 15px; display: flex; align-items: center; pointer-events: none;">
-        <div class="live-dot" style="width: 8px; height: 8px; background: #ff0000; border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite;"></div>
-        <span style="color: white; font-family: Oswald, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 1px;">LIVE</span>
-      </div>
-      <!-- Current show info -->
-      <div id="ticker" style="color: white; font-size: 14px; position: absolute; bottom: 15px; left: 15px; font-family: Oswald, sans-serif; font-weight: 400; pointer-events: none;">Loading current set...</div>
-    </div>    </div>
+      <div id="ticker" style="color: white; font-size: 16px; position: absolute; bottom: 20px; left: 20px;">Loading current set...</div>
+    </div>
   </div>
 </div><div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
   <h1 style="font-family: Oswald, sans-serif; font-size: 48px; font-weight: 300; letter-spacing: 2px; margin: 0; text-align: center;">RONAUT RADIO</h1>
@@ -584,27 +529,6 @@ h1, h2, h3 {
 
   const video = document.getElementById('ronaut-player');
   
-  // Enhanced player styling like The Lot Radio
-  video.addEventListener('loadstart', function() {
-    // Add custom styling when video loads
-    video.style.objectFit = 'cover';
-    video.style.background = '#000';
-  });
-  
-  // Update LIVE indicator based on stream status
-  video.addEventListener('playing', function() {
-    const liveIndicator = document.querySelector('.live-indicator');
-    if (liveIndicator) {
-      liveIndicator.style.opacity = '1';
-    }
-  });
-  
-  video.addEventListener('pause', function() {
-    const liveIndicator = document.querySelector('.live-indicator');
-    if (liveIndicator) {
-      liveIndicator.style.opacity = '0.7';
-    }
-  });  
   // iPhone background playback support
   video.addEventListener('loadstart', function() {
     // Enable background playback on iOS
@@ -1165,55 +1089,6 @@ body {
 
 
 
-
-/* The Lot Radio Style Media Player */
-@keyframes pulse {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Custom video controls styling like The Lot Radio */
-#ronaut-player {
-  background: #000 !important;
-}
-
-#ronaut-player::-webkit-media-controls-panel {
-  background: linear-gradient(transparent, rgba(0,0,0,0.8)) !important;
-}
-
-#ronaut-player::-webkit-media-controls-play-button,
-#ronaut-player::-webkit-media-controls-pause-button {
-  background-color: rgba(255,255,255,0.9) !important;
-  border-radius: 50% !important;
-  margin-left: 10px !important;
-}
-
-#ronaut-player::-webkit-media-controls-volume-slider {
-  background: rgba(255,255,255,0.3) !important;
-}
-
-#ronaut-player::-webkit-media-controls-current-time-display,
-#ronaut-player::-webkit-media-controls-time-remaining-display {
-  color: white !important;
-  font-family: Oswald, sans-serif !important;
-  font-size: 12px !important;
-}
-
-/* Enhanced player container */
-#top-player-container {
-  border-bottom: 2px solid #333 !important;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.5) !important;
-}
 /* RESTREAM Scrolling Banner */
 .restream-banner {
   position: fixed;
