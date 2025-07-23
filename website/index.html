@@ -61,8 +61,10 @@
         gtag('config', 'G-2P249Q3KZP');
     </script>
     <meta name="apple-itunes-app" content="app-id=1091128189">
-    <meta property="og:video" content="https://livepeercdn.studio/hls/85c28sa2o8wppm58/index.m3u8" />
-    <meta property="og:type" content="video">
+    <meta property="og:video" content="https://stream.ronautradio.la/live/hls/stream.m3u8" />
+    <meta property="og:video:type" content="application/x-mpegURL" />
+    <meta property="og:video:width" content="1280" />
+    <meta property="og:video:height" content="720" />    <meta property="og:type" content="video">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.jsdelivr.net/npm/share-api-polyfill@1.0.21/dist/share-min.min.js"></script>
     <style>
@@ -500,7 +502,7 @@ h1, h2, h3 {
 
                     function ShopifyBuyInit() {
                         var client = ShopifyBuy.buildClient({
-                            domain: 'thelotradio.myshopify.com',
+                            domain: 'ronautradio.myshopify.com',
                             storefrontAccessToken: '686cfe8cf0b79c6521c19106239159c3',
                         });
                         ShopifyBuy.UI.onReady(client).then(function(ui) {
