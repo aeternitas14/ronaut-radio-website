@@ -95,6 +95,7 @@
     <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
 </head>
 <body>
+<link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
 <div id="now-playing" style="color:white; font-size: 14px; padding-top: 10px;">Loading track info...</div>
 <div id="player-container">
   <video
@@ -107,7 +108,7 @@
     width="640"
     height="360"
   >
-    <source src="/hls/stream.m3u8" type="application/x-mpegURL" />
+    <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
   </video>
   <div id="overlay">
     <div id="logo">RONAUT RADIO</div>
@@ -124,10 +125,9 @@
     background: black;
   }
 
-  /* This targets the video element inside the container for full width */
-  #ronaut-player.video-js {
-    width: 100% !important;
-    height: auto !important;
+  #video {
+    width: 100%;
+    height: auto;
     display: block;
   }
 
@@ -166,7 +166,7 @@
   // All your JS here, after the DOM elements exist!
   async function updateNowPlaying() {
     try {
-      const res = await fetch("/now-playing");
+      const res = await fetch("https://stream.ronautradio.la/api/now-playing");
       const data = await res.json();
       const nowPlayingText = "Now Playing: " + data.now_playing;
       document.getElementById("now-playing").textContent = nowPlayingText;
@@ -185,7 +185,7 @@
   const video = document.getElementById('ronaut-player');
   if (Hls.isSupported()) {
     const hls = new Hls();
-    hls.loadSource('/hls/stream.m3u8');
+    hls.loadSource('https://stream.ronautradio.la/live/hls/stream.m3u8');
     hls.attachMedia(video);
     hls.on(Hls.Events.MANIFEST_PARSED, function () {
       document.getElementById('ticker').style.display = 'block';
@@ -197,7 +197,7 @@
       }
     });
   } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    video.src = '/hls/stream.m3u8';
+    video.src = 'https://stream.ronautradio.la/live/hls/stream.m3u8';
     video.play().catch(() => {});
   }
 </script>
