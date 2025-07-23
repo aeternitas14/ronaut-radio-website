@@ -95,40 +95,54 @@
     <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
 </head>
 <body>
-<link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
-<div id="now-playing" style="color:white; font-size: 14px; padding-top: 10px;">Loading track info...</div>
-<div id="player-container">
-  <video
-    id="ronaut-player"
-    class="video-js vjs-default-skin"
-    controls
-    autoplay
-    muted
-    playsinline
-    width="640"
-    height="360"
-  >
-    <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
-  </video>
-  <div id="overlay">
-    <div id="logo">RONAUT RADIO</div>
-    <div id="ticker">Loading current set...</div>
-  </div>
-</div> <!-- end of player-container -->
+<div class="div-block">
+    <div id="now-playing" style="color:white; font-size: 14px; padding-top: 10px; text-align: center;">Loading track info...</div>
+    <div id="player-container">
+      <video
+        id="ronaut-player"
+        class="video-js vjs-default-skin"
+        controls
+        autoplay
+        muted
+        playsinline
+        width="640"
+        height="360"
+      >
+        <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
+      </video>
+      <div id="overlay">
+        <div id="logo">RONAUT RADIO</div>
+        <div id="ticker">Loading current set...</div>
+      </div>
+    </div> <!-- end of player-container -->
+</div>
 
 <style>
+  /* This is the key change: Center the main content block */
+  .div-block {
+    max-width: 940px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  
   #player-container {
     position: relative;
     width: 100%;
-    max-width: 100vw;
     overflow: hidden;
     background: black;
+    /* The Lot Radio player has an aspect ratio of 16:9 */
+    padding-top: 56.25%; 
   }
-
-  #video {
+  
+  /* Make the video player fill the container */
+  #ronaut-player {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto;
-    display: block;
+    height: 100%;
   }
 
   #overlay {
