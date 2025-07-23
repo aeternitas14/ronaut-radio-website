@@ -93,83 +93,9 @@
         }
     </style>
     <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
-<!-- Enhanced Styling for Centered Layout like The Lot Radio -->
-<style>
-/* Apply The Lot Radio's centered container approach */
-.w-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-/* Enhanced paragraph styling with Oswald font */
-.paragraph {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  font-family: Oswald, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-.paragraph-2 {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  font-family: Oswald, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-/* Center all main content */
-.container, .container-2, .container-3 {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Enhanced text styling */
-body {
-  font-family: Oswald, sans-serif;
-  text-align: center;
-}
-
-/* Center the main content blocks */
-.div-block {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-/* Style the main description */
-.main-description {
-  font-family: Oswald, sans-serif;
-  font-size: 18px;
-  line-height: 1.8;
-  text-align: center;
-  margin: 30px auto;
-  max-width: 800px;
-  padding: 0 20px;
-}
-
-/* Style headings */
-h1, h2, h3 {
-  font-family: Oswald, sans-serif;
-  text-align: center;
-  margin: 20px auto;
-}
-</style></head>
+</head>
 <body>
-<div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
-  <h1 style="font-family: Oswald, sans-serif; font-size: 48px; font-weight: 300; letter-spacing: 2px; margin: 0; text-align: center;">RONAUT RADIO</h1>
-  <p style="font-family: Oswald, sans-serif; font-size: 14px; font-weight: 400; letter-spacing: 1px; margin: 10px 0 0 0; text-align: center; text-transform: uppercase;">Los Angeles • Vinyl Only • Live Shows</p>
-</div><div class="div-block">
+<div class="div-block">
     <div id="now-playing" style="color:white; font-size: 14px; padding-top: 10px; text-align: center;">Loading track info...</div>
     <div id="player-container">
       <video
@@ -402,7 +328,7 @@ h1, h2, h3 {
         <!-- <a href="http://www.twitter.com/ronautradio" target="_blank" class="w-inline-block"><img src="6065e48787c63189c61f2aab_social-twitter.svg" loading="lazy" alt=""/></a> -->
     </div>
     <div class="w-container">
-        <p class="paragraph">We are Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation.<br/>Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels.<br/>Experience authentic sound from analog records, curated by passionate collectors and DJs.<br/>‍<br/><strong>Please use this </strong><a href="showform.html" target="_blank"><strong>form</strong></a><strong> to submit your vinyl show proposals.</strong><br/><br/>Support independent radio and great music. <br/>‍<br/></p>
+        <p class="paragraph">We are Ronaut Radio - an independent online radio station streaming the best music 24/7.<br/>Discover new sounds and classic favorites from our carefully curated playlists.<br/>‍<br/><strong>Please use this </strong><a href="showform.html" target="_blank"><strong>form</strong></a><strong> to submit show proposals.</strong><br/><br/>Support independent radio and great music. <br/>‍<br/></p>
         <div class="w-layout-blockcontainer container-11 w-container"><a href="https://livepeer.studio/?utm_source=thelotradio&amp;utm_medium=referral" target="_blank" class="w-inline-block"><img src="65e740514f5a9a89f5bd342c_studio-logo-black.svg" loading="lazy" alt=""/></a>
             <div class="text-block-11">Livestream powered by Livepeer Studio</div>
         </div>
@@ -410,7 +336,7 @@ h1, h2, h3 {
     <!-- App store links removed to prevent redirecting to The Lot Radio's app -->
     <div class="w-container">
         <!-- Newsletter signup removed - add your own when ready -->
-        <p class="paragraph-2">RONAUT RADIO<br/>Los Angeles Vinyl-Only Radio<br/>Live shows • Rare records • Analog sound • Curated by collectors<br/>Broadcasting from the heart of LA's music scene</p>
+        <p class="paragraph-2">RONAUT RADIO<br/>Independent online radio streaming the best music 24/7.<br/>Discover new sounds and classic favorites.</p>
     </div>
     <div class="section">
         <!-- Shop link removed - add your own when ready -->
@@ -728,83 +654,9 @@ h1, h2, h3 {
                     calendar.render();
                 });
             </script>
-<!-- Enhanced Styling for Centered Layout like The Lot Radio -->
-<style>
-/* Apply The Lot Radio's centered container approach */
-.w-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-/* Enhanced paragraph styling with Oswald font */
-.paragraph {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  font-family: Oswald, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-.paragraph-2 {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  font-family: Oswald, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-}
-
-/* Center all main content */
-.container, .container-2, .container-3 {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Enhanced text styling */
-body {
-  font-family: Oswald, sans-serif;
-  text-align: center;
-}
-
-/* Center the main content blocks */
-.div-block {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
-}
-
-/* Style the main description */
-.main-description {
-  font-family: Oswald, sans-serif;
-  font-size: 18px;
-  line-height: 1.8;
-  text-align: center;
-  margin: 30px auto;
-  max-width: 800px;
-  padding: 0 20px;
-}
-
-/* Style headings */
-h1, h2, h3 {
-  font-family: Oswald, sans-serif;
-  text-align: center;
-  margin: 20px auto;
-}
-</style>        </head>
+        </head>
         <body>
-<div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
-  <h1 style="font-family: Oswald, sans-serif; font-size: 48px; font-weight: 300; letter-spacing: 2px; margin: 0; text-align: center;">RONAUT RADIO</h1>
-  <p style="font-family: Oswald, sans-serif; font-size: 14px; font-weight: 400; letter-spacing: 1px; margin: 10px 0 0 0; text-align: center; text-transform: uppercase;">Los Angeles • Vinyl Only • Live Shows</p>
-</div>            <div id='calendar'></div>
+            <div id='calendar'></div>
         </body>
         <!-- Mirrored from www.thelotradio.com/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 21 Jul 2025 21:27:02 GMT -->
         </html>
