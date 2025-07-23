@@ -164,33 +164,6 @@ body {
 
 
 
-
-/* The Lot Radio Share Button Styling */
-#btn-share {
-    font-family: Oswald, sans-serif;
-    margin-top: 0;
-    padding-left: 15px;
-    padding-right: 15px;
-    height: 52px;
-    background: grey;
-    border: 1px solid #000;
-    font-size: 16px;
-    color: #000;
-    font-weight: 500;
-    text-transform: uppercase;
-    width: auto;
-    cursor: pointer;
-}
-
-#btn-share:disabled {
-    background: #000;
-    color: #fff;
-}
-
-.share-container {
-    text-align: center;
-    margin: 20px 0;
-}
 /* The Lot Radio Exact CSS Styling */
 .container-2 {
     max-width: 160px;
@@ -239,6 +212,24 @@ body {
     flex-direction: column;
     align-items: stretch;
 }
+/* RESTREAM Scrolling Banner */
+.restream-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-family: Oswald, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 2px;
+  overflow: hidden;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+}
 
 .restream-text {
   white-space: nowrap;
@@ -260,11 +251,62 @@ body {
   margin-top: 30px !important;
 }
 /* Cool Share Button Styling */
+.cool-share-btn {
+  background: linear-gradient(45deg, #000, #333) !important;
+  color: white !important;
+  border: 2px solid #fff !important;
+  padding: 12px 24px !important;
+  font-family: Oswald, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: 1px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  border-radius: 8px !important;
+  text-transform: uppercase !important;
+}
 
+.cool-share-btn:hover {
+  background: linear-gradient(45deg, #333, #666) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+}
 
+.share-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  font-family: Oswald, sans-serif;
+}
 
+.share-popup.hidden {
+  display: none;
+}
 
+.share-popup-content {
+  background: #000;
+  border: 3px solid #fff;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  color: white;
+}
 
+.share-popup-content h3 {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
 
 .link-container {
   display: flex;
@@ -424,6 +466,13 @@ h1, h2, h3 {
   margin: 20px auto;
 }
 </style></head>
+<body>
+<!-- RESTREAM SCROLLING TEXT -->
+<div class="restream-banner">
+  <div class="restream-text">
+    RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM RESTREAM
+  </div>
+</div><!-- FULL-WIDTH MEDIA PLAYER AT TOP -->
 <div id="top-player-container" style="width: 100%; background: black; position: relative; z-index: 1000;">
   <div id="player-container" style="position: relative; width: 100%; overflow: hidden; background: black; padding-top: 56.25%;">
     <video
@@ -558,24 +607,73 @@ h1, h2, h3 {
     <div class="html-embed-9 w-embed w-iframe w-script">
         <div id="button-container"></div>
         <div class="share-container">
-            <button id="btn-share">Share the stream!</button>
-        </div>
-        <script>
-            // The Lot Radio Exact Share Implementation
-            window.addEventListener("load", function() {
-                if(!navigator.share) {
-                    document.querySelector(".share-container").innerHTML = "Web Share API not supported in this browser";
-                    return;
+            <button id="btn-share" class="cool-share-btn">📻 SHARE THE VIBES 📻</button>
+            <div id="share-popup" class="share-popup hidden">
+                <div class="share-popup-content">
+                    <h3>🎵 SPREAD THE RONAUT RADIO LOVE! 🎵</h3>
+                    <p>Copy this link and share the vinyl vibes:</p>
+                    <div class="link-container">
+                        <input type="text" id="share-link" value="https://ronautradio.la" readonly>
+                        <button id="copy-btn" class="copy-btn">📋 COPY</button>
+                    </div>
+                    <div class="social-share">
+                        <p>Or share directly:</p>
+                        <a href="https://twitter.com/intent/tweet?text=🎵%20Listening%20to%20some%20sick%20vinyl%20sets%20on%20Ronaut%20Radio!%20%F0%9F%94%A5&url=https://ronautradio.la" target="_blank" class="social-btn twitter">🐦 Twitter</a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u=https://ronautradio.la" target="_blank" class="social-btn facebook">📘 Facebook</a>
+                        <a href="sms:?body=🎵%20Check%20out%20this%20sick%20vinyl%20radio%20station!%20https://ronautradio.la" class="social-btn sms">💬 Text</a>
+                    </div>
+                    <button id="close-popup" class="close-btn">✖️ CLOSE</button>
+                </div>
+            </div>
+        </div>        <script>
+            /*
+            // Remove this to disable multi-stream mode
+                    }, true)
+                    if (isSelected) {
+                        streamButton.disabled = true
+                    }
+                    container.append(streamButton)
                 }
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                    })
+                }
+            }, false);
+            window.addEventListener('load', function() {
+                const shareBtn = document.getElementById('btn-share');
+                const sharePopup = document.getElementById('share-popup');
+                const copyBtn = document.getElementById('copy-btn');
+                const closeBtn = document.getElementById('close-popup');
+                const shareLink = document.getElementById('share-link');
                 
-                document.getElementById("btn-share").addEventListener("click", function() {
-                    navigator.share({
-                        title: "Check out Ronaut Radio",
-                        text: "Check out Ronaut Radio Live Stream:",
-                        url: "https://ronautradio.la",
-                    });
+                // Show popup when share button is clicked
+                shareBtn.addEventListener('click', function() {
+                    sharePopup.classList.remove('hidden');
+                    shareLink.select();
                 });
-            });                sharePopup.addEventListener('click', function(e) {
+                
+                // Copy link functionality with cool feedback
+                copyBtn.addEventListener('click', function() {
+                    shareLink.select();
+                    document.execCommand('copy');
+                    
+                    // Cool feedback animation
+                    copyBtn.textContent = '✅ COPIED!'; 
+                    copyBtn.style.background = '#4CAF50';
+                    
+                    setTimeout(function() {
+                        copyBtn.textContent = '📋 COPY';
+                        copyBtn.style.background = '#333';
+                    }, 2000);
+                });
+                
+                // Close popup
+                closeBtn.addEventListener('click', function() {
+                    sharePopup.classList.add('hidden');
+                });
+                
+                // Close popup when clicking outside
+                sharePopup.addEventListener('click', function(e) {
                     if (e.target === sharePopup) {
                         sharePopup.classList.add('hidden');
                     }
@@ -1074,33 +1172,6 @@ body {
 
 
 
-
-/* The Lot Radio Share Button Styling */
-#btn-share {
-    font-family: Oswald, sans-serif;
-    margin-top: 0;
-    padding-left: 15px;
-    padding-right: 15px;
-    height: 52px;
-    background: grey;
-    border: 1px solid #000;
-    font-size: 16px;
-    color: #000;
-    font-weight: 500;
-    text-transform: uppercase;
-    width: auto;
-    cursor: pointer;
-}
-
-#btn-share:disabled {
-    background: #000;
-    color: #fff;
-}
-
-.share-container {
-    text-align: center;
-    margin: 20px 0;
-}
 /* The Lot Radio Exact CSS Styling */
 .container-2 {
     max-width: 160px;
@@ -1149,6 +1220,24 @@ body {
     flex-direction: column;
     align-items: stretch;
 }
+/* RESTREAM Scrolling Banner */
+.restream-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-family: Oswald, sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 2px;
+  overflow: hidden;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+}
 
 .restream-text {
   white-space: nowrap;
@@ -1170,11 +1259,62 @@ body {
   margin-top: 30px !important;
 }
 /* Cool Share Button Styling */
+.cool-share-btn {
+  background: linear-gradient(45deg, #000, #333) !important;
+  color: white !important;
+  border: 2px solid #fff !important;
+  padding: 12px 24px !important;
+  font-family: Oswald, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  letter-spacing: 1px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  border-radius: 8px !important;
+  text-transform: uppercase !important;
+}
 
+.cool-share-btn:hover {
+  background: linear-gradient(45deg, #333, #666) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+}
 
+.share-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  font-family: Oswald, sans-serif;
+}
 
+.share-popup.hidden {
+  display: none;
+}
 
+.share-popup-content {
+  background: #000;
+  border: 3px solid #fff;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  color: white;
+}
 
+.share-popup-content h3 {
+  margin: 0 0 20px 0;
+  font-size: 24px;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
 
 .link-container {
   display: flex;
