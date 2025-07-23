@@ -166,30 +166,28 @@ h1, h2, h3 {
 }
 </style></head>
 <body>
-<!-- FULL-WIDTH MEDIA PLAYER AT TOP -->
-<div id="top-player-container" style="width: 100%; background: black; position: relative; z-index: 1000;">
-  <div id="now-playing" style="color: white; font-size: 14px; padding: 10px 0; text-align: center; background: rgba(0,0,0,0.8);">Loading track info...</div>
-  <div id="player-container" style="position: relative; width: 100%; overflow: hidden; background: black; padding-top: 56.25%;">
-    <video
-      id="ronaut-player"
-      class="video-js vjs-default-skin"
-      controls
-      autoplay
-      muted
-      playsinline
-      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-    >
-      <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
-    </video>
-    <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-      <div id="logo" style="color: white; font-size: 24px; font-weight: bold; position: absolute; top: 20px; left: 20px;">RONAUT RADIO</div>
-      <div id="ticker" style="color: white; font-size: 16px; position: absolute; bottom: 20px; left: 20px;">Loading current set...</div>
-    </div>
-  </div>
-</div><div class="w-container" style="margin-top: 60px; margin-bottom: 30px;">
+<div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
   <h1 style="font-family: Oswald, sans-serif; font-size: 48px; font-weight: 300; letter-spacing: 2px; margin: 0; text-align: center;">RONAUT RADIO</h1>
   <p style="font-family: Oswald, sans-serif; font-size: 14px; font-weight: 400; letter-spacing: 1px; margin: 10px 0 0 0; text-align: center; text-transform: uppercase;">Los Angeles • Vinyl Only • Live Shows</p>
 </div><div class="div-block">
+    <div id="now-playing" style="color:white; font-size: 14px; padding-top: 10px; text-align: center;">Loading track info...</div>
+    <div id="player-container">
+      <video
+        id="ronaut-player"
+        class="video-js vjs-default-skin"
+        controls
+        autoplay
+        muted
+        playsinline
+        width="640"
+        height="360"
+      >
+        <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
+      </video>
+      <div id="overlay">
+        <div id="logo">RONAUT RADIO</div>
+        <div id="ticker">Loading current set...</div>
+      </div>
     </div> <!-- end of player-container -->
 </div>
 
@@ -203,8 +201,23 @@ h1, h2, h3 {
     padding-right: 10px;
   }
   
-  /* Full-width player at top - no longer needed here as inline styles are used */
-  /* Player is now positioned at the very top with full width */  
+  #player-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: black;
+    /* The Lot Radio player has an aspect ratio of 16:9 */
+    padding-top: 56.25%; 
+  }
+  
+  /* Make the video player fill the container */
+  #ronaut-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
 
   #overlay {
     position: absolute;
@@ -288,42 +301,6 @@ h1, h2, h3 {
         <script>
             /*
             // Remove this to disable multi-stream mode
-            window.lotRadioStreams = [{
-              id: '68b9ebup9ajleurk',
-            	name: 'HORST FESTIVAL'
-            },{
-            	id: '85c28sa2o8wppm58',
-            	name: 'RONAUT'
-            }]
-            // end multi stream-mode config
-            */
-            var updateStreamButtons = function() {
-                // first remove existing stream buttons
-                var childNodesToRemove = document.getElementById('button-container').getElementsByClassName('switch-stream-button');
-                for (var i = childNodesToRemove.length - 1; i >= 0; i--) {
-                    var childNode = childNodesToRemove[i];
-                    childNode.parentNode.removeChild(childNode);
-                }
-                var iframe = document.querySelector('#player-iframe')
-                var selectedStreamId = iframe.getAttribute('data-stream-id')
-                var container = document.getElementById('button-container')
-                for (var i = 0; i < window.lotRadioStreams.length; i++) {
-                    var stream = window.lotRadioStreams[i]
-                    var isSelected = stream.id === selectedStreamId
-                    var streamButton = document.createElement('button');
-                    var linkTextContainer = document.createElement('b');
-                    linkTextContainer.className = 'button-text'
-                    var linkText = document.createTextNode(stream.name);
-                    linkTextContainer.appendChild(linkText)
-                    streamButton.appendChild(linkTextContainer);
-                    streamButton.className = 'switch-stream-button button primary'
-                    streamButton.setAttribute('data-stream-id', stream.id)
-                    streamButton.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        var streamId = event.currentTarget.getAttribute('data-stream-id')
-                        iframe.setAttribute('data-stream-id', streamId)
-                        iframe.setAttribute('src', 'https://lvpr.tv?v=' + streamId + '&lowLatency=false&muted=false')
-                        updateStreamButtons()
                     }, true)
                     if (isSelected) {
                         streamButton.disabled = true
@@ -332,13 +309,6 @@ h1, h2, h3 {
                 }
             }
             document.addEventListener('DOMContentLoaded', function() {
-                if (window.lotRadioStreams && window.lotRadioStreams.length > 1) {
-                    var iframe = document.querySelector('#player-iframe')
-                    var initialStreamId = window.lotRadioStreams[0].id
-                    iframe.setAttribute('data-stream-id', initialStreamId)
-                    iframe.setAttribute('src', 'https://lvpr.tv?v=' + initialStreamId + '&lowLatency=false&muted=false')
-                    iframe.addEventListener('load', function() {
-                        updateStreamButtons()
                     })
                 }
             }, false);
@@ -788,27 +758,7 @@ h1, h2, h3 {
 }
 </style>        </head>
         <body>
-<!-- FULL-WIDTH MEDIA PLAYER AT TOP -->
-<div id="top-player-container" style="width: 100%; background: black; position: relative; z-index: 1000;">
-  <div id="now-playing" style="color: white; font-size: 14px; padding: 10px 0; text-align: center; background: rgba(0,0,0,0.8);">Loading track info...</div>
-  <div id="player-container" style="position: relative; width: 100%; overflow: hidden; background: black; padding-top: 56.25%;">
-    <video
-      id="ronaut-player"
-      class="video-js vjs-default-skin"
-      controls
-      autoplay
-      muted
-      playsinline
-      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-    >
-      <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
-    </video>
-    <div id="overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-      <div id="logo" style="color: white; font-size: 24px; font-weight: bold; position: absolute; top: 20px; left: 20px;">RONAUT RADIO</div>
-      <div id="ticker" style="color: white; font-size: 16px; position: absolute; bottom: 20px; left: 20px;">Loading current set...</div>
-    </div>
-  </div>
-</div><div class="w-container" style="margin-top: 60px; margin-bottom: 30px;">
+<div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
   <h1 style="font-family: Oswald, sans-serif; font-size: 48px; font-weight: 300; letter-spacing: 2px; margin: 0; text-align: center;">RONAUT RADIO</h1>
   <p style="font-family: Oswald, sans-serif; font-size: 14px; font-weight: 400; letter-spacing: 1px; margin: 10px 0 0 0; text-align: center; text-transform: uppercase;">Los Angeles • Vinyl Only • Live Shows</p>
 </div>            <div id='calendar'></div>
