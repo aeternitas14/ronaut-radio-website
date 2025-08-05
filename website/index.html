@@ -232,7 +232,7 @@
             </video>
             <div id="overlay">
                 <div id="ticker">Loading current set...</div>
-            </div>
+    </div>
         </div>
     </div>
 
@@ -267,7 +267,7 @@
     </div>
 
     <div class="w-container">
-        <p class="paragraph">We are an independent, non-profit, online radio station live streaming 24/7 from Los Angeles.<br/>Expect a continuous stream of the best and most varied music Los Angeles has to offer.<br/>‍<br/><strong>Please use this </strong><a href="showform.html" target="_blank"><strong>form</strong></a><strong> to submit show proposal.</strong><br/><br/>
+        <p class="paragraph">We are an independent, non-profit, online radio station live streaming 24/7 from Los Angeles.<br/>Expect a continuous stream of the best and most varied music Los Angeles has to offer.<br/>‍<br/><strong>Please use this </strong><a href="showform.html" target="_blank"><strong>form</strong></a><strong> to submit show proposal.</strong><br/><br/></p>
     </div>
 
     <!-- SCHEDULE SECTION -->
@@ -288,6 +288,7 @@
     <script src='https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js'></script>
 
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
         // Player and Now Playing
         (function() {
             const video = document.getElementById('ronaut-player');
@@ -393,35 +394,34 @@
                 })();
 
         // Calendar
-                document.addEventListener('DOMContentLoaded', function() {
                     var calendarEl = document.getElementById('calendar');
                     var calendar = new FullCalendar.Calendar(calendarEl, {
-                timeZone: 'America/Los_Angeles',
-                headerToolbar: {
-                    left: 'prev,next',
-                    center: 'title',
-                    right: 'today'
-                },
+            timeZone: 'America/Los_Angeles',
+            headerToolbar: {
+                left: 'prev,next',
+                center: 'title',
+                right: 'today'
+            },
                         initialView: 'listWeek',
-                firstDay: 1, // Monday
-                nowIndicator: true,
-                googleCalendarApiKey: 'YOUR_API_KEY_HERE',
-                eventSources: [{
-                    googleCalendarId: 'heffcoi@gmail.com'
-                }],
+            firstDay: 1, // Monday
+            nowIndicator: true,
+            googleCalendarApiKey: 'YOUR_API_KEY_HERE',
+            eventSources: [{
+                googleCalendarId: 'heffcoi@gmail.com'
+            }],
                         eventDidMount: function(info) {
-                    if (info.event.extendedProps.description) {
+                if (info.event.extendedProps.description) {
                             var tooltip = new Tooltip(info.el, {
                                 title: info.event.extendedProps.description,
-                            placement: 'top',
+                        placement: 'top',
                                 trigger: 'hover',
                                 container: 'body',
-                            html: true
+                        html: true
                             });
-                    }
+                }
                         },
                         eventClick: function(info) {
-                    info.jsEvent.preventDefault();
+                info.jsEvent.preventDefault();
                         }
                     });
                     calendar.render();
