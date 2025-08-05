@@ -298,7 +298,7 @@
                     const res = await fetch("https://stream.ronautradio.la/api/now-playing");
                     const data = await res.json();
                     if(data && data.now_playing) {
-                        const nowPlayingText = "Now Playing: " + data.now_playing.song.text;
+                        const nowPlayingText = "Now Playing: " + data.now_playing;
                         const ticker = document.getElementById("ticker");
                         ticker.textContent = nowPlayingText;
                         ticker.style.display = 'block';
