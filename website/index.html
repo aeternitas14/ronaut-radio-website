@@ -193,17 +193,6 @@
         .fc-daygrid-day-number { font-family: Oswald, sans-serif !important; font-weight: 400 !important; }
         .fc-col-header-cell { font-family: Oswald, sans-serif !important; font-weight: 400 !important; letter-spacing: 1px !important; text-transform: uppercase !important; }
         .fc-daygrid-event, .fc-event-title, .fc-event-time { color: white !important; }
-
-        .popper, .tooltip { position: absolute; z-index: 9999; background: #dedede; color: black; width: 350px; border-radius: 3px; box-shadow: 0 0 2px rgba(0, 0, 0, 0.5); padding: 10px; text-align: left; }
-        .popper .popper__arrow, .tooltip .tooltip-arrow { width: 0; height: 0; border-style: solid; position: absolute; margin: 5px; border-color: #dedede; }
-        .popper[x-placement^="top"], .tooltip[x-placement^="top"] { margin-bottom: -10px; }
-        .popper[x-placement^="top"] .popper__arrow, .tooltip[x-placement^="top"] .tooltip-arrow { border-width: 5px 5px 0 5px; border-left-color: transparent; border-right-color: transparent; border-bottom-color: transparent; bottom: -5px; left: calc(50% - 5px); margin-top: 0; margin-bottom: 0; }
-        .popper[x-placement^="bottom"], .tooltip[x-placement^="bottom"] { margin-top: 5px; }
-        .tooltip[x-placement^="bottom"] .tooltip-arrow, .popper[x-placement^="bottom"] .popper__arrow { border-width: 0 5px 5px 5px; border-left-color: transparent; border-right-color: transparent; border-top-color: transparent; top: -5px; left: calc(50% - 5px); margin-top: 0; margin-bottom: 0; }
-        .tooltip[x-placement^="right"], .popper[x-placement^="right"] { margin-left: 5px; }
-        .popper[x-placement^="right"] .popper__arrow, .tooltip[x-placement^="right"] .tooltip-arrow { border-width: 5px 5px 5px 0; border-left-color: transparent; border-top-color: transparent; border-bottom-color: transparent; left: -5px; top: calc(50% - 5px); margin-left: 0; margin-right: 0; }
-        .popper[x-placement^="left"], .tooltip[x-placement^="left"] { margin-right: 5px; }
-        .popper[x-placement^="left"] .popper__arrow, .tooltip[x-placement^="left"] .tooltip-arrow { border-width: 5px 0 5px 5px; border-top-color: transparent; border-right-color: transparent; border-bottom-color: transparent; right: -5px; top: calc(50% - 5px); margin-left: 0; margin-right: 0; }
         
         /* Responsive Title */
         @media (max-width: 767px) {
@@ -394,24 +383,13 @@
                 center: 'title',
                 right: 'today'
             },
-            initialView: 'listWeek',
+            initialView: 'dayGridMonth',
             firstDay: 1, // Monday
             nowIndicator: true,
             eventSources: [{
                 url: 'https://calendar.google.com/calendar/ical/heffcoi%40gmail.com/public/basic.ics',
                 format: 'ics'
             }],
-            eventDidMount: function(info) {
-                if (info.event.extendedProps.description) {
-                    var tooltip = new Tooltip(info.el, {
-                        title: info.event.extendedProps.description,
-                        placement: 'top',
-                        trigger: 'hover',
-                        container: 'body',
-                        html: true
-                    });
-                }
-            },
             eventClick: function(info) {
                 info.jsEvent.preventDefault();
             }
