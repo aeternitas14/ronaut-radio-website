@@ -308,6 +308,17 @@
             opacity: 1;
         }
 
+        .programme-item.programme-past {
+            opacity: 0.5;
+            background: #f8f8f8;
+        }
+
+        .programme-item.programme-past .track-time {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         .now-playing-dot {
             width: 10px;
             height: 10px;
@@ -866,7 +877,7 @@
                 programmeLiveMsg.style.display = 'none';
 
                 try {
-                    var res = await fetch("https://stream.ronautradio.la/api/programme?count=10");
+                    var res = await fetch("https://stream.ronautradio.la/api/programme?count=10&recent=3");
                     var data = await res.json();
 
                     if (!data.current && (!data.upcoming || data.upcoming.length === 0)) {
@@ -875,12 +886,24 @@
                     }
 
                     var html = '';
+                    // Recent tracks (already played)
+                    if (data.recent && data.recent.length > 0) {
+                        for (var r = 0; r < data.recent.length; r++) {
+                            var recent = data.recent[r];
+                            html += '<div class="programme-item programme-past">';
+                            html += '<span class="track-name">' + escapeHtml(recent.display_name) + '</span>';
+                            html += '<span class="track-time">PLAYED</span>';
+                            html += '</div>';
+                        }
+                    }
+                    // Current track
                     if (data.current) {
                         html += '<div class="programme-item now-playing">';
                         html += '<span class="track-name"><span class="now-playing-dot"></span>' + escapeHtml(data.current.display_name) + '</span>';
                         html += '<span class="track-time">NOW</span>';
                         html += '</div>';
                     }
+                    // Upcoming tracks
                     if (data.upcoming) {
                         for (var i = 0; i < data.upcoming.length; i++) {
                             var track = data.upcoming[i];
