@@ -911,9 +911,10 @@
                     if (data.recent && data.recent.length > 0) {
                         for (var r = 0; r < data.recent.length; r++) {
                             var recent = data.recent[r];
+                            var recentTime = formatTime(recent.ended_at - recent.duration);
                             html += '<div class="programme-item programme-past">';
                             html += '<span class="track-name">' + escapeHtml(recent.display_name) + '</span>';
-                            html += '<span class="track-time">PLAYED</span>';
+                            html += '<span class="track-time">' + recentTime + '</span>';
                             html += '</div>';
                         }
                     }
