@@ -825,9 +825,10 @@
                 }
             }
 
-            // Initial calls
-            updateNowPlaying();
-            updateProgramme();
+            // Initial calls — programme needs currentMode from now-playing first
+            updateNowPlaying().then(function() {
+                updateProgramme();
+            });
 
             // Poll: now-playing every 10s, programme every 30s
             setInterval(updateNowPlaying, 10000);
