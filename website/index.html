@@ -231,21 +231,39 @@
             50% { opacity: 0.4; transform: scale(0.8); }
         }
 
-        /* Programme Section */
+        /* Programme + Chat Side-by-Side Layout */
+        #programme-chat-row {
+            max-width: 800px;
+            margin: 20px auto;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            padding: 0 10px;
+        }
+
         #programme-section {
-            max-width: 600px;
-            margin: 0 auto 30px auto;
+            flex: 1;
+            min-width: 0;
             text-align: left;
             font-family: Oswald, sans-serif;
         }
 
         #programme-section h2 {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 300;
             letter-spacing: 2px;
             text-transform: uppercase;
-            text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 4px;
+        }
+
+        #programme-date {
+            font-family: Oswald, sans-serif;
+            font-size: 12px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 12px;
         }
 
         .programme-item {
@@ -275,6 +293,9 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             margin-right: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .programme-item .track-time {
@@ -287,6 +308,15 @@
             opacity: 1;
         }
 
+        .now-playing-dot {
+            width: 8px;
+            height: 8px;
+            background: #ff0000;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
         #programme-live-message {
             text-align: center;
             font-size: 16px;
@@ -296,11 +326,87 @@
             display: none;
         }
 
-        /* Responsive Title */
+        /* Chat column */
+        #chat-column {
+            flex-shrink: 0;
+            width: 343px;
+        }
+
+        #chat-column h3 {
+            font-family: Oswald, sans-serif;
+            font-size: 20px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        #chat-toggle {
+            display: none;
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            background: none;
+            border: 1px solid #ccc;
+            color: #555;
+            padding: 8px 20px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+
+        #chat-toggle:hover {
+            border-color: #000;
+            color: #000;
+        }
+
+        #chat-body {
+            overflow: hidden;
+        }
+
+        #chat-discord-link {
+            margin-top: 8px;
+        }
+
+        #chat-discord-link a {
+            font-family: Oswald, sans-serif;
+            font-size: 11px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #999;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        #chat-discord-link a:hover {
+            color: #000;
+        }
+
+        /* Responsive */
         @media (max-width: 767px) {
             .main-title {
                 font-size: 32px;
                 letter-spacing: 1px;
+            }
+            #programme-chat-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            #chat-column {
+                width: 100%;
+            }
+            #chat-toggle {
+                display: block;
+            }
+            #chat-body {
+                display: none;
+            }
+            #chat-body.open {
+                display: block;
             }
         }
     </style>
@@ -319,17 +425,23 @@
         </div>
     </div>
 
-    <!-- CHATANGO SECTION -->
-    <div class="w-container" style="margin: 20px auto;">
-        <script id="cid0020000415584467063" data-cfasync="false" async src="//st.chatango.com/js/gz/emb.js" style="width: 600px;height: 250px;">{"handle":"ronautradiolos","arch":"js","styles":{"a":"C8C8C8","b":21,"c":"000000","d":"000000","f":21,"i":21,"k":"C8C8C8","l":"C8C8C8","m":"C8C8C8","o":21,"p":"10","q":"C8C8C8","r":21,"usricon":0.52,"cnrs":"0.3"}}</script>
-    </div>
-
-    <!-- PROGRAMME / UPCOMING SETS -->
-    <div class="w-container" style="margin: 20px auto;">
+    <!-- PROGRAMME + CHAT SIDE-BY-SIDE -->
+    <div id="programme-chat-row">
         <div id="programme-section">
             <h2>PROGRAMME</h2>
+            <div id="programme-date"></div>
             <div id="programme-live-message">Currently streaming live. Programme resumes after the live session.</div>
             <div id="programme-list"></div>
+        </div>
+        <div id="chat-column">
+            <h3>CHAT</h3>
+            <button id="chat-toggle" onclick="document.getElementById('chat-body').classList.toggle('open'); this.textContent = document.getElementById('chat-body').classList.contains('open') ? 'Hide Chat' : 'Open Chat';">Open Chat</button>
+            <div id="chat-body">
+                <script id="cid0020000415584467063" data-cfasync="false" async src="//st.chatango.com/js/gz/emb.js" style="width: 343px;height: 200px;">{"handle":"ronautradiolos","arch":"js","styles":{"a":"C8C8C8","b":21,"c":"000000","d":"000000","f":21,"i":21,"k":"C8C8C8","l":"C8C8C8","m":"C8C8C8","o":21,"p":"10","q":"C8C8C8","r":21,"usricon":0.52,"cnrs":"0.3"}}</script>
+                <div id="chat-discord-link">
+                    <a href="https://discord.gg/BCHVkUwT" target="_blank">Join our Discord</a>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -446,6 +558,14 @@
             }
 
             async function updateProgramme() {
+                var programmeDate = document.getElementById('programme-date');
+                if (programmeDate) {
+                    var now = new Date();
+                    var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                    var monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                    programmeDate.textContent = dayNames[now.getDay()] + ', ' + monthNames[now.getMonth()] + ' ' + now.getDate() + ', ' + now.getFullYear();
+                }
+
                 if (currentMode !== 'auto') {
                     programmeList.innerHTML = '';
                     programmeLiveMsg.style.display = currentMode === 'live' ? 'block' : 'none';
@@ -465,7 +585,7 @@
                     var html = '';
                     if (data.current) {
                         html += '<div class="programme-item now-playing">';
-                        html += '<span class="track-name">&#9654; ' + escapeHtml(data.current.display_name) + '</span>';
+                        html += '<span class="track-name"><span class="now-playing-dot"></span>' + escapeHtml(data.current.display_name) + '</span>';
                         html += '<span class="track-time">NOW</span>';
                         html += '</div>';
                     }
