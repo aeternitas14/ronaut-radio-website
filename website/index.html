@@ -311,30 +311,19 @@
 
         .programme-item.now-playing .progress-container {
             width: 100%;
-            margin-top: 8px;
+            height: 3px;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.2);
+            position: relative;
         }
 
-        .programme-item.now-playing .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .programme-item.now-playing .progress-fill {
-            height: 100%;
+        .programme-item.now-playing .progress-line {
+            position: absolute;
+            top: -4px;
+            width: 2px;
+            height: 11px;
             background: #ff0000;
-            transition: width 1s linear;
-        }
-
-        .programme-item.now-playing .progress-text {
-            font-size: 12px;
-            font-weight: 300;
-            opacity: 0.8;
-            margin-top: 4px;
-            display: flex;
-            justify-content: space-between;
+            transition: left 1s linear;
         }
 
         .programme-item.programme-past {
@@ -936,7 +925,7 @@
                             html += '</div>';
                         }
                     }
-                    // Current track with progress bar
+                    // Current track with progress line
                     if (data.current) {
                         var elapsed = Math.floor(Date.now() / 1000) - data.current.started_at;
                         var duration = data.current.duration || 0;
@@ -949,8 +938,7 @@
                         html += '<span class="track-time">NOW</span>';
                         if (duration > 0) {
                             html += '<div class="progress-container">';
-                            html += '<div class="progress-bar"><div class="progress-fill" style="width:' + progressPct.toFixed(1) + '%"></div></div>';
-                            html += '<div class="progress-text"><span>' + formatDuration(elapsed) + '</span><span>' + formatDuration(duration) + '</span></div>';
+                            html += '<div class="progress-line" style="left:' + progressPct.toFixed(1) + '%"></div>';
                             html += '</div>';
                         }
                         html += '</div>';
