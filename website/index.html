@@ -390,6 +390,82 @@
             color: #000;
         }
 
+        /* Staff Picks */
+        #staff-picks {
+            max-width: 800px;
+            margin: 40px auto 20px;
+            padding: 0 10px;
+            text-align: center;
+        }
+
+        #staff-picks h2 {
+            font-size: 20px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        #picks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .pick-card {
+            cursor: pointer;
+            text-align: left;
+            transition: opacity 0.2s;
+        }
+
+        .pick-card:hover {
+            opacity: 0.8;
+        }
+
+        .pick-card img {
+            width: 100%;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+            background: #ddd;
+        }
+
+        .pick-card .pick-title {
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            margin-top: 6px;
+        }
+
+        .pick-card .pick-desc {
+            font-family: Oswald, sans-serif;
+            font-size: 12px;
+            font-weight: 300;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        /* Back to Live banner */
+        #back-to-live {
+            display: none;
+            background: #000;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            z-index: 1002;
+        }
+
+        #back-to-live:hover {
+            background: #333;
+        }
+
         /* Responsive */
         @media (max-width: 767px) {
             .main-title {
@@ -416,7 +492,10 @@
         </div>
     </div>
 
-    <!-- PROGRAMME + CHAT SIDE-BY-SIDE -->
+    <!-- BACK TO LIVE BANNER (appears when playing a staff pick) -->
+    <div id="back-to-live" onclick="backToLive()">&#8592; Back to Live Stream</div>
+
+    <!-- PROGRAMME + CHAT STACKED -->
     <div id="programme-chat-row">
         <div id="programme-section">
             <h2>PROGRAMME</h2>
@@ -434,6 +513,12 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- STAFF PICKS -->
+    <div id="staff-picks">
+        <h2>STAFF PICKS</h2>
+        <div id="picks-grid"></div>
     </div>
 
     <div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
@@ -489,6 +574,65 @@
     <script src='https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js'></script>
 
     <script>
+    // Global HLS instance (needs to be accessible for staff picks player switching)
+    var hlsInstance = null;
+    var isPlayingPick = false;
+
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function initHls(video) {
+        if (Hls.isSupported()) {
+            hlsInstance = new Hls();
+            hlsInstance.loadSource('https://stream.ronautradio.la/live/hls/stream.m3u8');
+            hlsInstance.attachMedia(video);
+            hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                video.play().catch(function(e) { console.log("Autoplay prevented", e); });
+            });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = 'https://stream.ronautradio.la/live/hls/stream.m3u8';
+            video.addEventListener('loadedmetadata', function() {
+                video.play().catch(function(e) { console.log("Autoplay prevented", e); });
+            });
+        }
+    }
+
+    function playPick(url, title) {
+        var video = document.getElementById('ronaut-player');
+        var ticker = document.getElementById('ticker');
+        var backBtn = document.getElementById('back-to-live');
+
+        // Destroy HLS instance
+        if (hlsInstance) {
+            hlsInstance.destroy();
+            hlsInstance = null;
+        }
+
+        // Set MP4 source directly
+        video.src = 'https://stream.ronautradio.la' + url;
+        video.play().catch(function(e) { console.log("Play prevented", e); });
+
+        ticker.textContent = 'Playing: ' + title;
+        ticker.style.display = 'block';
+        backBtn.style.display = 'block';
+        isPlayingPick = true;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function backToLive() {
+        var video = document.getElementById('ronaut-player');
+        var backBtn = document.getElementById('back-to-live');
+
+        // Re-initialize HLS
+        initHls(video);
+        backBtn.style.display = 'none';
+        isPlayingPick = false;
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // Player, Now Playing, and Programme
         (function() {
@@ -499,12 +643,6 @@
             const programmeLiveMsg = document.getElementById('programme-live-message');
 
             let currentMode = 'offline';
-
-            function escapeHtml(text) {
-                var div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
 
             function formatTime(unixTimestamp) {
                 if (!unixTimestamp || unixTimestamp <= 0) return '';
@@ -520,6 +658,7 @@
             }
 
             async function updateNowPlaying() {
+                if (isPlayingPick) return; // Don't override ticker when playing a staff pick
                 try {
                     var res = await fetch("https://stream.ronautradio.la/api/now-playing");
                     var data = await res.json();
@@ -604,20 +743,45 @@
             setInterval(updateNowPlaying, 10000);
             setInterval(updateProgramme, 30000);
 
-            // HLS Player
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource('https://stream.ronautradio.la/live/hls/stream.m3u8');
-                hls.attachMedia(video);
-                hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                    video.play().catch(e => console.log("Autoplay was prevented.", e));
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = 'https://stream.ronautradio.la/live/hls/stream.m3u8';
-                video.addEventListener('loadedmetadata', function() {
-                    video.play().catch(e => console.log("Autoplay was prevented.", e));
-                });
+            // Initialize HLS Player
+            initHls(video);
+        })();
+
+        // Staff Picks
+        (function() {
+            var picksGrid = document.getElementById('picks-grid');
+
+            async function loadStaffPicks() {
+                try {
+                    var res = await fetch('https://stream.ronautradio.la/api/sets');
+                    var data = await res.json();
+                    if (!data.sets || data.sets.length === 0) return;
+
+                    var html = '';
+                    for (var i = 0; i < data.sets.length; i++) {
+                        var pick = data.sets[i];
+                        html += '<div class="pick-card" data-url="' + pick.url + '" data-title="' + escapeHtml(pick.title) + '">';
+                        html += '<img src="https://stream.ronautradio.la' + pick.thumbnail + '" alt="' + escapeHtml(pick.title) + '" loading="lazy" />';
+                        html += '<div class="pick-title">' + escapeHtml(pick.title) + '</div>';
+                        if (pick.description) {
+                            html += '<div class="pick-desc">' + escapeHtml(pick.description) + '</div>';
+                        }
+                        html += '</div>';
+                    }
+                    picksGrid.innerHTML = html;
+
+                    var cards = picksGrid.querySelectorAll('.pick-card');
+                    for (var j = 0; j < cards.length; j++) {
+                        cards[j].addEventListener('click', function() {
+                            playPick(this.getAttribute('data-url'), this.getAttribute('data-title'));
+                        });
+                    }
+                } catch (err) {
+                    console.error('Failed to load staff picks:', err);
+                }
             }
+
+            loadStaffPicks();
         })();
 
         // Share Button
