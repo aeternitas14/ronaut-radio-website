@@ -231,20 +231,20 @@
             50% { opacity: 0.4; transform: scale(0.8); }
         }
 
-        /* Programme + Chat Side-by-Side Layout */
+        /* Programme + Chat Stacked Layout */
         #programme-chat-row {
-            max-width: 800px;
+            max-width: 600px;
             margin: 20px auto;
             display: flex;
+            flex-direction: column;
             gap: 20px;
-            align-items: flex-start;
+            align-items: center;
             padding: 0 10px;
         }
 
         #programme-section {
-            flex: 1;
-            min-width: 0;
-            text-align: left;
+            width: 100%;
+            text-align: center;
             font-family: Oswald, sans-serif;
         }
 
@@ -328,7 +328,6 @@
 
         /* Chat column */
         #chat-column {
-            flex-shrink: 0;
             width: 343px;
         }
 
@@ -396,16 +395,6 @@
             .main-title {
                 font-size: 32px;
                 letter-spacing: 1px;
-            }
-            #programme-chat-row {
-                flex-direction: column;
-                gap: 15px;
-            }
-            #programme-section {
-                text-align: center;
-            }
-            #programme-section h2 {
-                text-align: center;
             }
             #chat-column {
                 width: 100%;
