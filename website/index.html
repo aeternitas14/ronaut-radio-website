@@ -194,6 +194,108 @@
         .fc-col-header-cell { font-family: Oswald, sans-serif !important; font-weight: 400 !important; letter-spacing: 1px !important; text-transform: uppercase !important; }
         .fc-daygrid-event, .fc-event-title, .fc-event-time { color: white !important; }
         
+        /* LIVE Badge */
+        #live-badge {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 1001;
+            background: rgba(0, 0, 0, 0.7);
+            color: #ff0000;
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border: 1px solid #ff0000;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #live-badge.active {
+            display: flex;
+        }
+
+        #live-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff0000;
+            border-radius: 50%;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        /* Programme Section */
+        #programme-section {
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            text-align: left;
+            font-family: Oswald, sans-serif;
+        }
+
+        #programme-section h2 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .programme-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .programme-item:first-child {
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .programme-item.now-playing {
+            background: #000;
+            color: #fff;
+            font-weight: 400;
+        }
+
+        .programme-item .track-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 15px;
+        }
+
+        .programme-item .track-time {
+            flex-shrink: 0;
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        .programme-item.now-playing .track-time {
+            opacity: 1;
+        }
+
+        #programme-live-message {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            padding: 20px;
+            display: none;
+        }
+
         /* Responsive Title */
         @media (max-width: 767px) {
             .main-title {
@@ -211,6 +313,7 @@
                 <source src="https://stream.ronautradio.la/live/audio/stream.mp3" type="audio/mpeg" />
             </video>
             <div id="overlay">
+                <div id="live-badge"><div id="live-dot"></div>LIVE</div>
                 <div id="ticker">Loading current set...</div>
             </div>
         </div>
@@ -219,6 +322,15 @@
     <!-- CHATANGO SECTION -->
     <div class="w-container" style="margin: 20px auto;">
         <script id="cid0020000415584467063" data-cfasync="false" async src="//st.chatango.com/js/gz/emb.js" style="width: 343px;height: 200px;">{"handle":"ronautradiolos","arch":"js","styles":{"a":"C8C8C8","b":21,"c":"000000","d":"000000","f":21,"i":21,"k":"C8C8C8","l":"C8C8C8","m":"C8C8C8","o":21,"p":"10","q":"C8C8C8","r":21,"usricon":0.52,"cnrs":"0.3"}}</script>
+    </div>
+
+    <!-- PROGRAMME / UPCOMING SETS -->
+    <div class="w-container" style="margin: 20px auto;">
+        <div id="programme-section">
+            <h2>PROGRAMME</h2>
+            <div id="programme-live-message">Currently streaming live. Programme resumes after the live session.</div>
+            <div id="programme-list"></div>
+        </div>
     </div>
 
     <div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
@@ -275,31 +387,113 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Player and Now Playing
+        // Player, Now Playing, and Programme
         (function() {
             const video = document.getElementById('ronaut-player');
-            
+            const ticker = document.getElementById('ticker');
+            const liveBadge = document.getElementById('live-badge');
+            const programmeList = document.getElementById('programme-list');
+            const programmeLiveMsg = document.getElementById('programme-live-message');
+
+            let currentMode = 'offline';
+
+            function escapeHtml(text) {
+                var div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            function formatTime(unixTimestamp) {
+                if (!unixTimestamp || unixTimestamp <= 0) return '';
+                var d = new Date(unixTimestamp * 1000);
+                var now = new Date();
+                var hours = d.getHours().toString().padStart(2, '0');
+                var mins = d.getMinutes().toString().padStart(2, '0');
+                if (d.toDateString() === now.toDateString()) {
+                    return hours + ':' + mins;
+                }
+                var dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                return dayNames[d.getDay()] + ' ' + hours + ':' + mins;
+            }
+
             async function updateNowPlaying() {
                 try {
-                    const res = await fetch("https://stream.ronautradio.la/api/now-playing");
-                    const data = await res.json();
-                    if(data && data.now_playing) {
-                        const nowPlayingText = "Now Playing: " + data.now_playing;
-                        const ticker = document.getElementById("ticker");
-                        ticker.textContent = nowPlayingText;
+                    var res = await fetch("https://stream.ronautradio.la/api/now-playing");
+                    var data = await res.json();
+                    currentMode = data.mode || 'offline';
+
+                    if (currentMode === 'live') {
+                        liveBadge.classList.add('active');
+                        liveBadge.style.display = 'flex';
+                        ticker.textContent = 'LIVE BROADCAST';
                         ticker.style.display = 'block';
+                    } else {
+                        liveBadge.classList.remove('active');
+                        liveBadge.style.display = 'none';
+                        if (data.now_playing && data.now_playing !== 'Offline') {
+                            ticker.textContent = 'Now Playing: ' + data.now_playing;
+                            ticker.style.display = 'block';
+                        } else {
+                            ticker.textContent = 'Stream offline';
+                            ticker.style.display = 'block';
+                        }
                     }
                 } catch (err) {
                     console.error("Failed to fetch now playing:", err);
-                    const ticker = document.getElementById("ticker");
-                    ticker.textContent = "Error loading track info.";
+                    ticker.textContent = 'Error loading track info.';
                     ticker.style.display = 'block';
                 }
             }
 
-            updateNowPlaying();
-            setInterval(updateNowPlaying, 10000);
+            async function updateProgramme() {
+                if (currentMode !== 'auto') {
+                    programmeList.innerHTML = '';
+                    programmeLiveMsg.style.display = currentMode === 'live' ? 'block' : 'none';
+                    return;
+                }
+                programmeLiveMsg.style.display = 'none';
 
+                try {
+                    var res = await fetch("https://stream.ronautradio.la/api/programme?count=10");
+                    var data = await res.json();
+
+                    if (!data.current && (!data.upcoming || data.upcoming.length === 0)) {
+                        programmeList.innerHTML = '<div class="programme-item"><span class="track-name">No programme data available</span></div>';
+                        return;
+                    }
+
+                    var html = '';
+                    if (data.current) {
+                        html += '<div class="programme-item now-playing">';
+                        html += '<span class="track-name">&#9654; ' + escapeHtml(data.current.display_name) + '</span>';
+                        html += '<span class="track-time">NOW</span>';
+                        html += '</div>';
+                    }
+                    if (data.upcoming) {
+                        for (var i = 0; i < data.upcoming.length; i++) {
+                            var track = data.upcoming[i];
+                            var timeStr = formatTime(track.estimated_start);
+                            html += '<div class="programme-item">';
+                            html += '<span class="track-name">' + escapeHtml(track.display_name) + '</span>';
+                            html += '<span class="track-time">' + timeStr + '</span>';
+                            html += '</div>';
+                        }
+                    }
+                    programmeList.innerHTML = html;
+                } catch (err) {
+                    console.error("Failed to fetch programme:", err);
+                }
+            }
+
+            // Initial calls
+            updateNowPlaying();
+            updateProgramme();
+
+            // Poll: now-playing every 10s, programme every 30s
+            setInterval(updateNowPlaying, 10000);
+            setInterval(updateProgramme, 30000);
+
+            // HLS Player
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource('https://stream.ronautradio.la/live/hls/stream.m3u8');
