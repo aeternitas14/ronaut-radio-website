@@ -342,7 +342,7 @@
         }
 
         #chat-toggle {
-            display: none;
+            display: block;
             font-family: Oswald, sans-serif;
             font-size: 14px;
             font-weight: 300;
@@ -365,6 +365,11 @@
 
         #chat-body {
             overflow: hidden;
+            display: none;
+        }
+
+        #chat-body.open {
+            display: block;
         }
 
         #chat-discord-link {
@@ -396,17 +401,14 @@
                 flex-direction: column;
                 gap: 15px;
             }
+            #programme-section {
+                text-align: center;
+            }
+            #programme-section h2 {
+                text-align: center;
+            }
             #chat-column {
                 width: 100%;
-            }
-            #chat-toggle {
-                display: block;
-            }
-            #chat-body {
-                display: none;
-            }
-            #chat-body.open {
-                display: block;
             }
         }
     </style>
