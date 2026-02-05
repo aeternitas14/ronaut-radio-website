@@ -296,11 +296,65 @@
             display: none;
         }
 
+        /* Chat Section */
+        #chat-section {
+            max-width: 600px;
+            margin: 0 auto;
+            font-family: Oswald, sans-serif;
+        }
+
+        #chat-section h2 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        #chat-wrapper {
+            width: 100%;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        #chat-wrapper script,
+        #chat-wrapper iframe {
+            display: block;
+            width: 100% !important;
+            max-width: 600px;
+            height: 400px !important;
+        }
+
+        #chat-discord-link {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        #chat-discord-link a {
+            font-family: Oswald, sans-serif;
+            font-size: 12px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #888;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        #chat-discord-link a:hover {
+            color: #fff;
+        }
+
         /* Responsive Title */
         @media (max-width: 767px) {
             .main-title {
                 font-size: 32px;
                 letter-spacing: 1px;
+            }
+            #chat-wrapper script,
+            #chat-wrapper iframe {
+                height: 350px !important;
             }
         }
     </style>
@@ -319,9 +373,17 @@
         </div>
     </div>
 
-    <!-- CHATANGO SECTION -->
+    <!-- CHAT SECTION -->
     <div class="w-container" style="margin: 20px auto;">
-        <script id="cid0020000415584467063" data-cfasync="false" async src="//st.chatango.com/js/gz/emb.js" style="width: 343px;height: 200px;">{"handle":"ronautradiolos","arch":"js","styles":{"a":"C8C8C8","b":21,"c":"000000","d":"000000","f":21,"i":21,"k":"C8C8C8","l":"C8C8C8","m":"C8C8C8","o":21,"p":"10","q":"C8C8C8","r":21,"usricon":0.52,"cnrs":"0.3"}}</script>
+        <div id="chat-section">
+            <h2>CHAT</h2>
+            <div id="chat-wrapper">
+                <script id="cid0020000415584467063" data-cfasync="false" async src="//st.chatango.com/js/gz/emb.js" style="width: 100%;height: 400px;">{"handle":"ronautradiolos","arch":"js","styles":{"a":"000000","b":100,"c":"FFFFFF","d":"AAAAAA","f":14,"i":14,"k":"1A1A1A","l":"FFFFFF","m":"E0E0E0","o":100,"p":"12","q":"CCCCCC","r":100,"usricon":0.52,"cnrs":"0.35"}}</script>
+            </div>
+            <div id="chat-discord-link">
+                <a href="https://discord.gg/BCHVkUwT" target="_blank">Join our Discord for more</a>
+            </div>
+        </div>
     </div>
 
     <!-- PROGRAMME / UPCOMING SETS -->
