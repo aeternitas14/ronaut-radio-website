@@ -285,6 +285,7 @@
             background: #000;
             color: #fff;
             font-weight: 400;
+            flex-wrap: wrap;
         }
 
         .programme-item .track-name {
@@ -306,6 +307,34 @@
 
         .programme-item.now-playing .track-time {
             opacity: 1;
+        }
+
+        .programme-item.now-playing .progress-container {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .programme-item.now-playing .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .programme-item.now-playing .progress-fill {
+            height: 100%;
+            background: #ff0000;
+            transition: width 1s linear;
+        }
+
+        .programme-item.now-playing .progress-text {
+            font-size: 12px;
+            font-weight: 300;
+            opacity: 0.8;
+            margin-top: 4px;
+            display: flex;
+            justify-content: space-between;
         }
 
         .programme-item.programme-past {
@@ -830,6 +859,17 @@
                 return dayNames[d.getDay()] + ' ' + hours + ':' + mins;
             }
 
+            function formatDuration(seconds) {
+                if (!seconds || seconds <= 0) return '0:00';
+                var h = Math.floor(seconds / 3600);
+                var m = Math.floor((seconds % 3600) / 60);
+                var s = Math.floor(seconds % 60);
+                if (h > 0) {
+                    return h + ':' + m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+                }
+                return m + ':' + s.toString().padStart(2, '0');
+            }
+
             async function updateNowPlaying() {
                 if (isPlayingPick) return; // Don't override ticker when playing a staff pick
                 try {
@@ -896,11 +936,23 @@
                             html += '</div>';
                         }
                     }
-                    // Current track
+                    // Current track with progress bar
                     if (data.current) {
+                        var elapsed = Math.floor(Date.now() / 1000) - data.current.started_at;
+                        var duration = data.current.duration || 0;
+                        if (elapsed < 0) elapsed = 0;
+                        if (elapsed > duration && duration > 0) elapsed = duration;
+                        var progressPct = duration > 0 ? Math.min(100, (elapsed / duration) * 100) : 0;
+
                         html += '<div class="programme-item now-playing">';
                         html += '<span class="track-name"><span class="now-playing-dot"></span>' + escapeHtml(data.current.display_name) + '</span>';
                         html += '<span class="track-time">NOW</span>';
+                        if (duration > 0) {
+                            html += '<div class="progress-container">';
+                            html += '<div class="progress-bar"><div class="progress-fill" style="width:' + progressPct.toFixed(1) + '%"></div></div>';
+                            html += '<div class="progress-text"><span>' + formatDuration(elapsed) + '</span><span>' + formatDuration(duration) + '</span></div>';
+                            html += '</div>';
+                        }
                         html += '</div>';
                     }
                     // Upcoming tracks
