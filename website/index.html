@@ -371,6 +371,82 @@
             display: block;
         }
 
+        /* Custom Chat Widget */
+        #chat-widget {
+            width: 343px;
+            border: 1px solid #ddd;
+            font-family: Oswald, sans-serif;
+            background: #fff;
+        }
+
+        #chat-header {
+            background: #000;
+            color: #fff;
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        #chat-messages {
+            height: 200px;
+            overflow-y: auto;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        .chat-msg {
+            margin-bottom: 4px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
+
+        .chat-msg .chat-nick {
+            font-weight: 500;
+            margin-right: 6px;
+        }
+
+        #chat-input-row {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+
+        #chat-nick {
+            width: 70px;
+            border: none;
+            border-right: 1px solid #ddd;
+            padding: 8px;
+            font-family: Oswald, sans-serif;
+            font-size: 12px;
+            font-weight: 300;
+            outline: none;
+        }
+
+        #chat-msg {
+            flex: 1;
+            border: none;
+            padding: 8px;
+            font-family: Oswald, sans-serif;
+            font-size: 13px;
+            font-weight: 300;
+            outline: none;
+        }
+
+        #chat-send {
+            border: none;
+            background: #000;
+            color: #fff;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #chat-send:hover {
+            background: #333;
+        }
+
         #chat-discord-link {
             margin-top: 8px;
         }
@@ -475,6 +551,9 @@
             #chat-column {
                 width: 100%;
             }
+            #chat-widget {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -507,7 +586,17 @@
             <h3>CHAT</h3>
             <button id="chat-toggle" onclick="document.getElementById('chat-body').classList.toggle('open'); this.textContent = document.getElementById('chat-body').classList.contains('open') ? 'Hide Chat' : 'Open Chat';">Open Chat</button>
             <div id="chat-body">
-                <script id="cid0020000415584467063" data-cfasync="false" async src="//st.chatango.com/js/gz/emb.js" style="width: 343px;height: 200px;">{"handle":"ronautradiolos","arch":"js","styles":{"a":"C8C8C8","b":21,"c":"000000","d":"000000","f":21,"i":21,"k":"C8C8C8","l":"C8C8C8","m":"C8C8C8","o":21,"p":"10","q":"C8C8C8","r":21,"usricon":0.52,"cnrs":"0.3"}}</script>
+                <div id="chat-widget">
+                    <div id="chat-header">
+                        <span id="chat-online">0 online</span>
+                    </div>
+                    <div id="chat-messages"></div>
+                    <div id="chat-input-row">
+                        <input type="text" id="chat-nick" placeholder="Name" maxlength="20" />
+                        <input type="text" id="chat-msg" placeholder="Type a message..." maxlength="300" />
+                        <button id="chat-send">&#9654;</button>
+                    </div>
+                </div>
                 <div id="chat-discord-link">
                     <a href="https://discord.gg/BCHVkUwT" target="_blank">Join our Discord</a>
                 </div>
@@ -566,6 +655,7 @@
         <img src="67fbd3ee737c96017f6e42a6_cityview.webp" loading="lazy" sizes="100vw" srcset="67fbd3ee737c96017f6e42a6_cityview-p-500.webp 500w, 67fbd3ee737c96017f6e42a6_cityview-p-800.webp 800w, 67fbd3ee737c96017f6e42a6_cityview-p-1080.webp 1080w, 67fbd3ee737c96017f6e42a6_cityview-p-1600.webp 1600w, 67fbd3ee737c96017f6e42a6_cityview.webp 1920w" alt="" class="image-7" style="width: 100%;" />
     </div>
 
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -782,6 +872,67 @@
             }
 
             loadStaffPicks();
+        })();
+
+        // Chat
+        (function() {
+            var socket = io('https://stream.ronautradio.la', { path: '/ws/' });
+            var messagesDiv = document.getElementById('chat-messages');
+            var nickInput = document.getElementById('chat-nick');
+            var msgInput = document.getElementById('chat-msg');
+            var sendBtn = document.getElementById('chat-send');
+            var onlineSpan = document.getElementById('chat-online');
+
+            // Restore nickname from localStorage
+            nickInput.value = localStorage.getItem('ronaut_chat_nick') || '';
+
+            function appendMessage(data) {
+                var div = document.createElement('div');
+                div.className = 'chat-msg';
+                var nick = document.createElement('span');
+                nick.className = 'chat-nick';
+                nick.style.color = data.color;
+                nick.textContent = data.nickname;
+                var text = document.createTextNode(data.message);
+                div.appendChild(nick);
+                div.appendChild(text);
+                messagesDiv.appendChild(div);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            socket.on('history', function(messages) {
+                messagesDiv.innerHTML = '';
+                for (var i = 0; i < messages.length; i++) {
+                    appendMessage(messages[i]);
+                }
+            });
+
+            socket.on('new_message', function(data) {
+                appendMessage(data);
+            });
+
+            socket.on('user_count', function(data) {
+                onlineSpan.textContent = data.count + ' online';
+            });
+
+            socket.on('error', function(data) {
+                msgInput.style.borderColor = '#ff0000';
+                setTimeout(function() { msgInput.style.borderColor = ''; }, 1000);
+            });
+
+            function sendMessage() {
+                var nick = nickInput.value.trim() || 'anon';
+                var msg = msgInput.value.trim();
+                if (!msg) return;
+                localStorage.setItem('ronaut_chat_nick', nick);
+                socket.emit('send_message', { nickname: nick, message: msg });
+                msgInput.value = '';
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            msgInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
         })();
 
         // Share Button
