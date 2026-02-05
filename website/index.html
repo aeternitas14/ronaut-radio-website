@@ -285,7 +285,7 @@
             background: #000;
             color: #fff;
             font-weight: 400;
-            flex-wrap: wrap;
+            position: relative;
         }
 
         .programme-item .track-name {
@@ -309,19 +309,11 @@
             opacity: 1;
         }
 
-        .programme-item.now-playing .progress-container {
-            width: 100%;
-            height: 3px;
-            margin-top: 10px;
-            background: rgba(255,255,255,0.2);
-            position: relative;
-        }
-
         .programme-item.now-playing .progress-line {
             position: absolute;
-            top: -4px;
+            top: 0;
+            bottom: 0;
             width: 2px;
-            height: 11px;
             background: #ff0000;
             transition: left 1s linear;
         }
@@ -934,13 +926,11 @@
                         var progressPct = duration > 0 ? Math.min(100, (elapsed / duration) * 100) : 0;
 
                         html += '<div class="programme-item now-playing">';
+                        if (duration > 0) {
+                            html += '<div class="progress-line" style="left:' + progressPct.toFixed(1) + '%"></div>';
+                        }
                         html += '<span class="track-name"><span class="now-playing-dot"></span>' + escapeHtml(data.current.display_name) + '</span>';
                         html += '<span class="track-time">NOW</span>';
-                        if (duration > 0) {
-                            html += '<div class="progress-container">';
-                            html += '<div class="progress-line" style="left:' + progressPct.toFixed(1) + '%"></div>';
-                            html += '</div>';
-                        }
                         html += '</div>';
                     }
                     // Upcoming tracks
