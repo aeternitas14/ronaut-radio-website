@@ -116,6 +116,59 @@
             pointer-events: none;
         }
 
+        /* Audio-reactive visuals */
+        #audio-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #grain-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.08;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        #edge-pulse {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            box-shadow: inset 0 0 60px rgba(255, 255, 255, 0);
+            transition: box-shadow 0.1s ease-out;
+        }
+
+        /* Energy meter - thin bar below ticker */
+        #energy-meter {
+            position: absolute;
+            bottom: 8px;
+            left: 20px;
+            width: 120px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            border-radius: 2px;
+        }
+
+        #energy-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #fff, #ff6b6b);
+            transition: width 0.05s ease-out;
+            border-radius: 2px;
+        }
+
         #ticker {
             color: white;
             font-size: 16px;
@@ -756,9 +809,14 @@
                 <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
                 <source src="https://stream.ronautradio.la/live/audio/stream.mp3" type="audio/mpeg" />
             </video>
+            <div id="audio-overlay">
+                <canvas id="grain-canvas"></canvas>
+                <div id="edge-pulse"></div>
+            </div>
             <div id="overlay">
                 <div id="live-badge"><div id="live-dot"></div>LIVE</div>
                 <div id="ticker">Loading current set...</div>
+                <div id="energy-meter"><div id="energy-bar"></div></div>
             </div>
         </div>
     </div>
@@ -1145,6 +1203,115 @@
 
             // Initialize HLS Player
             initHls(video);
+
+            // Audio-reactive visuals
+            (function() {
+                var audioCtx = null;
+                var analyser = null;
+                var dataArray = null;
+                var grainCanvas = document.getElementById('grain-canvas');
+                var grainCtx = grainCanvas.getContext('2d');
+                var edgePulse = document.getElementById('edge-pulse');
+                var energyBar = document.getElementById('energy-bar');
+                var isAudioConnected = false;
+
+                // Resize grain canvas
+                function resizeGrainCanvas() {
+                    var container = document.getElementById('player-container');
+                    grainCanvas.width = container.offsetWidth;
+                    grainCanvas.height = container.offsetHeight;
+                }
+                resizeGrainCanvas();
+                window.addEventListener('resize', resizeGrainCanvas);
+
+                // Generate film grain
+                function drawGrain() {
+                    var w = grainCanvas.width;
+                    var h = grainCanvas.height;
+                    var imageData = grainCtx.createImageData(w, h);
+                    var data = imageData.data;
+                    for (var i = 0; i < data.length; i += 4) {
+                        var noise = Math.random() * 255;
+                        data[i] = noise;
+                        data[i + 1] = noise;
+                        data[i + 2] = noise;
+                        data[i + 3] = 255;
+                    }
+                    grainCtx.putImageData(imageData, 0, 0);
+                }
+
+                // Connect audio for analysis (called on user interaction)
+                function connectAudio() {
+                    if (isAudioConnected || !video) return;
+                    try {
+                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                        var source = audioCtx.createMediaElementSource(video);
+                        analyser = audioCtx.createAnalyser();
+                        analyser.fftSize = 256;
+                        analyser.smoothingTimeConstant = 0.8;
+                        source.connect(analyser);
+                        analyser.connect(audioCtx.destination);
+                        dataArray = new Uint8Array(analyser.frequencyBinCount);
+                        isAudioConnected = true;
+                    } catch (e) {
+                        console.log('Audio analysis not available:', e);
+                    }
+                }
+
+                // Animation loop
+                function animate() {
+                    requestAnimationFrame(animate);
+
+                    // Update grain every few frames for performance
+                    if (Math.random() < 0.3) {
+                        drawGrain();
+                    }
+
+                    if (!analyser || !dataArray) return;
+
+                    analyser.getByteFrequencyData(dataArray);
+
+                    // Calculate bass energy (lower frequencies)
+                    var bass = 0;
+                    var bassCount = Math.floor(dataArray.length * 0.15); // Lower 15% of frequencies
+                    for (var i = 0; i < bassCount; i++) {
+                        bass += dataArray[i];
+                    }
+                    bass = bass / bassCount / 255; // Normalize 0-1
+
+                    // Calculate overall energy
+                    var total = 0;
+                    for (var j = 0; j < dataArray.length; j++) {
+                        total += dataArray[j];
+                    }
+                    var energy = total / dataArray.length / 255; // Normalize 0-1
+
+                    // Edge pulse based on bass (subtle)
+                    var pulseIntensity = Math.pow(bass, 1.5) * 0.12; // Max ~12% opacity
+                    edgePulse.style.boxShadow = 'inset 0 0 ' + (40 + bass * 40) + 'px rgba(255, 255, 255, ' + pulseIntensity + ')';
+
+                    // Energy bar
+                    energyBar.style.width = (energy * 100) + '%';
+                }
+
+                // Start on user interaction (autoplay policy)
+                video.addEventListener('play', function() {
+                    connectAudio();
+                    if (audioCtx && audioCtx.state === 'suspended') {
+                        audioCtx.resume();
+                    }
+                });
+
+                // Also try on click
+                document.addEventListener('click', function() {
+                    connectAudio();
+                    if (audioCtx && audioCtx.state === 'suspended') {
+                        audioCtx.resume();
+                    }
+                }, { once: true });
+
+                animate();
+            })();
         })();
 
         // Staff Picks
