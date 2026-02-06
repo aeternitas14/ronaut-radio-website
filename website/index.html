@@ -211,6 +211,47 @@
             }
         }
 
+        /* Fullscreen support for overlays */
+        #player-container:fullscreen #overlay,
+        #player-container:-webkit-full-screen #overlay,
+        #player-container:-moz-full-screen #overlay {
+            display: block !important;
+        }
+
+        #player-container:fullscreen #waveform-container,
+        #player-container:-webkit-full-screen #waveform-container,
+        #player-container:-moz-full-screen #waveform-container {
+            bottom: 80px;
+            right: 30px;
+            width: 350px;
+            height: 90px;
+        }
+
+        #player-container:fullscreen #audio-overlay,
+        #player-container:-webkit-full-screen #audio-overlay,
+        #player-container:-moz-full-screen #audio-overlay {
+            display: block !important;
+        }
+
+        /* Video.js fullscreen container */
+        .video-js.vjs-fullscreen ~ #overlay,
+        .video-js.vjs-fullscreen ~ #audio-overlay {
+            display: block !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+        }
+
+        .video-js.vjs-fullscreen ~ #overlay #waveform-container {
+            bottom: 80px;
+            right: 30px;
+            width: 350px;
+            height: 90px;
+        }
+
         #ticker {
             color: white;
             font-size: 16px;
@@ -1249,6 +1290,34 @@
             // Initialize HLS Player
             initHls(video);
 
+            // Handle Video.js fullscreen - move overlays into video container
+            var vjsPlayer = videojs('ronaut-player');
+            var playerContainer = document.getElementById('player-container');
+            var overlay = document.getElementById('overlay');
+            var audioOverlay = document.getElementById('audio-overlay');
+
+            vjsPlayer.on('fullscreenchange', function() {
+                var isFullscreen = vjsPlayer.isFullscreen();
+                if (isFullscreen) {
+                    // Move overlays into the video-js container for fullscreen
+                    var vjsEl = vjsPlayer.el();
+                    vjsEl.appendChild(overlay);
+                    vjsEl.appendChild(audioOverlay);
+                    overlay.style.position = 'absolute';
+                    audioOverlay.style.position = 'absolute';
+                } else {
+                    // Move overlays back to player-container
+                    playerContainer.appendChild(audioOverlay);
+                    playerContainer.appendChild(overlay);
+                    overlay.style.position = '';
+                    audioOverlay.style.position = '';
+                }
+                // Resize canvases after fullscreen change
+                setTimeout(function() {
+                    window.dispatchEvent(new Event('resize'));
+                }, 100);
+            });
+
             // Audio-reactive visuals
             (function() {
                 var audioCtx = null;
@@ -1295,6 +1364,16 @@
                 window.addEventListener('orientationchange', function() {
                     setTimeout(resizeWaveCanvas, 200);
                 });
+
+                // Fullscreen change handler
+                function onFullscreenChange() {
+                    setTimeout(resizeWaveCanvas, 100);
+                    setTimeout(resizeGrainCanvas, 100);
+                }
+                document.addEventListener('fullscreenchange', onFullscreenChange);
+                document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+                document.addEventListener('mozfullscreenchange', onFullscreenChange);
+                document.addEventListener('MSFullscreenChange', onFullscreenChange);
 
                 // Generate film grain
                 function drawGrain() {
