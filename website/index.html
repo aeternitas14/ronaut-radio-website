@@ -625,6 +625,95 @@
             text-decoration: underline;
         }
 
+        /* Help ID Modal */
+        #help-id-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #help-id-modal.open {
+            display: flex;
+        }
+
+        #help-id-form {
+            background: #fff;
+            padding: 25px;
+            max-width: 400px;
+            width: 90%;
+            font-family: Oswald, sans-serif;
+        }
+
+        #help-id-form h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        #help-id-form .help-id-time {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        #help-id-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            box-sizing: border-box;
+        }
+
+        #help-id-form input:focus {
+            outline: none;
+            border-color: #000;
+        }
+
+        #help-id-form .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        #help-id-form button {
+            flex: 1;
+            padding: 10px;
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border: 1px solid #000;
+        }
+
+        #help-id-form button.submit-btn {
+            background: #000;
+            color: #fff;
+        }
+
+        #help-id-form button.cancel-btn {
+            background: #fff;
+            color: #000;
+        }
+
+        #help-id-form .success-msg {
+            color: #090;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
         /* Back to Live banner */
         #back-to-live {
             display: none;
@@ -676,6 +765,24 @@
 
     <!-- BACK TO LIVE BANNER (appears when playing a staff pick) -->
     <div id="back-to-live" onclick="backToLive()">&#8592; Back to Live Stream</div>
+
+    <!-- HELP ID MODAL -->
+    <div id="help-id-modal">
+        <div id="help-id-form">
+            <h3>HELP IDENTIFY THIS TRACK</h3>
+            <div class="help-id-time" id="help-id-time-range"></div>
+            <input type="text" id="help-id-artist" placeholder="Artist name" maxlength="100" />
+            <input type="text" id="help-id-title" placeholder="Track title" maxlength="200" />
+            <input type="text" id="help-id-name" placeholder="Your name (optional)" maxlength="50" />
+            <input type="hidden" id="help-id-set" />
+            <input type="hidden" id="help-id-start" />
+            <div class="form-buttons">
+                <button class="cancel-btn" onclick="closeHelpIdModal()">Cancel</button>
+                <button class="submit-btn" onclick="submitHelpId()">Submit</button>
+            </div>
+            <div class="success-msg" id="help-id-success">Thanks! Your submission has been received.</div>
+        </div>
+    </div>
 
     <!-- PROGRAMME + CHAT STACKED -->
     <div id="programme-chat-row">
@@ -834,6 +941,63 @@
         backBtn.style.display = 'none';
         isPlayingPick = false;
     }
+
+    // Help ID Modal
+    function openHelpIdModal(setName, startTime, timeRange) {
+        document.getElementById('help-id-set').value = setName;
+        document.getElementById('help-id-start').value = startTime;
+        document.getElementById('help-id-time-range').textContent = 'Time: ' + timeRange;
+        document.getElementById('help-id-artist').value = '';
+        document.getElementById('help-id-title').value = '';
+        document.getElementById('help-id-name').value = localStorage.getItem('ronaut_chat_nick') || '';
+        document.getElementById('help-id-success').style.display = 'none';
+        document.getElementById('help-id-modal').classList.add('open');
+    }
+
+    function closeHelpIdModal() {
+        document.getElementById('help-id-modal').classList.remove('open');
+    }
+
+    async function submitHelpId() {
+        var setName = document.getElementById('help-id-set').value;
+        var startTime = parseInt(document.getElementById('help-id-start').value, 10);
+        var artist = document.getElementById('help-id-artist').value.trim();
+        var title = document.getElementById('help-id-title').value.trim();
+        var submittedBy = document.getElementById('help-id-name').value.trim() || 'Anonymous';
+
+        if (!artist || !title) {
+            alert('Please enter both artist and track title.');
+            return;
+        }
+
+        try {
+            var res = await fetch('https://stream.ronautradio.la/api/submit-id', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    set_name: setName,
+                    start_time: startTime,
+                    artist: artist,
+                    title: title,
+                    submitted_by: submittedBy
+                })
+            });
+            var data = await res.json();
+            if (data.status === 'ok') {
+                document.getElementById('help-id-success').style.display = 'block';
+                setTimeout(closeHelpIdModal, 1500);
+            } else {
+                alert('Error: ' + (data.error || 'Unknown error'));
+            }
+        } catch (err) {
+            alert('Failed to submit. Please try again.');
+        }
+    }
+
+    // Close modal on backdrop click
+    document.getElementById('help-id-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeHelpIdModal();
+    });
 
     document.addEventListener('DOMContentLoaded', function() {
         // Player, Now Playing, and Programme
@@ -1047,9 +1211,10 @@
                                 } else {
                                     var unid = item.data;
                                     var timeRange = unid.start_time_formatted + ' - ' + unid.end_time_formatted;
+                                    var setName = pick.filename.replace('.mp4', '');
                                     html += '<div class="track unidentified">';
                                     html += '<span class="track-time" data-url="' + pick.url + '" data-time="' + unid.start_time + '">' + timeRange + '</span>';
-                                    html += escapeHtml(unid.title) + ' <span class="help-id">[Help ID]</span>';
+                                    html += escapeHtml(unid.title) + ' <span class="help-id" data-set="' + escapeHtml(setName) + '" data-start="' + unid.start_time + '" data-range="' + timeRange + '">[Help ID]</span>';
                                     html += '</div>';
                                 }
                             }
@@ -1096,6 +1261,18 @@
                             if (setData) {
                                 playPick(url, setData.title, time);
                             }
+                        });
+                    }
+
+                    // Help ID click to open modal
+                    var helpIds = picksGrid.querySelectorAll('.help-id');
+                    for (var h = 0; h < helpIds.length; h++) {
+                        helpIds[h].addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            var setName = this.getAttribute('data-set');
+                            var startTime = parseInt(this.getAttribute('data-start'), 10);
+                            var timeRange = this.getAttribute('data-range');
+                            openHelpIdModal(setName, startTime, timeRange);
                         });
                     }
                 } catch (err) {
