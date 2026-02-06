@@ -169,6 +169,45 @@
             border-radius: 2px;
         }
 
+        /* AM-style waveform visualizer - bottom right */
+        #waveform-container {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            width: 180px;
+            height: 50px;
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        #waveform-canvas {
+            width: 100%;
+            height: 100%;
+            opacity: 0.85;
+        }
+
+        /* Style toggle (for testing - can remove later) */
+        #waveform-style-toggle {
+            position: absolute;
+            bottom: 70px;
+            right: 15px;
+            font-family: Oswald, sans-serif;
+            font-size: 10px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            background: rgba(0,0,0,0.5);
+            border: none;
+            padding: 4px 8px;
+            cursor: pointer;
+            z-index: 16;
+        }
+
+        #waveform-style-toggle:hover {
+            color: rgba(255,255,255,0.8);
+        }
+
         #ticker {
             color: white;
             font-size: 16px;
@@ -817,6 +856,10 @@
                 <div id="live-badge"><div id="live-dot"></div>LIVE</div>
                 <div id="ticker">Loading current set...</div>
                 <div id="energy-meter"><div id="energy-bar"></div></div>
+                <div id="waveform-container">
+                    <canvas id="waveform-canvas"></canvas>
+                </div>
+                <button id="waveform-style-toggle">Line</button>
             </div>
         </div>
     </div>
@@ -1209,11 +1252,16 @@
                 var audioCtx = null;
                 var analyser = null;
                 var dataArray = null;
+                var timeDataArray = null;
                 var grainCanvas = document.getElementById('grain-canvas');
                 var grainCtx = grainCanvas.getContext('2d');
                 var edgePulse = document.getElementById('edge-pulse');
                 var energyBar = document.getElementById('energy-bar');
+                var waveCanvas = document.getElementById('waveform-canvas');
+                var waveCtx = waveCanvas.getContext('2d');
+                var waveStyleBtn = document.getElementById('waveform-style-toggle');
                 var isAudioConnected = false;
+                var waveformStyle = 'line'; // 'line' or 'filled'
 
                 // Resize grain canvas
                 function resizeGrainCanvas() {
@@ -1223,6 +1271,23 @@
                 }
                 resizeGrainCanvas();
                 window.addEventListener('resize', resizeGrainCanvas);
+
+                // Resize waveform canvas
+                function resizeWaveCanvas() {
+                    var container = document.getElementById('waveform-container');
+                    waveCanvas.width = container.offsetWidth * 2; // 2x for retina
+                    waveCanvas.height = container.offsetHeight * 2;
+                    waveCtx.scale(2, 2);
+                }
+                resizeWaveCanvas();
+                window.addEventListener('resize', resizeWaveCanvas);
+
+                // Toggle waveform style
+                waveStyleBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    waveformStyle = waveformStyle === 'line' ? 'filled' : 'line';
+                    waveStyleBtn.textContent = waveformStyle === 'line' ? 'Line' : 'Filled';
+                });
 
                 // Generate film grain
                 function drawGrain() {
@@ -1240,6 +1305,95 @@
                     grainCtx.putImageData(imageData, 0, 0);
                 }
 
+                // Draw AM-style waveform
+                function drawWaveform() {
+                    if (!analyser || !timeDataArray) return;
+
+                    analyser.getByteTimeDomainData(timeDataArray);
+
+                    var w = waveCanvas.width / 2;
+                    var h = waveCanvas.height / 2;
+                    var centerY = h / 2;
+
+                    // Clear canvas
+                    waveCtx.clearRect(0, 0, w, h);
+
+                    // Draw waveform
+                    waveCtx.beginPath();
+                    waveCtx.lineWidth = 1.5;
+                    waveCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+
+                    var sliceWidth = w / timeDataArray.length;
+                    var x = 0;
+
+                    // Smooth the waveform with bezier curves for AM aesthetic
+                    var points = [];
+                    for (var i = 0; i < timeDataArray.length; i++) {
+                        var v = timeDataArray[i] / 128.0; // Normalize around 1
+                        var y = centerY + (v - 1) * (h * 0.8); // Scale amplitude
+                        points.push({ x: x, y: y });
+                        x += sliceWidth;
+                    }
+
+                    if (waveformStyle === 'filled') {
+                        // Filled style with gradient
+                        var gradient = waveCtx.createLinearGradient(0, 0, 0, h);
+                        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+                        gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.15)');
+                        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+                        waveCtx.beginPath();
+                        waveCtx.moveTo(0, centerY);
+
+                        // Draw smooth curve through points
+                        for (var j = 0; j < points.length - 1; j++) {
+                            var xc = (points[j].x + points[j + 1].x) / 2;
+                            var yc = (points[j].y + points[j + 1].y) / 2;
+                            waveCtx.quadraticCurveTo(points[j].x, points[j].y, xc, yc);
+                        }
+                        waveCtx.lineTo(w, centerY);
+                        waveCtx.lineTo(w, h);
+                        waveCtx.lineTo(0, h);
+                        waveCtx.closePath();
+                        waveCtx.fillStyle = gradient;
+                        waveCtx.fill();
+
+                        // Draw the line on top
+                        waveCtx.beginPath();
+                        waveCtx.moveTo(points[0].x, points[0].y);
+                        for (var k = 0; k < points.length - 1; k++) {
+                            var xc2 = (points[k].x + points[k + 1].x) / 2;
+                            var yc2 = (points[k].y + points[k + 1].y) / 2;
+                            waveCtx.quadraticCurveTo(points[k].x, points[k].y, xc2, yc2);
+                        }
+                        waveCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                        waveCtx.lineWidth = 1;
+                        waveCtx.stroke();
+                    } else {
+                        // Classic AM line style - clean white line
+                        waveCtx.beginPath();
+                        waveCtx.moveTo(points[0].x, points[0].y);
+
+                        // Smooth bezier curves for that AM look
+                        for (var m = 0; m < points.length - 1; m++) {
+                            var xc3 = (points[m].x + points[m + 1].x) / 2;
+                            var yc3 = (points[m].y + points[m + 1].y) / 2;
+                            waveCtx.quadraticCurveTo(points[m].x, points[m].y, xc3, yc3);
+                        }
+
+                        waveCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+                        waveCtx.lineWidth = 2;
+                        waveCtx.lineCap = 'round';
+                        waveCtx.lineJoin = 'round';
+                        waveCtx.stroke();
+
+                        // Add subtle glow
+                        waveCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                        waveCtx.lineWidth = 4;
+                        waveCtx.stroke();
+                    }
+                }
+
                 // Connect audio for analysis (called on user interaction)
                 function connectAudio() {
                     if (isAudioConnected || !video) return;
@@ -1247,11 +1401,12 @@
                         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                         var source = audioCtx.createMediaElementSource(video);
                         analyser = audioCtx.createAnalyser();
-                        analyser.fftSize = 256;
-                        analyser.smoothingTimeConstant = 0.8;
+                        analyser.fftSize = 512; // More detail for waveform
+                        analyser.smoothingTimeConstant = 0.85;
                         source.connect(analyser);
                         analyser.connect(audioCtx.destination);
                         dataArray = new Uint8Array(analyser.frequencyBinCount);
+                        timeDataArray = new Uint8Array(analyser.fftSize);
                         isAudioConnected = true;
                     } catch (e) {
                         console.log('Audio analysis not available:', e);
@@ -1266,6 +1421,9 @@
                     if (Math.random() < 0.3) {
                         drawGrain();
                     }
+
+                    // Draw waveform
+                    drawWaveform();
 
                     if (!analyser || !dataArray) return;
 
