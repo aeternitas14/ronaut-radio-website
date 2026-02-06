@@ -606,6 +606,25 @@
             text-decoration: underline;
         }
 
+        .pick-card .pick-tracklist .track.unidentified {
+            color: #999;
+            font-style: italic;
+            border-left: 2px solid #ff6600;
+            padding-left: 6px;
+            margin-left: -8px;
+        }
+
+        .pick-card .pick-tracklist .track.unidentified .help-id {
+            color: #ff6600;
+            font-weight: 400;
+            font-style: normal;
+            cursor: pointer;
+        }
+
+        .pick-card .pick-tracklist .track.unidentified .help-id:hover {
+            text-decoration: underline;
+        }
+
         /* Back to Live banner */
         #back-to-live {
             display: none;
@@ -990,17 +1009,49 @@
                         if (pick.genres && pick.genres.length > 0) {
                             html += '<div class="pick-genres">' + pick.genres.map(escapeHtml).join(' · ') + '</div>';
                         }
-                        // Tracklist toggle
-                        if (pick.tracklist && pick.tracklist.length > 0) {
-                            html += '<div class="pick-tracklist-toggle" data-url="' + pick.url + '">Tracklist (' + pick.tracklist.length + ')</div>';
+                        // Tracklist toggle (includes identified + unidentified)
+                        var hasTracklist = (pick.tracklist && pick.tracklist.length > 0);
+                        var hasUnidentified = (pick.unidentified && pick.unidentified.length > 0);
+                        if (hasTracklist || hasUnidentified) {
+                            var totalCount = (pick.tracklist ? pick.tracklist.length : 0);
+                            var unidCount = pick.unidentified ? pick.unidentified.length : 0;
+                            var label = totalCount > 0 ? 'Tracklist (' + totalCount + ')' : '';
+                            if (unidCount > 0) {
+                                label += (label ? ' + ' : '') + unidCount + ' unidentified';
+                            }
+                            html += '<div class="pick-tracklist-toggle" data-url="' + pick.url + '">' + label + '</div>';
                             html += '<div class="pick-tracklist" id="tracklist-' + i + '">';
-                            for (var t = 0; t < pick.tracklist.length; t++) {
-                                var track = pick.tracklist[t];
-                                var artist = track.artists && track.artists.length > 0 ? track.artists[0] : 'Unknown';
-                                html += '<div class="track">';
-                                html += '<span class="track-time" data-url="' + pick.url + '" data-time="' + track.start_time + '">' + track.start_time_formatted + '</span>';
-                                html += escapeHtml(artist) + ' - ' + escapeHtml(track.title);
-                                html += '</div>';
+                            // Merge and sort by start_time
+                            var allTracks = [];
+                            if (pick.tracklist) {
+                                for (var t = 0; t < pick.tracklist.length; t++) {
+                                    allTracks.push({type: 'identified', data: pick.tracklist[t]});
+                                }
+                            }
+                            if (pick.unidentified) {
+                                for (var u = 0; u < pick.unidentified.length; u++) {
+                                    allTracks.push({type: 'unidentified', data: pick.unidentified[u]});
+                                }
+                            }
+                            allTracks.sort(function(a, b) { return a.data.start_time - b.data.start_time; });
+
+                            for (var at = 0; at < allTracks.length; at++) {
+                                var item = allTracks[at];
+                                if (item.type === 'identified') {
+                                    var track = item.data;
+                                    var artist = track.artists && track.artists.length > 0 ? track.artists[0] : 'Unknown';
+                                    html += '<div class="track">';
+                                    html += '<span class="track-time" data-url="' + pick.url + '" data-time="' + track.start_time + '">' + track.start_time_formatted + '</span>';
+                                    html += escapeHtml(artist) + ' - ' + escapeHtml(track.title);
+                                    html += '</div>';
+                                } else {
+                                    var unid = item.data;
+                                    var timeRange = unid.start_time_formatted + ' - ' + unid.end_time_formatted;
+                                    html += '<div class="track unidentified">';
+                                    html += '<span class="track-time" data-url="' + pick.url + '" data-time="' + unid.start_time + '">' + timeRange + '</span>';
+                                    html += escapeHtml(unid.title) + ' <span class="help-id">[Help ID]</span>';
+                                    html += '</div>';
+                                }
                             }
                             html += '</div>';
                         }
