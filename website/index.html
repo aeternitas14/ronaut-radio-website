@@ -189,19 +189,25 @@
         /* Mobile: adjust waveform position and size */
         @media (max-width: 767px) {
             #waveform-container {
-                bottom: 50px;
+                bottom: 55px;
                 right: 10px;
-                width: 180px;
-                height: 50px;
+                width: 160px;
+                height: 45px;
+                display: block !important;
+                visibility: visible !important;
+            }
+
+            #waveform-canvas {
+                display: block !important;
             }
         }
 
         @media (max-width: 480px) {
             #waveform-container {
-                bottom: 45px;
+                bottom: 50px;
                 right: 8px;
-                width: 140px;
-                height: 40px;
+                width: 120px;
+                height: 35px;
             }
         }
 
@@ -1270,14 +1276,25 @@
                 // Resize waveform canvas
                 function resizeWaveCanvas() {
                     var container = document.getElementById('waveform-container');
+                    if (!container) return;
+                    var rect = container.getBoundingClientRect();
                     var dpr = window.devicePixelRatio || 1;
-                    waveCanvas.width = container.offsetWidth * dpr;
-                    waveCanvas.height = container.offsetHeight * dpr;
+                    // Use rect dimensions which work better on mobile
+                    var w = rect.width || container.offsetWidth || 280;
+                    var h = rect.height || container.offsetHeight || 70;
+                    waveCanvas.width = w * dpr;
+                    waveCanvas.height = h * dpr;
+                    waveCanvas.style.width = w + 'px';
+                    waveCanvas.style.height = h + 'px';
                     waveCtx.setTransform(1, 0, 0, 1, 0, 0);
                     waveCtx.scale(dpr, dpr);
                 }
-                resizeWaveCanvas();
+                // Initial resize after a short delay (for mobile layout)
+                setTimeout(resizeWaveCanvas, 100);
                 window.addEventListener('resize', resizeWaveCanvas);
+                window.addEventListener('orientationchange', function() {
+                    setTimeout(resizeWaveCanvas, 200);
+                });
 
                 // Generate film grain
                 function drawGrain() {
@@ -1302,8 +1319,11 @@
                     analyser.getByteTimeDomainData(timeDataArray);
 
                     var container = document.getElementById('waveform-container');
-                    var w = container.offsetWidth;
-                    var h = container.offsetHeight;
+                    if (!container) return;
+                    var rect = container.getBoundingClientRect();
+                    var w = rect.width || 280;
+                    var h = rect.height || 70;
+                    if (w < 10 || h < 10) return; // Don't draw if too small
                     var centerY = h / 2;
 
                     // Clear canvas
@@ -1474,20 +1494,20 @@
                 }
 
                 // Start on user interaction (autoplay policy)
-                video.addEventListener('play', function() {
+                function activateAudio() {
                     connectAudio();
                     if (audioCtx && audioCtx.state === 'suspended') {
                         audioCtx.resume();
                     }
-                });
+                    resizeWaveCanvas(); // Ensure canvas is sized
+                }
 
-                // Also try on click
-                document.addEventListener('click', function() {
-                    connectAudio();
-                    if (audioCtx && audioCtx.state === 'suspended') {
-                        audioCtx.resume();
-                    }
-                }, { once: true });
+                video.addEventListener('play', activateAudio);
+                video.addEventListener('playing', activateAudio);
+
+                // Click and touch for mobile
+                document.addEventListener('click', activateAudio, { once: true });
+                document.addEventListener('touchstart', activateAudio, { once: true });
 
                 animate();
             })();
