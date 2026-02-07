@@ -152,7 +152,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.08;
+            opacity: 0.03;
             mix-blend-mode: overlay;
             pointer-events: none;
         }
@@ -1057,6 +1057,16 @@
 
         // Set MP4 source directly
         video.src = 'https://stream.ronautradio.la' + url;
+
+        // Ensure staff pick audio is audible after user interaction
+        video.muted = false;
+        video.removeAttribute('muted');
+        video.volume = 1;
+
+        // Ensure staff pick audio is audible after user interaction
+        video.muted = false;
+        video.removeAttribute('muted');
+        video.volume = 1;
 
         // Seek to start time if provided
         if (startTime && startTime > 0) {
