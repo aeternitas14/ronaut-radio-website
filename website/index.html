@@ -1057,14 +1057,12 @@
 
         // Set MP4 source directly
         video.crossOrigin = 'anonymous';
+        video.muted = false;
+        video.removeAttribute('muted');
+        video.volume = 1;
         video.src = 'https://stream.ronautradio.la' + url;
 
         video.addEventListener('loadedmetadata', function onLoaded() {
-            // Ensure staff pick audio is audible after user interaction
-            video.muted = false;
-            video.removeAttribute('muted');
-            video.volume = 1;
-
             // Seek to start time if provided
             if (startTime && startTime > 0) {
                 video.currentTime = startTime;
@@ -1073,6 +1071,9 @@
         });
 
         video.play().catch(function(e) { console.log("Play prevented", e); });
+        if (window.RonautAudio && window.RonautAudio.activate) {
+            window.RonautAudio.activate();
+        }
 
         ticker.textContent = 'Playing: ' + title;
         ticker.style.display = 'block';
@@ -1583,6 +1584,11 @@
                     }
                     resizeWaveCanvas(); // Ensure canvas is sized
                 }
+
+                // Expose a safe hook for staff-pick switching
+                window.RonautAudio = {
+                    activate: activateAudio
+                };
 
                 video.addEventListener('play', activateAudio);
                 video.addEventListener('playing', activateAudio);
