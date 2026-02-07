@@ -1431,7 +1431,7 @@
                     var sliceWidth = w / (smoothedWaveform.length - 1);
                     for (var p = 0; p < smoothedWaveform.length; p++) {
                         var x = p * sliceWidth;
-                        var y = centerY + smoothedWaveform[p] * (h * 0.4); // Scale amplitude
+                        var y = centerY + smoothedWaveform[p] * (h * 0.6); // Scale amplitude (+50%)
                         points.push({ x: x, y: y });
                     }
 
