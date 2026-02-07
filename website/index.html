@@ -888,7 +888,7 @@
 <body>
     <div id="top-player-container">
         <div id="player-container">
-            <video id="ronaut-player" class="video-js vjs-default-skin" controls autoplay muted playsinline webkit-playsinline x5-playsinline preload="none">
+            <video id="ronaut-player" class="video-js vjs-default-skin" controls autoplay muted playsinline webkit-playsinline x5-playsinline preload="none" crossorigin="anonymous">
                 <source src="https://stream.ronautradio.la/live/hls/stream.m3u8" type="application/x-mpegURL" />
                 <source src="https://stream.ronautradio.la/live/audio/stream.mp3" type="audio/mpeg" />
             </video>
@@ -1056,25 +1056,21 @@
         }
 
         // Set MP4 source directly
+        video.crossOrigin = 'anonymous';
         video.src = 'https://stream.ronautradio.la' + url;
 
-        // Ensure staff pick audio is audible after user interaction
-        video.muted = false;
-        video.removeAttribute('muted');
-        video.volume = 1;
+        video.addEventListener('loadedmetadata', function onLoaded() {
+            // Ensure staff pick audio is audible after user interaction
+            video.muted = false;
+            video.removeAttribute('muted');
+            video.volume = 1;
 
-        // Ensure staff pick audio is audible after user interaction
-        video.muted = false;
-        video.removeAttribute('muted');
-        video.volume = 1;
-
-        // Seek to start time if provided
-        if (startTime && startTime > 0) {
-            video.addEventListener('loadedmetadata', function onLoaded() {
+            // Seek to start time if provided
+            if (startTime && startTime > 0) {
                 video.currentTime = startTime;
-                video.removeEventListener('loadedmetadata', onLoaded);
-            });
-        }
+            }
+            video.removeEventListener('loadedmetadata', onLoaded);
+        });
 
         video.play().catch(function(e) { console.log("Play prevented", e); });
 
@@ -1298,6 +1294,7 @@
             setInterval(updateProgramme, 30000);
 
             // Initialize HLS Player
+            video.crossOrigin = 'anonymous';
             initHls(video);
 
             // Audio-reactive visuals
