@@ -560,6 +560,12 @@
             word-wrap: break-word;
         }
 
+        .chat-msg .chat-time {
+            font-size: 10px;
+            color: #999;
+            margin-right: 6px;
+        }
+
         .chat-msg .chat-nick {
             font-weight: 500;
             margin-right: 6px;
@@ -1994,15 +2000,29 @@
             // Restore nickname from localStorage
             nickInput.value = localStorage.getItem('ronaut_chat_nick') || '';
 
+            function formatChatTime(timestamp) {
+                var d = new Date(timestamp * 1000);
+                var hours = d.getHours().toString().padStart(2, '0');
+                var mins = d.getMinutes().toString().padStart(2, '0');
+                return hours + ':' + mins;
+            }
+
             function appendMessage(data) {
                 var div = document.createElement('div');
                 div.className = 'chat-msg';
+                // Timestamp
+                var timeSpan = document.createElement('span');
+                timeSpan.className = 'chat-time';
+                timeSpan.textContent = formatChatTime(data.timestamp);
+                div.appendChild(timeSpan);
+                // Nickname
                 var nick = document.createElement('span');
                 nick.className = 'chat-nick';
                 nick.style.color = data.color;
                 nick.textContent = data.nickname;
-                var text = document.createTextNode(data.message);
                 div.appendChild(nick);
+                // Message text
+                var text = document.createTextNode(data.message);
                 div.appendChild(text);
                 messagesDiv.appendChild(div);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -2029,7 +2049,7 @@
             });
 
             function sendMessage() {
-                var nick = nickInput.value.trim() || 'anon';
+                var nick = nickInput.value.trim(); // Empty string lets server generate unique anon name
                 var msg = msgInput.value.trim();
                 if (!msg) return;
                 localStorage.setItem('ronaut_chat_nick', nick);
