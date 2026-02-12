@@ -623,6 +623,105 @@
             color: #000;
         }
 
+        /* Featured Residents */
+        #featured-residents {
+            max-width: 1200px;
+            margin: 40px auto 20px;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        #featured-residents h2 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        #residents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            justify-items: center;
+        }
+
+        @media (min-width: 1024px) {
+            #residents-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .resident-card {
+            text-align: center;
+            max-width: 280px;
+        }
+
+        .resident-card img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+            background: #ddd;
+            transition: transform 0.2s;
+        }
+
+        .resident-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .resident-card .resident-name {
+            font-family: Oswald, sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin-top: 15px;
+            text-transform: uppercase;
+        }
+
+        .resident-card .resident-bio {
+            font-family: Oswald, sans-serif;
+            font-size: 13px;
+            font-weight: 300;
+            color: #666;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .resident-card .resident-social {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .resident-card .resident-social a {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .resident-card .resident-social a:hover {
+            opacity: 1;
+        }
+
+        .resident-card .resident-social img {
+            width: 24px;
+            height: 24px;
+            border-radius: 0;
+        }
+
+        @media (max-width: 767px) {
+            .resident-card img {
+                width: 140px;
+                height: 140px;
+            }
+        }
+
         /* Staff Picks */
         #staff-picks {
             max-width: 1200px;
@@ -956,6 +1055,12 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- FEATURED RESIDENTS -->
+    <div id="featured-residents">
+        <h2>FEATURED RESIDENTS</h2>
+        <div id="residents-grid"></div>
     </div>
 
     <!-- STAFF PICKS -->
@@ -1606,6 +1711,53 @@
 
                 animate();
             })();
+        })();
+
+        // Featured Residents
+        (function() {
+            var residentsGrid = document.getElementById('residents-grid');
+
+            async function loadResidents() {
+                try {
+                    var res = await fetch('https://stream.ronautradio.la/api/residents');
+                    var data = await res.json();
+                    if (!data.residents || data.residents.length === 0) {
+                        document.getElementById('featured-residents').style.display = 'none';
+                        return;
+                    }
+
+                    var html = '';
+                    for (var i = 0; i < data.residents.length; i++) {
+                        var resident = data.residents[i];
+                        html += '<div class="resident-card">';
+                        html += '<img src="https://stream.ronautradio.la' + resident.photo + '" alt="' + escapeHtml(resident.name) + '" loading="lazy" />';
+                        html += '<div class="resident-name">' + escapeHtml(resident.name) + '</div>';
+                        if (resident.bio) {
+                            html += '<div class="resident-bio">' + escapeHtml(resident.bio) + '</div>';
+                        }
+                        if (resident.social && Object.keys(resident.social).length > 0) {
+                            html += '<div class="resident-social">';
+                            if (resident.social.instagram) {
+                                html += '<a href="' + resident.social.instagram + '" target="_blank"><img src="assets/6065dc53271cd689405645e3_social-instagram.svg" alt="Instagram" /></a>';
+                            }
+                            if (resident.social.soundcloud) {
+                                html += '<a href="' + resident.social.soundcloud + '" target="_blank"><img src="assets/6065e41429ff79264e86b0d7_social-soundcloud.svg" alt="Soundcloud" /></a>';
+                            }
+                            if (resident.social.mixcloud) {
+                                html += '<a href="' + resident.social.mixcloud + '" target="_blank"><img src="assets/6065e43e39b94578e5cc3ea1_social-mixcloud.svg" alt="Mixcloud" /></a>';
+                            }
+                            html += '</div>';
+                        }
+                        html += '</div>';
+                    }
+                    residentsGrid.innerHTML = html;
+                } catch (err) {
+                    console.error('Failed to load residents:', err);
+                    document.getElementById('featured-residents').style.display = 'none';
+                }
+            }
+
+            loadResidents();
         })();
 
         // Staff Picks
