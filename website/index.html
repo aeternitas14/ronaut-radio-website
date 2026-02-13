@@ -629,135 +629,218 @@
             color: #000;
         }
 
-        /* Featured Residents - List with expand */
+        /* Featured Residents - Lot Radio Style */
         #featured-residents {
-            max-width: 800px;
-            margin: 40px auto 20px;
-            padding: 0 20px;
+            background: #1a1a1a;
+            padding: 60px 40px;
+            margin: 40px 0;
         }
 
         #featured-residents h2 {
-            font-size: 24px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 25px;
-            text-align: center;
+            display: none;
         }
 
-        #residents-list {
+        .residents-intro {
+            font-family: Oswald, sans-serif;
+            font-size: 13px;
+            font-weight: 300;
+            color: #888;
+            letter-spacing: 0.5px;
+            line-height: 1.6;
+            max-width: 200px;
+            margin-bottom: 30px;
+        }
+
+        .residents-container {
+            display: flex;
+            gap: 60px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Left side - Photo */
+        .residents-photo-col {
+            flex: 0 0 280px;
             display: flex;
             flex-direction: column;
-            gap: 0;
         }
 
-        /* Collapsed resident row */
-        .resident-item {
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .resident-item:first-child {
-            border-top: 1px solid #e0e0e0;
-        }
-
-        .resident-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 12px 0;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .resident-header:hover {
-            background: #f8f8f8;
-        }
-
-        .resident-header img {
-            width: 60px;
-            height: 60px;
+        #resident-photo {
+            width: 280px;
+            height: 280px;
             object-fit: cover;
-            flex-shrink: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .resident-header .resident-name {
+        .residents-photo-label {
             font-family: Oswald, sans-serif;
-            font-size: 22px;
-            font-weight: 400;
+            font-size: 11px;
+            font-weight: 300;
+            color: #666;
             letter-spacing: 1px;
             text-transform: uppercase;
+            margin-top: 15px;
+        }
+
+        .residents-photo-label a {
+            color: #666;
+            text-decoration: none;
+        }
+
+        .residents-photo-label a:hover {
+            color: #fff;
+        }
+
+        /* Right side - Names list */
+        .residents-names-col {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .resident-header .resident-toggle {
-            font-size: 20px;
-            color: #999;
-            transition: transform 0.3s;
+        .resident-name-row {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            cursor: pointer;
+            transition: opacity 0.2s;
         }
 
-        .resident-item.expanded .resident-toggle {
-            transform: rotate(180deg);
+        .resident-name-row:hover {
+            opacity: 1;
         }
 
-        /* Expanded content */
-        .resident-details {
+        .resident-name-row.dimmed {
+            opacity: 0.4;
+        }
+
+        .resident-name-row .name {
+            font-family: Oswald, sans-serif;
+            font-size: 15px;
+            font-weight: 400;
+            color: #fff;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .resident-name-row .indicator {
+            width: 18px;
+            height: 18px;
+            margin-left: 10px;
+            border-radius: 2px;
+        }
+
+        /* Expanded detail panel */
+        .resident-detail-panel {
             display: none;
-            padding: 0 0 20px 75px;
+            background: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            overflow-y: auto;
         }
 
-        .resident-item.expanded .resident-details {
-            display: block;
+        .resident-detail-panel.active {
+            display: flex;
         }
 
-        .resident-details .resident-bio {
+        .detail-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 32px;
+            color: #000;
+            cursor: pointer;
+            z-index: 10;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+
+        .detail-photo {
+            flex: 0 0 50%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .detail-content {
+            flex: 1;
+            padding: 80px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .detail-label {
+            font-family: Oswald, sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            color: #d4a32a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .detail-name {
+            font-family: Oswald, sans-serif;
+            font-size: 48px;
+            font-weight: 500;
+            color: #000;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        .detail-bio {
             font-family: Oswald, sans-serif;
             font-size: 14px;
             font-weight: 300;
             color: #555;
-            line-height: 1.6;
-            margin-bottom: 15px;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            max-width: 500px;
         }
 
-        .resident-details .resident-links {
+        .detail-links {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 12px;
+            margin-bottom: 30px;
         }
 
-        .resident-details .resident-links a {
+        .detail-links a {
             font-family: Oswald, sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 400;
             letter-spacing: 1px;
             text-transform: uppercase;
             color: #000;
             text-decoration: none;
-            padding: 6px 12px;
+            padding: 8px 16px;
             border: 1px solid #000;
             transition: all 0.2s;
         }
 
-        .resident-details .resident-links a:hover {
+        .detail-links a:hover {
             background: #000;
             color: #fff;
         }
 
-        .resident-details .resident-sets {
-            margin-top: 15px;
-        }
-
-        .resident-details .resident-sets-title {
+        .detail-sets-title {
             font-family: Oswald, sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 400;
             letter-spacing: 1px;
             text-transform: uppercase;
             color: #888;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        .resident-details .resident-set-link {
+        .detail-set-link {
             display: inline-block;
             font-family: Oswald, sans-serif;
             font-size: 14px;
@@ -765,26 +848,62 @@
             color: #000;
             text-decoration: underline;
             cursor: pointer;
-            margin-right: 15px;
+            margin-right: 20px;
         }
 
-        .resident-details .resident-set-link:hover {
+        .detail-set-link:hover {
             color: #666;
         }
 
-        /* Mobile adjustments */
-        @media (max-width: 600px) {
-            .resident-header img {
-                width: 50px;
-                height: 50px;
+        /* Mobile */
+        @media (max-width: 768px) {
+            #featured-residents {
+                padding: 40px 20px;
             }
 
-            .resident-header .resident-name {
-                font-size: 18px;
+            .residents-container {
+                flex-direction: column;
+                gap: 30px;
             }
 
-            .resident-details {
-                padding-left: 0;
+            .residents-photo-col {
+                flex: none;
+                align-items: center;
+            }
+
+            #resident-photo {
+                width: 200px;
+                height: 200px;
+            }
+
+            .residents-intro {
+                text-align: center;
+                max-width: none;
+            }
+
+            .residents-names-col {
+                align-items: center;
+            }
+
+            .resident-name-row .name {
+                font-size: 14px;
+            }
+
+            .resident-detail-panel.active {
+                flex-direction: column;
+            }
+
+            .detail-photo {
+                flex: 0 0 250px;
+                width: 100%;
+            }
+
+            .detail-content {
+                padding: 40px 25px;
+            }
+
+            .detail-name {
+                font-size: 28px;
             }
         }
 
@@ -1126,7 +1245,27 @@
     <!-- FEATURED RESIDENTS -->
     <div id="featured-residents">
         <h2>FEATURED RESIDENTS</h2>
-        <div id="residents-list"></div>
+        <div class="residents-container">
+            <div class="residents-photo-col">
+                <p class="residents-intro">Get to know our Residents — Whose contributions keep our radio fresh and exciting.</p>
+                <img id="resident-photo" src="" alt="Resident" />
+                <div class="residents-photo-label"><a id="resident-photo-link" href="#">ALL ARTISTS</a></div>
+            </div>
+            <div class="residents-names-col" id="residents-list"></div>
+        </div>
+    </div>
+
+    <!-- Resident Detail Panel (fullscreen overlay) -->
+    <div class="resident-detail-panel" id="resident-detail">
+        <button class="detail-close">&times;</button>
+        <div class="detail-photo" id="detail-photo"></div>
+        <div class="detail-content">
+            <div class="detail-label">RESIDENT</div>
+            <div class="detail-name" id="detail-name"></div>
+            <div class="detail-bio" id="detail-bio"></div>
+            <div class="detail-links" id="detail-links"></div>
+            <div class="detail-sets" id="detail-sets"></div>
+        </div>
     </div>
 
     <!-- STAFF PICKS -->
@@ -1779,9 +1918,16 @@
             })();
         })();
 
-        // Featured Residents - Expandable List
+        // Featured Residents - Lot Radio Style
         (function() {
             var residentsList = document.getElementById('residents-list');
+            var residentPhoto = document.getElementById('resident-photo');
+            var detailPanel = document.getElementById('resident-detail');
+            var detailClose = detailPanel.querySelector('.detail-close');
+            var residentsData = [];
+
+            // Colors for indicators (cycling through)
+            var indicatorColors = ['#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#f39c12', '#1abc9c', '#e91e63', '#00bcd4'];
 
             async function loadResidents() {
                 try {
@@ -1792,81 +1938,42 @@
                         return;
                     }
 
+                    residentsData = data.residents;
+
+                    // Set initial photo to first resident
+                    residentPhoto.src = 'https://stream.ronautradio.la' + residentsData[0].photo;
+
                     var html = '';
-                    for (var i = 0; i < data.residents.length; i++) {
-                        var r = data.residents[i];
-                        html += '<div class="resident-item" data-index="' + i + '">';
-
-                        // Header row (always visible)
-                        html += '<div class="resident-header">';
-                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" />';
-                        html += '<span class="resident-name">' + escapeHtml(r.name) + '</span>';
-                        html += '<span class="resident-toggle">&#9662;</span>';
+                    for (var i = 0; i < residentsData.length; i++) {
+                        var r = residentsData[i];
+                        var color = indicatorColors[i % indicatorColors.length];
+                        html += '<div class="resident-name-row" data-index="' + i + '">';
+                        html += '<span class="name">' + escapeHtml(r.name) + '</span>';
+                        html += '<span class="indicator" style="background:' + color + '"></span>';
                         html += '</div>';
-
-                        // Expandable details
-                        html += '<div class="resident-details">';
-                        if (r.bio) {
-                            html += '<div class="resident-bio">' + escapeHtml(r.bio) + '</div>';
-                        }
-
-                        // Social links
-                        html += '<div class="resident-links">';
-                        if (r.social) {
-                            if (r.social.instagram) {
-                                html += '<a href="' + r.social.instagram + '" target="_blank">Instagram</a>';
-                            }
-                            if (r.social.soundcloud) {
-                                html += '<a href="' + r.social.soundcloud + '" target="_blank">Soundcloud</a>';
-                            }
-                            if (r.social.ra) {
-                                html += '<a href="' + r.social.ra + '" target="_blank">Resident Advisor</a>';
-                            }
-                            if (r.social.mixcloud) {
-                                html += '<a href="' + r.social.mixcloud + '" target="_blank">Mixcloud</a>';
-                            }
-                            if (r.social.website) {
-                                html += '<a href="' + r.social.website + '" target="_blank">Website</a>';
-                            }
-                        }
-                        html += '</div>';
-
-                        // Sets/Shows
-                        if (r.sets && r.sets.length > 0) {
-                            html += '<div class="resident-sets">';
-                            html += '<div class="resident-sets-title">Listen to their sets</div>';
-                            for (var j = 0; j < r.sets.length; j++) {
-                                var setFile = r.sets[j];
-                                var setName = setFile.replace('.mp4', '');
-                                html += '<span class="resident-set-link" data-url="/sets/' + setFile + '" data-title="' + escapeHtml(setName) + '">' + escapeHtml(setName) + '</span>';
-                            }
-                            html += '</div>';
-                        }
-
-                        html += '</div>'; // end details
-                        html += '</div>'; // end item
                     }
                     residentsList.innerHTML = html;
 
-                    // Add click listeners for expand/collapse
-                    var headers = residentsList.querySelectorAll('.resident-header');
-                    headers.forEach(function(header) {
-                        header.addEventListener('click', function() {
-                            var item = this.closest('.resident-item');
-                            item.classList.toggle('expanded');
+                    // Add hover listeners to change photo
+                    var rows = residentsList.querySelectorAll('.resident-name-row');
+                    rows.forEach(function(row) {
+                        row.addEventListener('mouseenter', function() {
+                            var idx = parseInt(this.getAttribute('data-index'));
+                            residentPhoto.src = 'https://stream.ronautradio.la' + residentsData[idx].photo;
+                            // Dim other rows
+                            rows.forEach(function(r) { r.classList.add('dimmed'); });
+                            this.classList.remove('dimmed');
                         });
-                    });
 
-                    // Add click listeners for set links
-                    var setLinks = residentsList.querySelectorAll('.resident-set-link');
-                    setLinks.forEach(function(link) {
-                        link.addEventListener('click', function(e) {
-                            e.stopPropagation();
-                            var url = this.getAttribute('data-url');
-                            var title = this.getAttribute('data-title');
-                            if (typeof playPick === 'function') {
-                                playPick(url, title);
-                            }
+                        row.addEventListener('mouseleave', function() {
+                            // Remove dimming
+                            rows.forEach(function(r) { r.classList.remove('dimmed'); });
+                        });
+
+                        // Click to open detail panel
+                        row.addEventListener('click', function() {
+                            var idx = parseInt(this.getAttribute('data-index'));
+                            openDetail(idx);
                         });
                     });
 
@@ -1875,6 +1982,66 @@
                     document.getElementById('featured-residents').style.display = 'none';
                 }
             }
+
+            function openDetail(idx) {
+                var r = residentsData[idx];
+                document.getElementById('detail-photo').style.backgroundImage = 'url(https://stream.ronautradio.la' + r.photo + ')';
+                document.getElementById('detail-name').textContent = r.name;
+                document.getElementById('detail-bio').textContent = r.bio || '';
+
+                // Social links
+                var linksHtml = '';
+                if (r.social) {
+                    if (r.social.instagram) linksHtml += '<a href="' + r.social.instagram + '" target="_blank">Instagram</a>';
+                    if (r.social.soundcloud) linksHtml += '<a href="' + r.social.soundcloud + '" target="_blank">Soundcloud</a>';
+                    if (r.social.ra) linksHtml += '<a href="' + r.social.ra + '" target="_blank">Resident Advisor</a>';
+                    if (r.social.mixcloud) linksHtml += '<a href="' + r.social.mixcloud + '" target="_blank">Mixcloud</a>';
+                    if (r.social.website) linksHtml += '<a href="' + r.social.website + '" target="_blank">Website</a>';
+                }
+                document.getElementById('detail-links').innerHTML = linksHtml;
+
+                // Sets
+                var setsHtml = '';
+                if (r.sets && r.sets.length > 0) {
+                    setsHtml += '<div class="detail-sets-title">Listen to their sets</div>';
+                    for (var j = 0; j < r.sets.length; j++) {
+                        var setFile = r.sets[j];
+                        var setName = setFile.replace('.mp4', '');
+                        setsHtml += '<span class="detail-set-link" data-url="/sets/' + setFile + '" data-title="' + escapeHtml(setName) + '">' + escapeHtml(setName) + '</span>';
+                    }
+                }
+                document.getElementById('detail-sets').innerHTML = setsHtml;
+
+                // Add click listeners for set links in detail panel
+                var setLinks = document.querySelectorAll('#detail-sets .detail-set-link');
+                setLinks.forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        var url = this.getAttribute('data-url');
+                        var title = this.getAttribute('data-title');
+                        closeDetail();
+                        if (typeof playPick === 'function') {
+                            playPick(url, title);
+                        }
+                    });
+                });
+
+                detailPanel.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDetail() {
+                detailPanel.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            detailClose.addEventListener('click', closeDetail);
+
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && detailPanel.classList.contains('active')) {
+                    closeDetail();
+                }
+            });
 
             loadResidents();
         })();
