@@ -629,109 +629,67 @@
             color: #000;
         }
 
-        /* Featured Residents - Lot Radio Style */
+        /* Featured Residents - Simple list with detail panel */
         #featured-residents {
-            background: #1a1a1a;
-            padding: 60px 40px;
-            margin: 40px 0;
+            max-width: 600px;
+            margin: 40px auto 20px;
+            padding: 0 20px;
         }
 
         #featured-residents h2 {
-            display: none;
-        }
-
-        .residents-intro {
-            font-family: Oswald, sans-serif;
-            font-size: 13px;
+            font-size: 24px;
             font-weight: 300;
-            color: #888;
-            letter-spacing: 0.5px;
-            line-height: 1.6;
-            max-width: 200px;
-            margin-bottom: 30px;
-        }
-
-        .residents-container {
-            display: flex;
-            gap: 60px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        /* Left side - Photo */
-        .residents-photo-col {
-            flex: 0 0 280px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #resident-photo {
-            width: 280px;
-            height: 280px;
-            object-fit: cover;
-            transition: opacity 0.3s ease;
-        }
-
-        .residents-photo-label {
-            font-family: Oswald, sans-serif;
-            font-size: 11px;
-            font-weight: 300;
-            color: #666;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-top: 15px;
-        }
-
-        .residents-photo-label a {
-            color: #666;
-            text-decoration: none;
-        }
-
-        .residents-photo-label a:hover {
-            color: #fff;
-        }
-
-        /* Right side - Names list */
-        .residents-names-col {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .resident-name-row {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-
-        .resident-name-row:hover {
-            opacity: 1;
-        }
-
-        .resident-name-row.dimmed {
-            opacity: 0.4;
-        }
-
-        .resident-name-row .name {
-            font-family: Oswald, sans-serif;
-            font-size: 15px;
-            font-weight: 400;
-            color: #fff;
             letter-spacing: 2px;
             text-transform: uppercase;
+            margin-bottom: 25px;
+            text-align: center;
         }
 
-        .resident-name-row .indicator {
-            width: 18px;
-            height: 18px;
-            margin-left: 10px;
-            border-radius: 2px;
+        #residents-list {
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Expanded detail panel */
+        .resident-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .resident-row:first-child {
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .resident-row:hover {
+            background: #f8f8f8;
+        }
+
+        .resident-row img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .resident-row .name {
+            font-family: Oswald, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            flex: 1;
+        }
+
+        .resident-row .arrow {
+            color: #999;
+            font-size: 18px;
+        }
+
+        /* Detail panel (fullscreen overlay on click) */
         .resident-detail-panel {
             display: none;
             background: #fff;
@@ -751,8 +709,8 @@
         .detail-close {
             position: absolute;
             top: 20px;
-            right: 20px;
-            font-size: 32px;
+            right: 25px;
+            font-size: 36px;
             color: #000;
             cursor: pointer;
             z-index: 10;
@@ -762,14 +720,14 @@
         }
 
         .detail-photo {
-            flex: 0 0 50%;
+            flex: 0 0 45%;
             background-size: cover;
             background-position: center;
         }
 
         .detail-content {
             flex: 1;
-            padding: 80px 60px;
+            padding: 80px 50px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -787,12 +745,12 @@
 
         .detail-name {
             font-family: Oswald, sans-serif;
-            font-size: 48px;
+            font-size: 42px;
             font-weight: 500;
             color: #000;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-transform: uppercase;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
 
         .detail-bio {
@@ -801,15 +759,15 @@
             font-weight: 300;
             color: #555;
             line-height: 1.8;
-            margin-bottom: 30px;
-            max-width: 500px;
+            margin-bottom: 25px;
+            max-width: 480px;
         }
 
         .detail-links {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 30px;
+            gap: 10px;
+            margin-bottom: 25px;
         }
 
         .detail-links a {
@@ -820,7 +778,7 @@
             text-transform: uppercase;
             color: #000;
             text-decoration: none;
-            padding: 8px 16px;
+            padding: 8px 14px;
             border: 1px solid #000;
             transition: all 0.2s;
         }
@@ -848,7 +806,7 @@
             color: #000;
             text-decoration: underline;
             cursor: pointer;
-            margin-right: 20px;
+            margin-right: 15px;
         }
 
         .detail-set-link:hover {
@@ -857,53 +815,25 @@
 
         /* Mobile */
         @media (max-width: 768px) {
-            #featured-residents {
-                padding: 40px 20px;
-            }
-
-            .residents-container {
-                flex-direction: column;
-                gap: 30px;
-            }
-
-            .residents-photo-col {
-                flex: none;
-                align-items: center;
-            }
-
-            #resident-photo {
-                width: 200px;
-                height: 200px;
-            }
-
-            .residents-intro {
-                text-align: center;
-                max-width: none;
-            }
-
-            .residents-names-col {
-                align-items: center;
-            }
-
-            .resident-name-row .name {
-                font-size: 14px;
-            }
-
             .resident-detail-panel.active {
                 flex-direction: column;
             }
 
             .detail-photo {
-                flex: 0 0 250px;
+                flex: 0 0 220px;
                 width: 100%;
             }
 
             .detail-content {
-                padding: 40px 25px;
+                padding: 30px 20px;
             }
 
             .detail-name {
                 font-size: 28px;
+            }
+
+            .detail-bio {
+                font-size: 13px;
             }
         }
 
@@ -1245,14 +1175,7 @@
     <!-- FEATURED RESIDENTS -->
     <div id="featured-residents">
         <h2>FEATURED RESIDENTS</h2>
-        <div class="residents-container">
-            <div class="residents-photo-col">
-                <p class="residents-intro">Get to know our Residents — Whose contributions keep our radio fresh and exciting.</p>
-                <img id="resident-photo" src="" alt="Resident" />
-                <div class="residents-photo-label"><a id="resident-photo-link" href="#">ALL ARTISTS</a></div>
-            </div>
-            <div class="residents-names-col" id="residents-list"></div>
-        </div>
+        <div id="residents-list"></div>
     </div>
 
     <!-- Resident Detail Panel (fullscreen overlay) -->
@@ -1918,16 +1841,12 @@
             })();
         })();
 
-        // Featured Residents - Lot Radio Style
+        // Featured Residents - Simple list with detail panel
         (function() {
             var residentsList = document.getElementById('residents-list');
-            var residentPhoto = document.getElementById('resident-photo');
             var detailPanel = document.getElementById('resident-detail');
             var detailClose = detailPanel.querySelector('.detail-close');
             var residentsData = [];
-
-            // Colors for indicators (cycling through)
-            var indicatorColors = ['#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#f39c12', '#1abc9c', '#e91e63', '#00bcd4'];
 
             async function loadResidents() {
                 try {
@@ -1940,37 +1859,20 @@
 
                     residentsData = data.residents;
 
-                    // Set initial photo to first resident
-                    residentPhoto.src = 'https://stream.ronautradio.la' + residentsData[0].photo;
-
                     var html = '';
                     for (var i = 0; i < residentsData.length; i++) {
                         var r = residentsData[i];
-                        var color = indicatorColors[i % indicatorColors.length];
-                        html += '<div class="resident-name-row" data-index="' + i + '">';
+                        html += '<div class="resident-row" data-index="' + i + '">';
+                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" />';
                         html += '<span class="name">' + escapeHtml(r.name) + '</span>';
-                        html += '<span class="indicator" style="background:' + color + '"></span>';
+                        html += '<span class="arrow">&#8250;</span>';
                         html += '</div>';
                     }
                     residentsList.innerHTML = html;
 
-                    // Add hover listeners to change photo
-                    var rows = residentsList.querySelectorAll('.resident-name-row');
+                    // Click to open detail panel
+                    var rows = residentsList.querySelectorAll('.resident-row');
                     rows.forEach(function(row) {
-                        row.addEventListener('mouseenter', function() {
-                            var idx = parseInt(this.getAttribute('data-index'));
-                            residentPhoto.src = 'https://stream.ronautradio.la' + residentsData[idx].photo;
-                            // Dim other rows
-                            rows.forEach(function(r) { r.classList.add('dimmed'); });
-                            this.classList.remove('dimmed');
-                        });
-
-                        row.addEventListener('mouseleave', function() {
-                            // Remove dimming
-                            rows.forEach(function(r) { r.classList.remove('dimmed'); });
-                        });
-
-                        // Click to open detail panel
                         row.addEventListener('click', function() {
                             var idx = parseInt(this.getAttribute('data-index'));
                             openDetail(idx);
@@ -2012,7 +1914,7 @@
                 }
                 document.getElementById('detail-sets').innerHTML = setsHtml;
 
-                // Add click listeners for set links in detail panel
+                // Add click listeners for set links
                 var setLinks = document.querySelectorAll('#detail-sets .detail-set-link');
                 setLinks.forEach(function(link) {
                     link.addEventListener('click', function() {
