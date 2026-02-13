@@ -629,9 +629,9 @@
             color: #000;
         }
 
-        /* Featured Residents - Lot Radio Style */
+        /* Featured Residents - List with expand */
         #featured-residents {
-            max-width: 1200px;
+            max-width: 800px;
             margin: 40px auto 20px;
             padding: 0 20px;
         }
@@ -645,132 +645,146 @@
             text-align: center;
         }
 
-        #residents-container {
-            display: flex;
-            gap: 40px;
-            align-items: flex-start;
-        }
-
-        /* Left side - Featured photo */
-        #resident-photo-display {
-            flex: 0 0 400px;
-            position: sticky;
-            top: 20px;
-        }
-
-        #resident-photo-display img {
-            width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: cover;
-            display: block;
-            background: #000;
-            transition: opacity 0.3s ease;
-        }
-
-        #resident-photo-display .resident-photo-name {
-            font-family: Oswald, sans-serif;
-            font-size: 14px;
-            font-weight: 400;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-top: 12px;
-            color: #333;
-        }
-
-        #resident-photo-display .resident-photo-bio {
-            font-family: Oswald, sans-serif;
-            font-size: 13px;
-            font-weight: 300;
-            color: #666;
-            margin-top: 6px;
-            line-height: 1.5;
-        }
-
-        #resident-photo-display .resident-photo-social {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-        }
-
-        #resident-photo-display .resident-photo-social a {
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-
-        #resident-photo-display .resident-photo-social a:hover {
-            opacity: 1;
-        }
-
-        #resident-photo-display .resident-photo-social img {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Right side - Names list */
         #residents-list {
-            flex: 1;
             display: flex;
             flex-direction: column;
             gap: 0;
         }
 
-        .resident-row {
-            font-family: Oswald, sans-serif;
-            font-size: 28px;
-            font-weight: 300;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 15px 0;
+        /* Collapsed resident row */
+        .resident-item {
             border-bottom: 1px solid #e0e0e0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            color: #333;
         }
 
-        .resident-row:first-child {
+        .resident-item:first-child {
             border-top: 1px solid #e0e0e0;
         }
 
-        .resident-row:hover {
-            color: #000;
-            padding-left: 10px;
+        .resident-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .resident-header:hover {
             background: #f8f8f8;
         }
 
-        .resident-row.active {
-            color: #000;
+        .resident-header img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .resident-header .resident-name {
+            font-family: Oswald, sans-serif;
+            font-size: 22px;
             font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            flex: 1;
         }
 
-        /* Mobile: Stack layout */
-        @media (max-width: 900px) {
-            #residents-container {
-                flex-direction: column;
-            }
-
-            #resident-photo-display {
-                flex: none;
-                width: 100%;
-                max-width: 350px;
-                margin: 0 auto 30px;
-                position: relative;
-                top: 0;
-            }
-
-            .resident-row {
-                font-size: 22px;
-                padding: 12px 0;
-            }
+        .resident-header .resident-toggle {
+            font-size: 20px;
+            color: #999;
+            transition: transform 0.3s;
         }
 
-        @media (max-width: 480px) {
-            #resident-photo-display {
-                max-width: 280px;
+        .resident-item.expanded .resident-toggle {
+            transform: rotate(180deg);
+        }
+
+        /* Expanded content */
+        .resident-details {
+            display: none;
+            padding: 0 0 20px 75px;
+        }
+
+        .resident-item.expanded .resident-details {
+            display: block;
+        }
+
+        .resident-details .resident-bio {
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .resident-details .resident-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .resident-details .resident-links a {
+            font-family: Oswald, sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #000;
+            text-decoration: none;
+            padding: 6px 12px;
+            border: 1px solid #000;
+            transition: all 0.2s;
+        }
+
+        .resident-details .resident-links a:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .resident-details .resident-sets {
+            margin-top: 15px;
+        }
+
+        .resident-details .resident-sets-title {
+            font-family: Oswald, sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .resident-details .resident-set-link {
+            display: inline-block;
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #000;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .resident-details .resident-set-link:hover {
+            color: #666;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 600px) {
+            .resident-header img {
+                width: 50px;
+                height: 50px;
             }
 
-            .resident-row {
+            .resident-header .resident-name {
                 font-size: 18px;
-                padding: 10px 0;
+            }
+
+            .resident-details {
+                padding-left: 0;
             }
         }
 
@@ -1112,15 +1126,7 @@
     <!-- FEATURED RESIDENTS -->
     <div id="featured-residents">
         <h2>FEATURED RESIDENTS</h2>
-        <div id="residents-container">
-            <div id="resident-photo-display">
-                <img id="resident-featured-img" src="" alt="" />
-                <div class="resident-photo-name" id="resident-featured-name"></div>
-                <div class="resident-photo-bio" id="resident-featured-bio"></div>
-                <div class="resident-photo-social" id="resident-featured-social"></div>
-            </div>
-            <div id="residents-list"></div>
-        </div>
+        <div id="residents-list"></div>
     </div>
 
     <!-- STAFF PICKS -->
@@ -1773,45 +1779,9 @@
             })();
         })();
 
-        // Featured Residents - Lot Radio Style
+        // Featured Residents - Expandable List
         (function() {
             var residentsList = document.getElementById('residents-list');
-            var featuredImg = document.getElementById('resident-featured-img');
-            var featuredName = document.getElementById('resident-featured-name');
-            var featuredBio = document.getElementById('resident-featured-bio');
-            var featuredSocial = document.getElementById('resident-featured-social');
-            var residentsData = [];
-
-            function updateFeaturedResident(index) {
-                var resident = residentsData[index];
-                if (!resident) return;
-
-                featuredImg.src = 'https://stream.ronautradio.la' + resident.photo;
-                featuredImg.alt = resident.name;
-                featuredName.textContent = resident.name;
-                featuredBio.textContent = resident.bio || '';
-
-                // Build social links
-                var socialHtml = '';
-                if (resident.social) {
-                    if (resident.social.instagram) {
-                        socialHtml += '<a href="' + resident.social.instagram + '" target="_blank"><img src="assets/6065dc53271cd689405645e3_social-instagram.svg" alt="Instagram" /></a>';
-                    }
-                    if (resident.social.soundcloud) {
-                        socialHtml += '<a href="' + resident.social.soundcloud + '" target="_blank"><img src="assets/6065e41429ff79264e86b0d7_social-soundcloud.svg" alt="Soundcloud" /></a>';
-                    }
-                    if (resident.social.mixcloud) {
-                        socialHtml += '<a href="' + resident.social.mixcloud + '" target="_blank"><img src="assets/6065e43e39b94578e5cc3ea1_social-mixcloud.svg" alt="Mixcloud" /></a>';
-                    }
-                }
-                featuredSocial.innerHTML = socialHtml;
-
-                // Update active state
-                var rows = residentsList.querySelectorAll('.resident-row');
-                rows.forEach(function(row, i) {
-                    row.classList.toggle('active', i === index);
-                });
-            }
 
             async function loadResidents() {
                 try {
@@ -1822,24 +1792,81 @@
                         return;
                     }
 
-                    residentsData = data.residents;
-
-                    // Build names list
                     var html = '';
-                    for (var i = 0; i < residentsData.length; i++) {
-                        html += '<div class="resident-row" data-index="' + i + '">' + escapeHtml(residentsData[i].name) + '</div>';
+                    for (var i = 0; i < data.residents.length; i++) {
+                        var r = data.residents[i];
+                        html += '<div class="resident-item" data-index="' + i + '">';
+
+                        // Header row (always visible)
+                        html += '<div class="resident-header">';
+                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" />';
+                        html += '<span class="resident-name">' + escapeHtml(r.name) + '</span>';
+                        html += '<span class="resident-toggle">&#9662;</span>';
+                        html += '</div>';
+
+                        // Expandable details
+                        html += '<div class="resident-details">';
+                        if (r.bio) {
+                            html += '<div class="resident-bio">' + escapeHtml(r.bio) + '</div>';
+                        }
+
+                        // Social links
+                        html += '<div class="resident-links">';
+                        if (r.social) {
+                            if (r.social.instagram) {
+                                html += '<a href="' + r.social.instagram + '" target="_blank">Instagram</a>';
+                            }
+                            if (r.social.soundcloud) {
+                                html += '<a href="' + r.social.soundcloud + '" target="_blank">Soundcloud</a>';
+                            }
+                            if (r.social.ra) {
+                                html += '<a href="' + r.social.ra + '" target="_blank">Resident Advisor</a>';
+                            }
+                            if (r.social.mixcloud) {
+                                html += '<a href="' + r.social.mixcloud + '" target="_blank">Mixcloud</a>';
+                            }
+                            if (r.social.website) {
+                                html += '<a href="' + r.social.website + '" target="_blank">Website</a>';
+                            }
+                        }
+                        html += '</div>';
+
+                        // Sets/Shows
+                        if (r.sets && r.sets.length > 0) {
+                            html += '<div class="resident-sets">';
+                            html += '<div class="resident-sets-title">Listen to their sets</div>';
+                            for (var j = 0; j < r.sets.length; j++) {
+                                var setFile = r.sets[j];
+                                var setName = setFile.replace('.mp4', '');
+                                html += '<span class="resident-set-link" data-url="/sets/' + setFile + '" data-title="' + escapeHtml(setName) + '">' + escapeHtml(setName) + '</span>';
+                            }
+                            html += '</div>';
+                        }
+
+                        html += '</div>'; // end details
+                        html += '</div>'; // end item
                     }
                     residentsList.innerHTML = html;
 
-                    // Set first resident as default
-                    updateFeaturedResident(0);
+                    // Add click listeners for expand/collapse
+                    var headers = residentsList.querySelectorAll('.resident-header');
+                    headers.forEach(function(header) {
+                        header.addEventListener('click', function() {
+                            var item = this.closest('.resident-item');
+                            item.classList.toggle('expanded');
+                        });
+                    });
 
-                    // Add hover listeners
-                    var rows = residentsList.querySelectorAll('.resident-row');
-                    rows.forEach(function(row) {
-                        row.addEventListener('mouseenter', function() {
-                            var index = parseInt(this.getAttribute('data-index'), 10);
-                            updateFeaturedResident(index);
+                    // Add click listeners for set links
+                    var setLinks = residentsList.querySelectorAll('.resident-set-link');
+                    setLinks.forEach(function(link) {
+                        link.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            var url = this.getAttribute('data-url');
+                            var title = this.getAttribute('data-title');
+                            if (typeof playPick === 'function') {
+                                playPick(url, title);
+                            }
                         });
                     });
 
