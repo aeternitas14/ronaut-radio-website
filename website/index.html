@@ -275,26 +275,23 @@
             color: white;
             font-size: 14px;
             position: absolute;
-            bottom: 20px;
+            top: 15px;
             left: 20px;
             white-space: nowrap;
             overflow: hidden;
             opacity: 0;
             transition: opacity 0.5s ease;
             pointer-events: none;
-            animation: scroll-left 15s linear infinite;
-            animation-play-state: paused;
         }
 
         #next-live-banner.visible {
             opacity: 1;
-            animation-play-state: running;
         }
 
         @media (max-width: 767px) {
             #next-live-banner {
                 font-size: 12px;
-                bottom: 18px;
+                top: 12px;
                 left: 10px;
             }
         }
@@ -2341,7 +2338,7 @@
             // Then cycle: show for 5s, hide for 25s
             setInterval(function() {
                 showBanner();
-            }, 30000); // Every 30 seconds
+            }, 60000); // Every 60 seconds
         }
 
         function showBanner() {
