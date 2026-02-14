@@ -402,6 +402,31 @@
             margin-bottom: 16px;
         }
 
+        #next-live-show {
+            display: none;
+            background: linear-gradient(90deg, #d4a32a, #e8c547);
+            color: #000;
+            padding: 12px 20px;
+            margin-bottom: 16px;
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        #next-live-show .next-label {
+            text-transform: uppercase;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        #next-live-show .next-details {
+            font-size: 16px;
+            font-weight: 400;
+        }
+
         .programme-item {
             display: flex;
             justify-content: space-between;
@@ -1146,6 +1171,7 @@
     <div id="programme-chat-row">
         <div id="programme-section">
             <h2>PROGRAMME</h2>
+            <div id="next-live-show"></div>
             <div id="programme-date"></div>
             <div id="programme-live-message">Currently streaming live. Programme resumes after the live session.</div>
             <div id="programme-list"></div>
@@ -1226,7 +1252,7 @@
         <p class="paragraph">An independent, non-profit radio station streaming 24/7 from Los Angeles.</p>
         <p class="paragraph">Ronaut Radio is dedicated to vinyl culture and the selectors who keep it alive. We broadcast a continuous rotation of live and recorded sets from DJs across Los Angeles and San Diego, highlighting the richness of our local scene.</p>
         <p class="paragraph">This platform exists to give DJs airtime — free of algorithms, free of commercial pressure — using high-quality streaming infrastructure and a community-first mindset.</p>
-        <p class="paragraph"><strong>If you want to be featured or collaborate, <a href="mailto:ronautradio@gmail.com">connect with us</a> below.</strong></p>
+        <p class="paragraph"><strong>If you want to be featured or collaborate, <a href="mailto:ronautradio@gmail.com">connect with us</a>.</strong></p>
     </div>
 
     <!-- STAFF PICKS -->
@@ -2240,14 +2266,45 @@
             firstDay: 1, // Monday
             nowIndicator: true,
             eventSources: [{
-                url: 'https://calendar.google.com/calendar/ical/heffcoi%40gmail.com/public/basic.ics',
-                format: 'ics'
+                url: 'https://calendar.google.com/calendar/ical/ronautradio%40gmail.com/public/basic.ics',
+                format: 'ics',
+                success: function() {
+                    // After events load, find and display next upcoming show
+                    setTimeout(showNextLiveShow, 500);
+                }
             }],
             eventClick: function(info) {
                 info.jsEvent.preventDefault();
             }
         });
         calendar.render();
+
+        function showNextLiveShow() {
+            var events = calendar.getEvents();
+            var now = new Date();
+            var nextEvent = null;
+
+            // Find the next upcoming event
+            for (var i = 0; i < events.length; i++) {
+                var eventStart = events[i].start;
+                if (eventStart > now) {
+                    if (!nextEvent || eventStart < nextEvent.start) {
+                        nextEvent = events[i];
+                    }
+                }
+            }
+
+            if (nextEvent) {
+                var nextShowEl = document.getElementById('next-live-show');
+                var startDate = nextEvent.start;
+                var options = { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+                var dateStr = startDate.toLocaleDateString('en-US', options);
+
+                nextShowEl.innerHTML = '<div class="next-label">Next Live Show</div>' +
+                    '<div class="next-details">' + escapeHtml(nextEvent.title) + ' — ' + dateStr + '</div>';
+                nextShowEl.style.display = 'block';
+            }
+        }
     });
     </script>
 </body>
