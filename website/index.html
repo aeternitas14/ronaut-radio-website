@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8" />
     <title>Ronaut Radio</title>
-    <link rel="icon" type="image/jpeg" href="assets/favicon.jpg" />
-    <link rel="apple-touch-icon" href="assets/favicon.jpg" />
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png" />
     <meta content="Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation. Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels." name="description" />
     <meta content="Ronaut Radio" property="og:title" />
     <meta content="Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation. Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels." property="og:description" />
-    <meta content="https://ronautradio.la/assets/favicon.jpg" property="og:image" />
+    <meta content="https://ronautradio.la/assets/favicon.png" property="og:image" />
     <meta content="Ronaut Radio" property="twitter:title" />
     <meta content="Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation. Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels." property="twitter:description" />
-    <meta content="https://ronautradio.la/assets/favicon.jpg" property="twitter:image" />
+    <meta content="https://ronautradio.la/assets/favicon.png" property="twitter:image" />
     <meta property="og:type" content="website" />
     <meta content="summary_large_image" name="twitter:card" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
@@ -1896,7 +1896,7 @@
                     for (var i = 0; i < residentsData.length; i++) {
                         var r = residentsData[i];
                         html += '<div class="resident-row" data-index="' + i + '">';
-                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" onerror="this.src=\'assets/favicon.jpg\'" />';
+                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" onerror="this.src=\'assets/favicon.png\'" />';
                         html += '<span class="name">' + escapeHtml(r.name) + '</span>';
                         html += '<span class="arrow">&#8250;</span>';
                         html += '</div>';
@@ -1921,7 +1921,7 @@
             function openDetail(idx) {
                 var r = residentsData[idx];
                 var photoUrl = 'https://stream.ronautradio.la' + r.photo;
-                var fallbackUrl = 'assets/favicon.jpg';
+                var fallbackUrl = 'assets/favicon.png';
                 var detailPhoto = document.getElementById('detail-photo');
 
                 // Try to load image, use fallback if fails
