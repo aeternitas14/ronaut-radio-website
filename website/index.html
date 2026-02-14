@@ -2280,6 +2280,12 @@
             initialView: 'dayGridMonth',
             firstDay: 1, // Monday
             nowIndicator: true,
+            displayEventTime: true,
+            eventTimeFormat: {
+                hour: 'numeric',
+                minute: '2-digit',
+                meridiem: 'short'
+            },
             eventSources: [{
                 url: 'https://stream.ronautradio.la/api/calendar.ics',
                 format: 'ics',
@@ -2293,6 +2299,14 @@
             }],
             eventClick: function(info) {
                 info.jsEvent.preventDefault();
+                var event = info.event;
+                var start = event.start;
+                var end = event.end;
+                var options = { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' };
+                var startStr = start.toLocaleString('en-US', options) + ' PT';
+                var endStr = end ? end.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' }) + ' PT' : '';
+                var timeRange = endStr ? startStr + ' - ' + endStr : startStr;
+                alert(event.title + '\n\n' + timeRange);
             }
         });
         calendar.render();
@@ -2317,8 +2331,8 @@
             var banner = document.getElementById('next-live-banner');
             if (nextEvent) {
                 var startDate = nextEvent.start;
-                var options = { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' };
-                var dateStr = startDate.toLocaleDateString('en-US', options);
+                var options = { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' };
+                var dateStr = startDate.toLocaleString('en-US', options);
 
                 nextLiveBannerText = 'Next Live: ' + nextEvent.title + ' — ' + dateStr;
                 banner.textContent = nextLiveBannerText;
