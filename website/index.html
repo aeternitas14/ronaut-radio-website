@@ -1943,7 +1943,7 @@
                     for (var i = 0; i < residentsData.length; i++) {
                         var r = residentsData[i];
                         html += '<div class="resident-row" data-index="' + i + '">';
-                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" />';
+                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" onerror="this.src=\'assets/favicon.jpg\'" />';
                         html += '<span class="name">' + escapeHtml(r.name) + '</span>';
                         html += '<span class="arrow">&#8250;</span>';
                         html += '</div>';
@@ -1967,7 +1967,19 @@
 
             function openDetail(idx) {
                 var r = residentsData[idx];
-                document.getElementById('detail-photo').style.backgroundImage = 'url(https://stream.ronautradio.la' + r.photo + ')';
+                var photoUrl = 'https://stream.ronautradio.la' + r.photo;
+                var fallbackUrl = 'assets/favicon.jpg';
+                var detailPhoto = document.getElementById('detail-photo');
+
+                // Try to load image, use fallback if fails
+                var img = new Image();
+                img.onload = function() {
+                    detailPhoto.style.backgroundImage = 'url(' + photoUrl + ')';
+                };
+                img.onerror = function() {
+                    detailPhoto.style.backgroundImage = 'url(' + fallbackUrl + ')';
+                };
+                img.src = photoUrl;
                 document.getElementById('detail-name').textContent = r.name;
                 document.getElementById('detail-bio').textContent = r.bio || '';
 
