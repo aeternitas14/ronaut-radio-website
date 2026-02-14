@@ -1896,7 +1896,7 @@
                     for (var i = 0; i < residentsData.length; i++) {
                         var r = residentsData[i];
                         html += '<div class="resident-row" data-index="' + i + '">';
-                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" onerror="this.src=\'assets/favicon.png\'" />';
+                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" onerror="this.src=\'https://stream.ronautradio.la/residents/logo.png\'" />';
                         html += '<span class="name">' + escapeHtml(r.name) + '</span>';
                         html += '<span class="arrow">&#8250;</span>';
                         html += '</div>';
@@ -1921,7 +1921,7 @@
             function openDetail(idx) {
                 var r = residentsData[idx];
                 var photoUrl = 'https://stream.ronautradio.la' + r.photo;
-                var fallbackUrl = 'assets/favicon.png';
+                var fallbackUrl = 'https://stream.ronautradio.la/residents/logo.png';
                 var detailPhoto = document.getElementById('detail-photo');
 
                 // Try to load image, use fallback if fails
