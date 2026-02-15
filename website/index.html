@@ -1196,6 +1196,97 @@
             background: #333;
         }
 
+        /* Mini Player */
+        #mini-player {
+            position: fixed;
+            background: #000;
+            color: #fff;
+            font-family: Oswald, sans-serif;
+            z-index: 9998;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        #mini-player.visible {
+            display: flex;
+        }
+
+        #mini-player .mini-status {
+            font-size: 10px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ff4444;
+        }
+
+        #mini-player .mini-title {
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        #mini-player .mini-info {
+            cursor: pointer;
+        }
+
+        #mini-player .mini-info:hover .mini-title {
+            text-decoration: underline;
+        }
+
+        #mini-player .mini-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        #mini-player .mini-btn {
+            background: none;
+            border: 1px solid #fff;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            padding: 0;
+        }
+
+        #mini-player .mini-btn:hover {
+            background: #333;
+        }
+
+        /* Desktop: top-left */
+        @media (min-width: 768px) {
+            #mini-player {
+                top: 15px;
+                left: 15px;
+                border: 1px solid #333;
+            }
+        }
+
+        /* Mobile: bottom sticky bar */
+        @media (max-width: 767px) {
+            #mini-player {
+                bottom: 0;
+                left: 0;
+                right: 0;
+                justify-content: space-between;
+                border-top: 1px solid #333;
+            }
+            #mini-player .mini-title {
+                max-width: none;
+                flex: 1;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 767px) {
             .main-title {
@@ -1212,6 +1303,18 @@
     </style>
 </head>
 <body>
+    <!-- Mini Player (appears when scrolling) -->
+    <div id="mini-player">
+        <div class="mini-info">
+            <div class="mini-status">LIVE</div>
+            <div class="mini-title">Loading...</div>
+        </div>
+        <div class="mini-controls">
+            <button class="mini-btn" id="mini-play-btn" title="Play/Pause">▶</button>
+            <button class="mini-btn" id="mini-mute-btn" title="Mute/Unmute">🔊</button>
+        </div>
+    </div>
+
     <div id="top-player-container">
         <div id="player-container">
             <video id="ronaut-player" class="video-js vjs-default-skin" controls autoplay muted playsinline webkit-playsinline x5-playsinline preload="none" crossorigin="anonymous">
@@ -1551,20 +1654,29 @@
                     var data = await res.json();
                     currentMode = data.mode || 'offline';
 
+                    var miniStatus = document.querySelector('#mini-player .mini-status');
+                    var miniTitle = document.querySelector('#mini-player .mini-title');
+
                     if (currentMode === 'live') {
                         liveBadge.classList.add('active');
                         liveBadge.style.display = 'flex';
                         ticker.textContent = 'LIVE BROADCAST';
                         ticker.style.display = 'block';
+                        if (miniStatus) miniStatus.textContent = 'LIVE';
+                        if (miniTitle) miniTitle.textContent = 'Live Broadcast';
                     } else {
                         liveBadge.classList.remove('active');
                         liveBadge.style.display = 'none';
                         if (data.now_playing && data.now_playing !== 'Offline') {
                             ticker.textContent = 'Now Playing: ' + data.now_playing;
                             ticker.style.display = 'block';
+                            if (miniStatus) miniStatus.textContent = 'NOW PLAYING';
+                            if (miniTitle) miniTitle.textContent = data.now_playing;
                         } else {
                             ticker.textContent = 'Stream offline';
                             ticker.style.display = 'block';
+                            if (miniStatus) miniStatus.textContent = 'OFFLINE';
+                            if (miniTitle) miniTitle.textContent = 'Stream offline';
                         }
                     }
                 } catch (err) {
@@ -1652,6 +1764,66 @@
             // Poll: now-playing every 10s, programme every 30s
             setInterval(updateNowPlaying, 10000);
             setInterval(updateProgramme, 30000);
+
+            // Mini Player - show when main player scrolls out of view
+            (function() {
+                var miniPlayer = document.getElementById('mini-player');
+                var playerContainer = document.getElementById('player-container');
+                var video = document.getElementById('ronaut-player');
+                var miniPlayBtn = document.getElementById('mini-play-btn');
+                var miniMuteBtn = document.getElementById('mini-mute-btn');
+
+                function updateMiniPlayerButtons() {
+                    if (!video) return;
+                    miniPlayBtn.textContent = video.paused ? '▶' : '⏸';
+                    miniMuteBtn.textContent = video.muted ? '🔇' : '🔊';
+                }
+
+                // Scroll listener
+                var lastScrollY = 0;
+                var ticking = false;
+                window.addEventListener('scroll', function() {
+                    lastScrollY = window.scrollY;
+                    if (!ticking) {
+                        window.requestAnimationFrame(function() {
+                            var rect = playerContainer.getBoundingClientRect();
+                            var playerHidden = rect.bottom < 100;
+                            if (playerHidden) {
+                                miniPlayer.classList.add('visible');
+                            } else {
+                                miniPlayer.classList.remove('visible');
+                            }
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                });
+
+                // Mini player controls
+                miniPlayBtn.addEventListener('click', function() {
+                    if (video.paused) {
+                        video.play().catch(function(e) { console.log('Play prevented', e); });
+                    } else {
+                        video.pause();
+                    }
+                    updateMiniPlayerButtons();
+                });
+
+                miniMuteBtn.addEventListener('click', function() {
+                    video.muted = !video.muted;
+                    updateMiniPlayerButtons();
+                });
+
+                // Update buttons when video state changes
+                video.addEventListener('play', updateMiniPlayerButtons);
+                video.addEventListener('pause', updateMiniPlayerButtons);
+                video.addEventListener('volumechange', updateMiniPlayerButtons);
+
+                // Click mini player to scroll to main player
+                miniPlayer.querySelector('.mini-info').addEventListener('click', function() {
+                    playerContainer.scrollIntoView({ behavior: 'smooth' });
+                });
+            })();
 
             // Initialize HLS Player
             video.crossOrigin = 'anonymous';
