@@ -1249,17 +1249,6 @@
             display: block;
         }
 
-        #mini-player .mini-waveform-wrap {
-            width: 60px;
-            height: 30px;
-            flex-shrink: 0;
-        }
-
-        #mini-player #mini-waveform {
-            width: 100%;
-            height: 100%;
-        }
-
         #mini-player .mini-info {
             cursor: pointer;
         }
@@ -1351,9 +1340,6 @@
     <div id="mini-player">
         <div class="mini-video-wrap">
             <video id="mini-video" muted playsinline></video>
-        </div>
-        <div class="mini-waveform-wrap">
-            <canvas id="mini-waveform"></canvas>
         </div>
         <div class="mini-info">
             <div class="mini-status">LIVE</div>
@@ -1932,45 +1918,6 @@
                     playerContainer.scrollIntoView({ behavior: 'smooth' });
                 });
 
-                // Mini waveform (animated bars)
-                var miniWaveCanvas = document.getElementById('mini-waveform');
-                var miniWaveCtx = miniWaveCanvas.getContext('2d');
-                var miniDemoPhase = 0;
-
-                function drawMiniWaveform() {
-                    if (!miniPlayer.classList.contains('visible')) {
-                        requestAnimationFrame(drawMiniWaveform);
-                        return;
-                    }
-
-                    var width = miniWaveCanvas.width = miniWaveCanvas.offsetWidth * 2;
-                    var height = miniWaveCanvas.height = miniWaveCanvas.offsetHeight * 2;
-                    miniWaveCtx.clearRect(0, 0, width, height);
-
-                    var bars = 8;
-                    var barWidth = width / bars - 2;
-                    var isPlaying = video && !video.paused;
-
-                    miniDemoPhase += isPlaying ? 0.12 : 0.03;
-
-                    miniWaveCtx.fillStyle = '#fff';
-                    for (var i = 0; i < bars; i++) {
-                        var h;
-                        if (isPlaying) {
-                            h = (Math.sin(miniDemoPhase + i * 0.7) * 0.35 + 0.5) * height;
-                        } else {
-                            h = (Math.sin(miniDemoPhase + i * 0.5) * 0.1 + 0.2) * height;
-                        }
-                        var x = i * (barWidth + 2);
-                        h = Math.max(4, h);
-                        var y = (height - h) / 2;
-                        miniWaveCtx.fillRect(x, y, barWidth, h);
-                    }
-
-                    requestAnimationFrame(drawMiniWaveform);
-                }
-
-                drawMiniWaveform();
             })();
 
             // Initialize HLS Player
