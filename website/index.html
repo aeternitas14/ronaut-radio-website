@@ -45,7 +45,6 @@
     <meta property="og:type" content="video">
     
     <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css' rel='stylesheet' />
 
     <style>
         body {
@@ -345,18 +344,102 @@
             line-height: 1.6;
         }
         
-        /* Calendar Styling */
-        .fc { font-family: Oswald, sans-serif !important; }
-        .fc-toolbar { margin-bottom: 20px !important; }
-        .fc-toolbar-title { font-size: 24px !important; font-weight: 300 !important; letter-spacing: 1px !important; color: #333 !important; }
-        .fc-button { background: #000 !important; border: 1px solid #000 !important; color: white !important; font-family: Oswald, sans-serif !important; font-weight: 400 !important; letter-spacing: 1px !important; text-transform: uppercase !important; }
-        .fc-button:hover { background: #333 !important; border-color: #333 !important; }
-        .fc-event { background: #000 !important; color: white !important; border: none !important; font-family: Oswald, sans-serif !important; font-weight: 400 !important; }
-        .fc-event:hover { background: #333 !important; color: white !important; }
-        .fc-daygrid-day-number { font-family: Oswald, sans-serif !important; font-weight: 400 !important; }
-        .fc-col-header-cell { font-family: Oswald, sans-serif !important; font-weight: 400 !important; letter-spacing: 1px !important; text-transform: uppercase !important; }
-        .fc-daygrid-event, .fc-event-title, .fc-event-time { color: white !important; }
-        .fc .fc-daygrid-block-event { white-space: normal !important; }
+        /* Event Cards */
+        .event-card {
+            display: flex;
+            border: 1px solid #000;
+            margin-bottom: 15px;
+            font-family: Oswald, sans-serif;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .event-date {
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            min-width: 80px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .event-date .month {
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .event-date .day {
+            font-size: 32px;
+            font-weight: 500;
+            line-height: 1;
+            margin: 4px 0;
+        }
+        .event-date .weekday {
+            font-size: 11px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+        .event-details {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .event-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0 0 6px 0;
+            letter-spacing: 0.5px;
+        }
+        .event-time {
+            font-size: 13px;
+            font-weight: 300;
+            color: #666;
+            margin: 0;
+        }
+        .event-actions {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            gap: 8px;
+        }
+        .event-actions a {
+            font-size: 10px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 12px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .event-actions .add-gcal {
+            background: #000;
+            color: #fff;
+        }
+        .event-actions .add-gcal:hover {
+            background: #333;
+        }
+        .event-actions .add-ics {
+            background: #fff;
+            color: #000;
+            border: 1px solid #000;
+        }
+        .event-actions .add-ics:hover {
+            background: #f5f5f5;
+        }
+        @media (max-width: 500px) {
+            .event-card { flex-direction: column; }
+            .event-date { padding: 15px; flex-direction: row; gap: 10px; min-width: auto; }
+            .event-date .day { font-size: 24px; margin: 0; }
+            .event-actions { padding: 10px 15px; }
+        }
         
         /* LIVE Badge */
         #live-badge {
@@ -1271,27 +1354,15 @@
         <div id="picks-grid"></div>
     </div>
 
-    <!-- SCHEDULE SECTION -->
+    <!-- UPCOMING SHOWS SECTION -->
     <div class="w-container" style="margin-top: 60px; margin-bottom: 40px;">
       <h2 style="font-size: 36px; font-weight: 300; letter-spacing: 2px; margin-bottom: 10px;">UPCOMING SHOWS</h2>
-      <div style="text-align: center; margin-bottom: 25px;">
+      <div style="text-align: center; margin-bottom: 30px;">
         <a href="https://calendar.google.com/calendar/u/0?cid=cm9uYXV0cmFkaW9AZ21haWwuY29t" target="_blank" style="display: inline-block; background: #000; color: #fff; font-family: Oswald, sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 16px; text-decoration: none; margin: 3px;">Subscribe to All</a>
         <a href="https://stream.ronautradio.la/api/calendar.ics" download="ronaut-radio.ics" style="display: inline-block; background: #fff; color: #000; border: 1px solid #000; font-family: Oswald, sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 16px; text-decoration: none; margin: 3px;">Download .ics</a>
       </div>
-      <div id="calendar" style="max-width: 800px; margin: 0 auto;"></div>
-    </div>
-
-    <!-- Event Popup Modal -->
-    <div id="event-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
-      <div style="background: #fff; padding: 30px; max-width: 400px; width: 90%; font-family: Oswald, sans-serif;">
-        <h3 id="event-modal-title" style="font-size: 20px; font-weight: 500; margin: 0 0 10px 0;"></h3>
-        <p id="event-modal-time" style="font-size: 14px; font-weight: 300; color: #666; margin: 0 0 20px 0;"></p>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <a id="event-add-google" href="#" target="_blank" style="display: block; background: #000; color: #fff; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; padding: 12px; text-decoration: none; text-align: center;">+ Add to Google Calendar</a>
-          <a id="event-add-ics" href="#" download style="display: block; background: #fff; color: #000; border: 1px solid #000; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; padding: 12px; text-decoration: none; text-align: center;">Download .ics</a>
-          <button onclick="document.getElementById('event-modal').style.display='none'" style="background: none; border: none; color: #999; font-family: Oswald, sans-serif; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; padding: 10px; cursor: pointer;">Close</button>
-        </div>
-      </div>
+      <div id="upcoming-events" style="max-width: 600px; margin: 0 auto;"></div>
+      <p id="no-upcoming" style="text-align: center; font-family: Oswald, sans-serif; font-weight: 300; font-size: 14px; color: #999; display: none;">No upcoming shows scheduled. Check back soon!</p>
     </div>
     
     <div class="section">
@@ -1302,11 +1373,6 @@
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src='https://cdn.jsdelivr.net/npm/ical.js@1.5.0/build/ical.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/luxon@3.4.4/build/global/luxon.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/luxon3@6.1.15/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/icalendar@6.1.15/index.global.min.js'></script>
     <script src='https://unpkg.com/popper.js/dist/umd/popper.min.js'></script>
     <script src='https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js'></script>
 
@@ -2295,124 +2361,142 @@
             }
         })();
 
-        // Calendar
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            timeZone: 'America/Los_Angeles',
-            headerToolbar: {
-                left: 'prev,next',
-                center: 'title',
-                right: 'today'
-            },
-            initialView: 'dayGridMonth',
-            firstDay: 1, // Monday
-            nowIndicator: true,
-            displayEventTime: true,
-            eventTimeFormat: {
-                hour: 'numeric',
-                minute: '2-digit',
-                meridiem: 'short'
-            },
-            events: {
-                url: 'https://stream.ronautradio.la/api/calendar.ics',
-                format: 'ics'
-            },
-            loading: function(isLoading) {
-                if (!isLoading) {
-                    console.log('Calendar loaded, events:', calendar.getEvents().length);
-                    setTimeout(showNextLiveShow, 500);
-                }
-            },
-            eventMouseEnter: function(info) {
-                info.el.style.cursor = 'pointer';
-                info.el.style.transform = 'scale(1.02)';
-                info.el.style.transition = 'transform 0.15s ease';
-            },
-            eventMouseLeave: function(info) {
-                info.el.style.transform = 'scale(1)';
-            },
-            eventClick: function(info) {
-                info.jsEvent.preventDefault();
-                var event = info.event;
-                var start = event.start;
-                var end = event.end || new Date(start.getTime() + 3600000); // Default 1 hour
-
-                // Format display time
-                var options = { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' };
-                var startStr = start.toLocaleString('en-US', options) + ' PT';
-                var endStr = end.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' }) + ' PT';
-                var timeRange = startStr + ' - ' + endStr;
-
-                // Format dates for Google Calendar URL (YYYYMMDDTHHMMSSZ)
-                function toGoogleDate(d) {
-                    return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-                }
-                var gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
-                    '&text=' + encodeURIComponent(event.title) +
-                    '&dates=' + toGoogleDate(start) + '/' + toGoogleDate(end) +
-                    '&details=' + encodeURIComponent('Ronaut Radio Live Stream - ronautradio.la');
-
-                // Generate ICS content for download
-                function toIcsDate(d) {
-                    return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-                }
-                var icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\n' +
-                    'DTSTART:' + toIcsDate(start) + '\n' +
-                    'DTEND:' + toIcsDate(end) + '\n' +
-                    'SUMMARY:' + event.title + '\n' +
-                    'DESCRIPTION:Ronaut Radio Live Stream - ronautradio.la\n' +
-                    'END:VEVENT\nEND:VCALENDAR';
-                var icsBlob = new Blob([icsContent], { type: 'text/calendar' });
-                var icsUrl = URL.createObjectURL(icsBlob);
-
-                // Update and show modal
-                document.getElementById('event-modal-title').textContent = event.title;
-                document.getElementById('event-modal-time').textContent = timeRange;
-                document.getElementById('event-add-google').href = gcalUrl;
-                document.getElementById('event-add-ics').href = icsUrl;
-                document.getElementById('event-add-ics').download = event.title.replace(/[^a-z0-9]/gi, '-') + '.ics';
-                document.getElementById('event-modal').style.display = 'flex';
-            }
-        });
-        calendar.render();
-
-        // Close modal when clicking outside
-        document.getElementById('event-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-            }
-        });
-
+        // Upcoming Events - Fetch ICS and render cards
+        var upcomingEvents = [];
         var nextLiveBannerText = '';
 
-        function showNextLiveShow() {
-            var events = calendar.getEvents();
-            var now = new Date();
-            var nextEvent = null;
+        function parseICS(icsText) {
+            var events = [];
+            var lines = icsText.split('\n');
+            var currentEvent = null;
 
-            // Find the next upcoming event
-            for (var i = 0; i < events.length; i++) {
-                var eventStart = events[i].start;
-                if (eventStart > now) {
-                    if (!nextEvent || eventStart < nextEvent.start) {
-                        nextEvent = events[i];
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (line === 'BEGIN:VEVENT') {
+                    currentEvent = {};
+                } else if (line === 'END:VEVENT' && currentEvent) {
+                    if (currentEvent.summary && currentEvent.dtstart) {
+                        events.push(currentEvent);
+                    }
+                    currentEvent = null;
+                } else if (currentEvent) {
+                    if (line.startsWith('SUMMARY:')) {
+                        currentEvent.summary = line.substring(8);
+                    } else if (line.startsWith('DTSTART:')) {
+                        var dtStr = line.substring(8).replace('Z', '');
+                        currentEvent.dtstart = new Date(
+                            dtStr.substring(0,4) + '-' + dtStr.substring(4,6) + '-' + dtStr.substring(6,8) + 'T' +
+                            dtStr.substring(9,11) + ':' + dtStr.substring(11,13) + ':' + dtStr.substring(13,15) + 'Z'
+                        );
+                    } else if (line.startsWith('DTEND:')) {
+                        var dtEndStr = line.substring(6).replace('Z', '');
+                        currentEvent.dtend = new Date(
+                            dtEndStr.substring(0,4) + '-' + dtEndStr.substring(4,6) + '-' + dtEndStr.substring(6,8) + 'T' +
+                            dtEndStr.substring(9,11) + ':' + dtEndStr.substring(11,13) + ':' + dtEndStr.substring(13,15) + 'Z'
+                        );
                     }
                 }
             }
+            return events;
+        }
 
-            var banner = document.getElementById('next-live-banner');
-            if (nextEvent) {
-                var startDate = nextEvent.start;
+        function toGoogleDate(d) {
+            return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+        }
+
+        function createEventCard(event) {
+            var start = event.dtstart;
+            var end = event.dtend || new Date(start.getTime() + 3600000);
+
+            var monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+            var dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            // Convert to Pacific Time for display
+            var options = { timeZone: 'America/Los_Angeles' };
+            var ptDate = new Date(start.toLocaleString('en-US', options));
+            var month = start.toLocaleString('en-US', { month: 'short', timeZone: 'America/Los_Angeles' }).toUpperCase();
+            var day = start.toLocaleString('en-US', { day: 'numeric', timeZone: 'America/Los_Angeles' });
+            var weekday = start.toLocaleString('en-US', { weekday: 'short', timeZone: 'America/Los_Angeles' });
+            var timeStr = start.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' }) + ' PT';
+
+            var gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+                '&text=' + encodeURIComponent(event.summary) +
+                '&dates=' + toGoogleDate(start) + '/' + toGoogleDate(end) +
+                '&details=' + encodeURIComponent('Ronaut Radio Live Stream - ronautradio.la');
+
+            var icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\n' +
+                'DTSTART:' + toGoogleDate(start) + '\n' +
+                'DTEND:' + toGoogleDate(end) + '\n' +
+                'SUMMARY:' + event.summary + '\n' +
+                'DESCRIPTION:Ronaut Radio Live Stream - ronautradio.la\n' +
+                'END:VEVENT\nEND:VCALENDAR';
+            var icsBlob = new Blob([icsContent], { type: 'text/calendar' });
+            var icsUrl = URL.createObjectURL(icsBlob);
+
+            var card = document.createElement('div');
+            card.className = 'event-card';
+            card.innerHTML =
+                '<div class="event-date">' +
+                    '<span class="month">' + month + '</span>' +
+                    '<span class="day">' + day + '</span>' +
+                    '<span class="weekday">' + weekday + '</span>' +
+                '</div>' +
+                '<div class="event-details">' +
+                    '<h3 class="event-title">' + event.summary + '</h3>' +
+                    '<p class="event-time">' + timeStr + '</p>' +
+                '</div>' +
+                '<div class="event-actions">' +
+                    '<a href="' + gcalUrl + '" target="_blank" class="add-gcal">+ Google</a>' +
+                    '<a href="' + icsUrl + '" download="' + event.summary.replace(/[^a-z0-9]/gi, '-') + '.ics" class="add-ics">.ics</a>' +
+                '</div>';
+
+            return card;
+        }
+
+        function renderUpcomingEvents() {
+            var container = document.getElementById('upcoming-events');
+            var noUpcoming = document.getElementById('no-upcoming');
+            var now = new Date();
+
+            // Filter to future events and sort
+            var futureEvents = upcomingEvents.filter(function(e) { return e.dtstart > now; });
+            futureEvents.sort(function(a, b) { return a.dtstart - b.dtstart; });
+
+            container.innerHTML = '';
+
+            if (futureEvents.length === 0) {
+                noUpcoming.style.display = 'block';
+            } else {
+                noUpcoming.style.display = 'none';
+                futureEvents.forEach(function(event) {
+                    container.appendChild(createEventCard(event));
+                });
+            }
+
+            // Update banner with next event
+            if (futureEvents.length > 0) {
+                var nextEvent = futureEvents[0];
+                var startDate = nextEvent.dtstart;
                 var options = { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' };
                 var dateStr = startDate.toLocaleString('en-US', options);
-
-                nextLiveBannerText = 'Next Live: ' + nextEvent.title + ' — ' + dateStr;
-                banner.textContent = nextLiveBannerText;
-
-                // Start the periodic display cycle
+                nextLiveBannerText = 'Next Live: ' + nextEvent.summary + ' — ' + dateStr;
+                document.getElementById('next-live-banner').textContent = nextLiveBannerText;
                 startBannerCycle();
             }
         }
+
+        // Fetch calendar
+        fetch('https://stream.ronautradio.la/api/calendar.ics')
+            .then(function(response) { return response.text(); })
+            .then(function(icsText) {
+                upcomingEvents = parseICS(icsText);
+                console.log('Calendar loaded, events:', upcomingEvents.length);
+                renderUpcomingEvents();
+            })
+            .catch(function(err) {
+                console.error('Calendar fetch error:', err);
+                document.getElementById('no-upcoming').style.display = 'block';
+            });
 
         function startBannerCycle() {
             var banner = document.getElementById('next-live-banner');
