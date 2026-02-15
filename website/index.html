@@ -1206,7 +1206,7 @@
             display: none;
             align-items: center;
             gap: 12px;
-            padding: 10px 15px;
+            padding: 10px 15px 10px 0;
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
@@ -1233,12 +1233,12 @@
         }
 
         #mini-player .mini-video-wrap {
-            width: 140px;
-            height: 79px;
+            width: 180px;
+            height: 101px;
             background: #000;
             overflow: hidden;
             flex-shrink: 0;
-            margin: -10px 0 -10px -15px;
+            margin: -10px 0 -10px 0;
         }
 
         #mini-player #mini-video {
@@ -1290,9 +1290,12 @@
         /* Desktop: top-left */
         @media (min-width: 768px) {
             #mini-player {
-                top: 15px;
-                left: 15px;
-                border: 1px solid #333;
+                top: 0;
+                left: 0;
+                padding: 0 15px 0 0;
+            }
+            #mini-player .mini-video-wrap {
+                margin: 0;
             }
         }
 
@@ -1304,12 +1307,12 @@
                 right: 0;
                 justify-content: space-between;
                 border-top: 1px solid #333;
-                padding: 8px 12px;
+                padding: 0 12px 0 0;
             }
             #mini-player .mini-video-wrap {
-                width: 100px;
-                height: 56px;
-                margin: -8px 0 -8px -12px;
+                width: 120px;
+                height: 68px;
+                margin: 0;
             }
             #mini-player .mini-title {
                 max-width: none;
