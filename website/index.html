@@ -1232,6 +1232,21 @@
             max-width: 200px;
         }
 
+        #mini-player .mini-video-wrap {
+            width: 80px;
+            height: 45px;
+            background: #111;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        #mini-player #mini-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
         #mini-player .mini-info {
             cursor: pointer;
         }
@@ -1281,6 +1296,10 @@
                 justify-content: space-between;
                 border-top: 1px solid #333;
             }
+            #mini-player .mini-video-wrap {
+                width: 60px;
+                height: 34px;
+            }
             #mini-player .mini-title {
                 max-width: none;
                 flex: 1;
@@ -1305,6 +1324,9 @@
 <body>
     <!-- Mini Player (appears when scrolling) -->
     <div id="mini-player">
+        <div class="mini-video-wrap">
+            <video id="mini-video" muted playsinline></video>
+        </div>
         <div class="mini-info">
             <div class="mini-status">LIVE</div>
             <div class="mini-title">Loading...</div>
@@ -1770,8 +1792,11 @@
                 var miniPlayer = document.getElementById('mini-player');
                 var playerContainer = document.getElementById('player-container');
                 var video = document.getElementById('ronaut-player');
+                var miniVideo = document.getElementById('mini-video');
                 var miniPlayBtn = document.getElementById('mini-play-btn');
                 var miniMuteBtn = document.getElementById('mini-mute-btn');
+                var miniHlsInitialized = false;
+                var miniHls = null;
 
                 function updateMiniPlayerButtons() {
                     if (!video) return;
@@ -1779,9 +1804,37 @@
                     miniMuteBtn.textContent = video.muted ? '🔇' : '🔊';
                 }
 
+                function initMiniHls() {
+                    if (miniHlsInitialized) return;
+                    miniHlsInitialized = true;
+
+                    var streamUrl = 'https://stream.ronautradio.la/live/hls/stream.m3u8';
+                    if (Hls.isSupported()) {
+                        miniHls = new Hls({ maxBufferLength: 5, maxMaxBufferLength: 10 });
+                        miniHls.loadSource(streamUrl);
+                        miniHls.attachMedia(miniVideo);
+                        miniHls.on(Hls.Events.MANIFEST_PARSED, function() {
+                            miniVideo.play().catch(function(e) {});
+                        });
+                    } else if (miniVideo.canPlayType('application/vnd.apple.mpegurl')) {
+                        miniVideo.src = streamUrl;
+                        miniVideo.play().catch(function(e) {});
+                    }
+                }
+
+                function destroyMiniHls() {
+                    if (miniHls) {
+                        miniHls.destroy();
+                        miniHls = null;
+                    }
+                    miniHlsInitialized = false;
+                    miniVideo.src = '';
+                }
+
                 // Scroll listener
                 var lastScrollY = 0;
                 var ticking = false;
+                var wasVisible = false;
                 window.addEventListener('scroll', function() {
                     lastScrollY = window.scrollY;
                     if (!ticking) {
@@ -1790,8 +1843,16 @@
                             var playerHidden = rect.bottom < 100;
                             if (playerHidden) {
                                 miniPlayer.classList.add('visible');
+                                if (!wasVisible) {
+                                    initMiniHls();
+                                    wasVisible = true;
+                                }
                             } else {
                                 miniPlayer.classList.remove('visible');
+                                if (wasVisible) {
+                                    destroyMiniHls();
+                                    wasVisible = false;
+                                }
                             }
                             ticking = false;
                         });
@@ -1821,6 +1882,11 @@
 
                 // Click mini player to scroll to main player
                 miniPlayer.querySelector('.mini-info').addEventListener('click', function() {
+                    playerContainer.scrollIntoView({ behavior: 'smooth' });
+                });
+
+                // Click mini video to scroll to main player
+                miniVideo.addEventListener('click', function() {
                     playerContainer.scrollIntoView({ behavior: 'smooth' });
                 });
             })();
