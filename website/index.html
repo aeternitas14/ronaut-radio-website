@@ -169,12 +169,12 @@
             transition: box-shadow 0.1s ease-out;
         }
 
-        /* Energy meter - thin bar below ticker */
+        /* Energy meter - intensity bar directly below waveform */
         #energy-meter {
             position: absolute;
             bottom: 8px;
             right: 20px;
-            width: 120px;
+            width: 280px;
             height: 3px;
             background: rgba(255, 255, 255, 0.2);
             overflow: hidden;
@@ -189,10 +189,10 @@
             border-radius: 2px;
         }
 
-        /* AM-style waveform visualizer - bottom right, above controls */
+        /* AM-style waveform visualizer - stacked directly above energy meter */
         #waveform-container {
             position: absolute;
-            bottom: 40px;
+            bottom: 11px; /* 8px (energy-meter bottom) + 3px (energy-meter height) = 11px */
             right: 20px;
             width: 280px;
             height: 70px;
@@ -221,10 +221,10 @@
             transform: translateZ(0);
         }
 
-        /* Mobile: adjust waveform position and size */
+        /* Mobile: adjust waveform and energy meter position and size */
         @media (max-width: 767px) {
             #waveform-container {
-                bottom: 35px;
+                bottom: 11px; /* Same stacking as desktop */
                 right: 10px;
                 width: 160px;
                 height: 45px;
@@ -239,6 +239,9 @@
             }
 
             #energy-meter {
+                bottom: 8px;
+                right: 10px;
+                width: 160px;
                 display: block !important;
                 visibility: visible !important;
             }
@@ -246,10 +249,16 @@
 
         @media (max-width: 480px) {
             #waveform-container {
-                bottom: 32px;
+                bottom: 11px;
                 right: 8px;
                 width: 120px;
                 height: 35px;
+            }
+
+            #energy-meter {
+                bottom: 8px;
+                right: 8px;
+                width: 120px;
             }
         }
 
