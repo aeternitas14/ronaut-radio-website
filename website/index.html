@@ -1835,7 +1835,7 @@
                 programmeLiveMsg.style.display = 'none';
 
                 try {
-                    var res = await fetch("https://stream.ronautradio.la/api/programme?count=10&recent=3");
+                    var res = await fetch("https://stream.ronautradio.la/api/programme?count=9&recent=2");
                     var data = await res.json();
 
                     if (!data.current && (!data.upcoming || data.upcoming.length === 0)) {
