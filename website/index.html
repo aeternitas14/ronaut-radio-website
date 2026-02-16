@@ -355,23 +355,34 @@
             color: #fff;
         }
 
+        /* Theme Toggle Bar - fixed at top */
+        #theme-toggle-bar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 10000;
+            padding: 8px 12px;
+        }
+
         #btn-theme {
             font-family: Oswald, sans-serif;
-            margin-left: 10px;
-            padding: 0 15px;
-            height: 52px;
+            padding: 6px 12px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            font-size: 20px;
+            font-size: 12px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            color: var(--text-primary);
         }
 
         #btn-theme:hover {
             background: var(--bg-secondary);
         }
 
-        /* Show sun in dark mode, moon in light mode */
+        /* Show sun + "Light Mode" in dark mode, moon + "Dark Mode" in light mode */
         .theme-icon-light { display: none; }
         .theme-icon-dark { display: inline; }
         [data-theme="dark"] .theme-icon-light { display: inline; }
@@ -1400,6 +1411,14 @@
     </style>
 </head>
 <body>
+    <!-- Theme Toggle Bar (fixed top) -->
+    <div id="theme-toggle-bar">
+        <button id="btn-theme" title="Toggle dark/light mode">
+            <span class="theme-icon-light">&#9728; Light Mode</span>
+            <span class="theme-icon-dark">&#9790; Dark Mode</span>
+        </button>
+    </div>
+
     <!-- Mini Player (appears when scrolling) -->
     <div id="mini-player">
         <div class="mini-video-wrap">
@@ -1523,10 +1542,6 @@
 
     <div class="share-container">
         <button id="btn-share">Share the stream!</button>
-        <button id="btn-theme" title="Toggle dark/light mode">
-            <span class="theme-icon-light">&#9728;</span>
-            <span class="theme-icon-dark">&#9790;</span>
-        </button>
     </div>
 
     <div class="social-links">
