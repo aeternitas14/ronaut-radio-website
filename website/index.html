@@ -1955,7 +1955,7 @@
                 var waveCanvas = document.getElementById('waveform-canvas');
                 var waveCtx = waveCanvas.getContext('2d');
                 var isAudioConnected = false;
-                var audioConnectionFailed = false; // Track if we should use demo mode
+                var audioConnectionFailed = true; // Default to demo mode for HLS (VOD will enable real audio)
                 var smoothedWaveform = null; // For temporal smoothing
                 var demoPhase = 0; // For demo mode animation
 
