@@ -2554,8 +2554,28 @@
             var sendBtn = document.getElementById('chat-send');
             var onlineSpan = document.getElementById('chat-online');
 
-            // Restore nickname from localStorage
-            nickInput.value = localStorage.getItem('ronaut_chat_nick') || '';
+            // Generate a persistent anon name if user never sets one
+            function generateAnonName() {
+                var chars = '0123456789abcdef';
+                var id = '';
+                for (var i = 0; i < 4; i++) {
+                    id += chars[Math.floor(Math.random() * chars.length)];
+                }
+                return 'anon' + id;
+            }
+
+            // Get or create persistent nickname
+            function getOrCreateNickname() {
+                var saved = localStorage.getItem('ronaut_chat_nick');
+                if (saved) return saved;
+                // Generate and save a persistent anon name
+                var anon = generateAnonName();
+                localStorage.setItem('ronaut_chat_nick', anon);
+                return anon;
+            }
+
+            // Restore nickname from localStorage (or generate one)
+            nickInput.value = getOrCreateNickname();
 
             function formatChatTime(timestamp) {
                 var d = new Date(timestamp * 1000);
@@ -2607,17 +2627,15 @@
 
             function sendMessage() {
                 var nick = nickInput.value.trim();
-                // Use saved nickname if input is empty
+                // Use saved/generated nickname if input is empty
                 if (!nick) {
-                    nick = localStorage.getItem('ronaut_chat_nick') || '';
+                    nick = getOrCreateNickname();
                 }
                 var msg = msgInput.value.trim();
                 if (!msg) return;
-                // Only save non-empty nicknames
-                if (nick) {
-                    localStorage.setItem('ronaut_chat_nick', nick);
-                    nickInput.value = nick; // Update input to show the name being used
-                }
+                // Save the nickname (ensures it persists)
+                localStorage.setItem('ronaut_chat_nick', nick);
+                nickInput.value = nick; // Update input to show the name being used
                 socket.emit('send_message', { nickname: nick, message: msg });
                 msgInput.value = '';
             }
