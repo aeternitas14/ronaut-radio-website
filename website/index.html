@@ -1913,6 +1913,15 @@
                     if (miniHlsInitialized) return;
                     miniHlsInitialized = true;
 
+                    // If playing a VOD (staff pick), mirror the main video source
+                    if (isPlayingPick && video.src) {
+                        miniVideo.src = video.src;
+                        miniVideo.currentTime = video.currentTime;
+                        miniVideo.play().catch(function(e) {});
+                        return;
+                    }
+
+                    // Otherwise use live HLS stream
                     var streamUrl = 'https://stream.ronautradio.la/live/hls/stream.m3u8';
                     if (Hls.isSupported()) {
                         miniHls = new Hls({ maxBufferLength: 5, maxMaxBufferLength: 10 });
@@ -1984,6 +1993,16 @@
                 video.addEventListener('play', updateMiniPlayerButtons);
                 video.addEventListener('pause', updateMiniPlayerButtons);
                 video.addEventListener('volumechange', updateMiniPlayerButtons);
+
+                // Sync mini video with main video for VOD playback
+                video.addEventListener('timeupdate', function() {
+                    if (isPlayingPick && wasVisible && miniVideo.src) {
+                        // Sync if more than 2 seconds apart
+                        if (Math.abs(video.currentTime - miniVideo.currentTime) > 2) {
+                            miniVideo.currentTime = video.currentTime;
+                        }
+                    }
+                });
 
                 // Click mini player to scroll to main player
                 miniPlayer.querySelector('.mini-info').addEventListener('click', function() {
