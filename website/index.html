@@ -1562,16 +1562,18 @@
         video.muted = false;
         video.removeAttribute('muted');
         video.volume = 1;
-        var encodedUrl = encodeURI(url || '');
+        var encodedUrl = url ? url.split('/').map(function(part, idx) {
+            return idx === 0 ? part : encodeURIComponent(part);
+        }).join('/') : '';
         video.src = 'https://stream.ronautradio.la' + encodedUrl;
 
         video.addEventListener('loadedmetadata', function onLoaded() {
-            // Seek to start time if provided
-            if (startTime && startTime > 0) {
+        // Seek to start time if provided
+        if (startTime && startTime > 0) {
                 video.currentTime = startTime;
             }
-            video.removeEventListener('loadedmetadata', onLoaded);
-        });
+                video.removeEventListener('loadedmetadata', onLoaded);
+            });
 
         video.play().catch(function(e) { console.log("Play prevented", e); });
         if (window.RonautAudio && window.RonautAudio.activate) {
@@ -2359,7 +2361,13 @@
             var picksGrid = document.getElementById('picks-grid');
             var setsData = {};  // Store set data for seek functionality
             function encodePickPath(path) {
-                return encodeURI(path || '');
+                if (!path) return '';
+                // Encode only the filename segment to preserve leading /sets/
+                var parts = path.split('/');
+                if (parts.length > 0) {
+                    parts[parts.length - 1] = encodeURIComponent(parts[parts.length - 1]);
+                }
+                return parts.join('/');
             }
             function displayPickTitle(pick) {
                 var filenameTitle = pick.filename ? pick.filename.replace(/\.mp4$/i, '') : '';
