@@ -847,11 +847,11 @@
         }
 
         .resident-row:first-child {
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid var(--border-color);
         }
 
         .resident-row:hover {
-            background: #f8f8f8;
+            background: var(--bg-secondary);
         }
 
         .resident-row img {
@@ -878,7 +878,7 @@
         /* Detail panel (fullscreen overlay on click) */
         .resident-detail-panel {
             display: none;
-            background: #fff;
+            background: var(--bg-primary);
             position: fixed;
             top: 0;
             left: 0;
@@ -897,7 +897,7 @@
             top: 20px;
             right: 25px;
             font-size: 36px;
-            color: #000;
+            color: var(--text-primary);
             cursor: pointer;
             z-index: 10;
             background: none;
@@ -933,7 +933,7 @@
             font-family: Oswald, sans-serif;
             font-size: 42px;
             font-weight: 500;
-            color: #000;
+            color: var(--text-primary);
             letter-spacing: 2px;
             text-transform: uppercase;
             margin-bottom: 25px;
@@ -943,7 +943,7 @@
             font-family: Oswald, sans-serif;
             font-size: 14px;
             font-weight: 300;
-            color: #555;
+            color: var(--text-muted);
             line-height: 1.8;
             margin-bottom: 25px;
             max-width: 480px;
@@ -962,16 +962,16 @@
             font-weight: 400;
             letter-spacing: 1px;
             text-transform: uppercase;
-            color: #000;
+            color: var(--text-primary);
             text-decoration: none;
             padding: 8px 14px;
-            border: 1px solid #000;
+            border: 1px solid var(--text-primary);
             transition: all 0.2s;
         }
 
         .detail-links a:hover {
-            background: #000;
-            color: #fff;
+            background: var(--text-primary);
+            color: var(--bg-primary);
         }
 
         .detail-sets-title {
