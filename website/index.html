@@ -1562,10 +1562,8 @@
         video.muted = false;
         video.removeAttribute('muted');
         video.volume = 1;
-        var encodedUrl = url ? url.split('/').map(function(part, idx) {
-            return idx === 0 ? part : encodeURIComponent(part);
-        }).join('/') : '';
-        video.src = 'https://stream.ronautradio.la' + encodedUrl;
+        // url already encoded by staff picks renderer
+        video.src = 'https://stream.ronautradio.la' + (url || '');
 
         video.addEventListener('loadedmetadata', function onLoaded() {
         // Seek to start time if provided
