@@ -1562,7 +1562,8 @@
         video.muted = false;
         video.removeAttribute('muted');
         video.volume = 1;
-        video.src = 'https://stream.ronautradio.la' + url;
+        var encodedUrl = encodeURI(url || '');
+        video.src = 'https://stream.ronautradio.la' + encodedUrl;
 
         video.addEventListener('loadedmetadata', function onLoaded() {
             // Seek to start time if provided
@@ -2357,6 +2358,16 @@
         (function() {
             var picksGrid = document.getElementById('picks-grid');
             var setsData = {};  // Store set data for seek functionality
+            function encodePickPath(path) {
+                return encodeURI(path || '');
+            }
+            function displayPickTitle(pick) {
+                var filenameTitle = pick.filename ? pick.filename.replace(/\.mp4$/i, '') : '';
+                if (filenameTitle && /^Ronaut\[\d+\]/i.test(filenameTitle)) {
+                    return filenameTitle;
+                }
+                return pick.title || filenameTitle || 'Untitled';
+            }
 
             async function loadStaffPicks() {
                 try {
@@ -2367,11 +2378,13 @@
                     var html = '';
                     for (var i = 0; i < data.sets.length; i++) {
                         var pick = data.sets[i];
-                        setsData[pick.url] = pick;
+                        var encodedUrl = encodePickPath(pick.url);
+                        var title = displayPickTitle(pick);
+                        setsData[encodedUrl] = pick;
 
-                        html += '<div class="pick-card" data-url="' + pick.url + '" data-title="' + escapeHtml(pick.title) + '">';
-                        html += '<img src="https://stream.ronautradio.la' + pick.thumbnail + '" alt="' + escapeHtml(pick.title) + '" loading="lazy" />';
-                        html += '<div class="pick-title">' + escapeHtml(pick.title) + '</div>';
+                        html += '<div class="pick-card" data-url="' + encodedUrl + '" data-title="' + escapeHtml(title) + '">';
+                        html += '<img src="' + encodePickPath('https://stream.ronautradio.la' + pick.thumbnail) + '" alt="' + escapeHtml(title) + '" loading="lazy" />';
+                        html += '<div class="pick-title">' + escapeHtml(title) + '</div>';
                         if (pick.description) {
                             html += '<div class="pick-desc">' + escapeHtml(pick.description) + '</div>';
                         }
@@ -2389,7 +2402,7 @@
                             if (unidCount > 0) {
                                 label += (label ? ' + ' : '') + unidCount + ' unidentified';
                             }
-                            html += '<div class="pick-tracklist-toggle" data-url="' + pick.url + '">' + label + '</div>';
+                            html += '<div class="pick-tracklist-toggle" data-url="' + encodedUrl + '">' + label + '</div>';
                             html += '<div class="pick-tracklist" id="tracklist-' + i + '">';
                             // Merge and sort by start_time
                             var allTracks = [];
@@ -2411,7 +2424,7 @@
                                     var track = item.data;
                                     var artist = track.artists && track.artists.length > 0 ? track.artists[0] : 'Unknown';
                                     html += '<div class="track">';
-                                    html += '<span class="track-time" data-url="' + pick.url + '" data-time="' + track.start_time + '">' + track.start_time_formatted + '</span>';
+                                    html += '<span class="track-time" data-url="' + encodedUrl + '" data-time="' + track.start_time + '">' + track.start_time_formatted + '</span>';
                                     html += escapeHtml(artist) + ' - ' + escapeHtml(track.title);
                                     html += '</div>';
                                 } else {
@@ -2419,7 +2432,7 @@
                                     var timeRange = unid.start_time_formatted + ' - ' + unid.end_time_formatted;
                                     var setName = pick.filename.replace('.mp4', '');
                                     html += '<div class="track unidentified">';
-                                    html += '<span class="track-time" data-url="' + pick.url + '" data-time="' + unid.start_time + '">' + timeRange + '</span>';
+                                    html += '<span class="track-time" data-url="' + encodedUrl + '" data-time="' + unid.start_time + '">' + timeRange + '</span>';
                                     html += escapeHtml(unid.title) + ' <span class="help-id" data-set="' + escapeHtml(setName) + '" data-start="' + unid.start_time + '" data-range="' + timeRange + '">[Help ID]</span>';
                                     html += '</div>';
                                 }
