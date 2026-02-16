@@ -2233,26 +2233,16 @@
                 window.RonautAudio = {
                     activate: activateAudio,
                     resetForVOD: function() {
-                        // Fully reset audio context for VOD playback
-                        // MediaElementSource can only be created once per element,
-                        // but we can close the old context and create a new one
-                        if (audioCtx) {
-                            try { audioCtx.close(); } catch(e) {}
-                        }
-                        audioCtx = null;
-                        analyser = null;
-                        dataArray = null;
-                        timeDataArray = null;
-                        isAudioConnected = false;
+                        // For VOD playback, use real audio analysis
+                        // MediaElementSource persists across src changes, just resume context
                         audioConnectionFailed = false;
-
-                        // Wait for video source to be ready, then reconnect
-                        setTimeout(function() {
-                            connectAudio();
-                            if (audioCtx && audioCtx.state === 'suspended') {
-                                audioCtx.resume();
-                            }
-                        }, 300);
+                        if (audioCtx && audioCtx.state === 'suspended') {
+                            audioCtx.resume();
+                        }
+                        // Try to connect if not yet connected
+                        if (!isAudioConnected) {
+                            setTimeout(connectAudio, 300);
+                        }
                     },
                     // For HLS, we use demo mode (real analysis often fails with MSE)
                     setDemoMode: function() {
