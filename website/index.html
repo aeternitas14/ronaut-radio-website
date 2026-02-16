@@ -1614,6 +1614,7 @@
     // Global HLS instance (needs to be accessible for staff picks player switching)
     var hlsInstance = null;
     var isPlayingPick = false;
+    var currentPickTitle = '';
 
     function escapeHtml(text) {
         var div = document.createElement('div');
@@ -1676,6 +1677,13 @@
         ticker.style.display = 'block';
         backBtn.style.display = 'block';
         isPlayingPick = true;
+        currentPickTitle = title; // Store for mini player
+
+        // Update mini player title for VOD
+        var miniStatus = document.querySelector('#mini-player .mini-status');
+        var miniTitle = document.querySelector('#mini-player .mini-title');
+        if (miniStatus) miniStatus.textContent = 'PLAYING';
+        if (miniTitle) miniTitle.textContent = title;
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1688,6 +1696,7 @@
         initHls(video);
         backBtn.style.display = 'none';
         isPlayingPick = false;
+        currentPickTitle = '';
 
         // Switch to demo mode for HLS (real audio analysis often fails with MSE)
         if (window.RonautAudio && window.RonautAudio.setDemoMode) {
@@ -2013,11 +2022,23 @@
                 });
 
                 // Update buttons when video state changes
-                video.addEventListener('play', updateMiniPlayerButtons);
-                video.addEventListener('pause', updateMiniPlayerButtons);
+                video.addEventListener('play', function() {
+                    updateMiniPlayerButtons();
+                    // Sync miniVideo play state for VOD
+                    if (isPlayingPick && miniVideo.src && miniVideo.paused) {
+                        miniVideo.play().catch(function(e) {});
+                    }
+                });
+                video.addEventListener('pause', function() {
+                    updateMiniPlayerButtons();
+                    // Sync miniVideo pause state for VOD
+                    if (isPlayingPick && miniVideo.src && !miniVideo.paused) {
+                        miniVideo.pause();
+                    }
+                });
                 video.addEventListener('volumechange', updateMiniPlayerButtons);
 
-                // Sync mini video with main video for VOD playback
+                // Sync mini video time with main video for VOD playback
                 video.addEventListener('timeupdate', function() {
                     if (isPlayingPick && wasVisible && miniVideo.src) {
                         // Sync if more than 2 seconds apart
