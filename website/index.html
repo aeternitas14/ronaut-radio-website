@@ -2606,10 +2606,18 @@
             });
 
             function sendMessage() {
-                var nick = nickInput.value.trim(); // Empty string lets server generate unique anon name
+                var nick = nickInput.value.trim();
+                // Use saved nickname if input is empty
+                if (!nick) {
+                    nick = localStorage.getItem('ronaut_chat_nick') || '';
+                }
                 var msg = msgInput.value.trim();
                 if (!msg) return;
-                localStorage.setItem('ronaut_chat_nick', nick);
+                // Only save non-empty nicknames
+                if (nick) {
+                    localStorage.setItem('ronaut_chat_nick', nick);
+                    nickInput.value = nick; // Update input to show the name being used
+                }
                 socket.emit('send_message', { nickname: nick, message: msg });
                 msgInput.value = '';
             }
