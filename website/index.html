@@ -47,11 +47,36 @@
     <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
 
     <style>
+        /* Theme variables */
+        :root {
+            --bg-primary: #f4f4f4;
+            --bg-secondary: #fff;
+            --text-primary: #000;
+            --text-secondary: #333;
+            --text-muted: #666;
+            --border-color: #ddd;
+            --card-bg: #fff;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --text-primary: #fff;
+            --text-secondary: #ccc;
+            --text-muted: #999;
+            --border-color: #444;
+            --card-bg: #2a2a2a;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+        }
+
         body {
             margin: 0;
             font-family: Oswald, sans-serif;
             text-align: center;
-            background-color: #f4f4f4;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .w-container {
@@ -330,6 +355,28 @@
             color: #fff;
         }
 
+        #btn-theme {
+            font-family: Oswald, sans-serif;
+            margin-left: 10px;
+            padding: 0 15px;
+            height: 52px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #btn-theme:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Show sun in dark mode, moon in light mode */
+        .theme-icon-light { display: none; }
+        .theme-icon-dark { display: inline; }
+        [data-theme="dark"] .theme-icon-light { display: inline; }
+        [data-theme="dark"] .theme-icon-dark { display: none; }
+
         .social-links {
             max-width: 200px;
             margin: 20px auto;
@@ -517,7 +564,7 @@
             font-size: 14px;
             font-weight: 300;
             letter-spacing: 1px;
-            color: #888;
+            color: var(--text-muted);
             text-transform: uppercase;
             margin-bottom: 16px;
         }
@@ -528,19 +575,20 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--border-color);
             font-size: 18px;
             font-weight: 300;
             letter-spacing: 0.5px;
+            color: var(--text-primary);
         }
 
         .programme-item:first-child {
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid var(--border-color);
         }
 
         .programme-item.now-playing {
-            background: #000;
-            color: #fff;
+            background: var(--text-primary);
+            color: var(--bg-primary);
             font-weight: 400;
             position: relative;
         }
@@ -577,7 +625,7 @@
 
         .programme-item.programme-past {
             opacity: 0.5;
-            background: #f8f8f8;
+            background: var(--bg-secondary);
         }
 
         .programme-item.programme-past .track-time {
@@ -652,14 +700,15 @@
         /* Custom Chat Widget */
         #chat-widget {
             width: 343px;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             font-family: Oswald, sans-serif;
-            background: #fff;
+            background: var(--card-bg);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         #chat-header {
-            background: #000;
-            color: #fff;
+            background: var(--text-primary);
+            color: var(--bg-primary);
             padding: 6px 10px;
             font-size: 11px;
             font-weight: 300;
@@ -673,6 +722,7 @@
             padding: 8px;
             font-size: 13px;
             font-weight: 300;
+            color: var(--text-primary);
         }
 
         .chat-msg {
@@ -694,18 +744,20 @@
 
         #chat-input-row {
             display: flex;
-            border-top: 1px solid #ddd;
+            border-top: 1px solid var(--border-color);
         }
 
         #chat-nick {
             width: 70px;
             border: none;
-            border-right: 1px solid #ddd;
+            border-right: 1px solid var(--border-color);
             padding: 8px;
             font-family: Oswald, sans-serif;
             font-size: 12px;
             font-weight: 300;
             outline: none;
+            background: var(--card-bg);
+            color: var(--text-primary);
         }
 
         #chat-msg {
@@ -716,19 +768,21 @@
             font-size: 13px;
             font-weight: 300;
             outline: none;
+            background: var(--card-bg);
+            color: var(--text-primary);
         }
 
         #chat-send {
             border: none;
-            background: #000;
-            color: #fff;
+            background: var(--text-primary);
+            color: var(--bg-primary);
             padding: 8px 12px;
             cursor: pointer;
             font-size: 14px;
         }
 
         #chat-send:hover {
-            background: #333;
+            background: var(--text-secondary);
         }
 
         #chat-discord-link {
@@ -1001,7 +1055,7 @@
             aspect-ratio: 16/9;
             object-fit: cover;
             display: block;
-            background: #ddd;
+            background: var(--border-color);
         }
 
         .pick-card .pick-title {
@@ -1010,13 +1064,14 @@
             font-weight: 400;
             letter-spacing: 0.5px;
             margin-top: 10px;
+            color: var(--text-primary);
         }
 
         .pick-card .pick-desc {
             font-family: Oswald, sans-serif;
             font-size: 13px;
             font-weight: 300;
-            color: #888;
+            color: var(--text-muted);
             margin-top: 4px;
         }
 
@@ -1024,7 +1079,7 @@
             font-family: Oswald, sans-serif;
             font-size: 11px;
             font-weight: 300;
-            color: #666;
+            color: var(--text-muted);
             margin-top: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -1468,6 +1523,10 @@
 
     <div class="share-container">
         <button id="btn-share">Share the stream!</button>
+        <button id="btn-theme" title="Toggle dark/light mode">
+            <span class="theme-icon-light">&#9728;</span>
+            <span class="theme-icon-dark">&#9790;</span>
+        </button>
     </div>
 
     <div class="social-links">
@@ -2678,7 +2737,38 @@
                 });
             }
         })();
-        
+
+        // Theme Toggle (Dark/Light Mode)
+        (function() {
+            var themeBtn = document.getElementById('btn-theme');
+            var html = document.documentElement;
+
+            // Check for saved theme or system preference
+            var savedTheme = localStorage.getItem('ronaut_theme');
+            if (savedTheme) {
+                html.setAttribute('data-theme', savedTheme);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                html.setAttribute('data-theme', 'dark');
+            }
+
+            // Toggle theme on button click
+            themeBtn.addEventListener('click', function() {
+                var currentTheme = html.getAttribute('data-theme');
+                var newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('ronaut_theme', newTheme);
+            });
+
+            // Listen for system theme changes
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                    if (!localStorage.getItem('ronaut_theme')) {
+                        html.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+                    }
+                });
+            }
+        })();
+
         // Shopify
         (function() {
             var scriptURL = 'https://sdks.shopifycdn.com/buy-button/latest/buy-button-storefront.min.js';
