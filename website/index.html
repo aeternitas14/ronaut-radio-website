@@ -1574,8 +1574,11 @@
             });
 
         video.play().catch(function(e) { console.log("Play prevented", e); });
-        if (window.RonautAudio && window.RonautAudio.activate) {
-            window.RonautAudio.activate();
+        // Reset audio context for VOD - real waveform works with MP4
+        if (window.RonautAudio && window.RonautAudio.resetForVOD) {
+            setTimeout(function() {
+                window.RonautAudio.resetForVOD();
+            }, 500);
         }
 
         ticker.textContent = 'Playing: ' + title;
@@ -1594,6 +1597,11 @@
         initHls(video);
         backBtn.style.display = 'none';
         isPlayingPick = false;
+
+        // Switch to demo mode for HLS (real audio analysis often fails with MSE)
+        if (window.RonautAudio && window.RonautAudio.setDemoMode) {
+            window.RonautAudio.setDemoMode();
+        }
     }
 
     // Help ID Modal
@@ -2214,7 +2222,37 @@
 
                 // Expose a safe hook for staff-pick switching
                 window.RonautAudio = {
-                    activate: activateAudio
+                    activate: activateAudio,
+                    resetForVOD: function() {
+                        // Fully reset audio context for VOD playback
+                        // MediaElementSource can only be created once per element,
+                        // but we can close the old context and create a new one
+                        if (audioCtx) {
+                            try { audioCtx.close(); } catch(e) {}
+                        }
+                        audioCtx = null;
+                        analyser = null;
+                        dataArray = null;
+                        timeDataArray = null;
+                        isAudioConnected = false;
+                        audioConnectionFailed = false;
+
+                        // Wait for video source to be ready, then reconnect
+                        setTimeout(function() {
+                            connectAudio();
+                            if (audioCtx && audioCtx.state === 'suspended') {
+                                audioCtx.resume();
+                            }
+                        }, 300);
+                    },
+                    // For HLS, we use demo mode (real analysis often fails with MSE)
+                    setDemoMode: function() {
+                        audioConnectionFailed = true;
+                    },
+                    // Legacy alias
+                    resetAndRetry: function() {
+                        this.resetForVOD();
+                    }
                 };
 
                 video.addEventListener('play', activateAudio);
