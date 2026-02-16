@@ -3,13 +3,15 @@
 <head>
     <meta charset="utf-8" />
     <title>Ronaut Radio</title>
+    <link rel="icon" type="image/png" href="assets/favicon.png" />
+    <link rel="apple-touch-icon" href="assets/favicon.png" />
     <meta content="Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation. Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels." name="description" />
     <meta content="Ronaut Radio" property="og:title" />
     <meta content="Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation. Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels." property="og:description" />
-    <meta content="https://via.placeholder.com/1200x630/000000/FFFFFF?text=RONAUT+RADIO+%7C+Los+Angeles+Vinyl+Only" property="og:image" />
+    <meta content="https://ronautradio.la/assets/favicon.png" property="og:image" />
     <meta content="Ronaut Radio" property="twitter:title" />
     <meta content="Ronaut Radio - Los Angeles-based independent radio station dedicated to vinyl-only curation. Broadcasting live shows, rare finds, and timeless classics straight from the City of Angels." property="twitter:description" />
-    <meta content="https://via.placeholder.com/1200x630/000000/FFFFFF?text=RONAUT+RADIO+%7C+Los+Angeles+Vinyl+Only" property="twitter:image" />
+    <meta content="https://ronautradio.la/assets/favicon.png" property="twitter:image" />
     <meta property="og:type" content="website" />
     <meta content="summary_large_image" name="twitter:card" />
     <meta content="width=device-width, initial-scale=1" name="viewport" />
@@ -43,7 +45,6 @@
     <meta property="og:type" content="video">
     
     <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet" />
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css' rel='stylesheet' />
 
     <style>
         body {
@@ -172,7 +173,7 @@
         #energy-meter {
             position: absolute;
             bottom: 8px;
-            left: 20px;
+            right: 20px;
             width: 120px;
             height: 3px;
             background: rgba(255, 255, 255, 0.2);
@@ -191,7 +192,7 @@
         /* AM-style waveform visualizer - bottom right, above controls */
         #waveform-container {
             position: absolute;
-            bottom: 60px;
+            bottom: 40px;
             right: 20px;
             width: 280px;
             height: 70px;
@@ -223,7 +224,7 @@
         /* Mobile: adjust waveform position and size */
         @media (max-width: 767px) {
             #waveform-container {
-                bottom: 55px;
+                bottom: 35px;
                 right: 10px;
                 width: 160px;
                 height: 45px;
@@ -245,7 +246,7 @@
 
         @media (max-width: 480px) {
             #waveform-container {
-                bottom: 50px;
+                bottom: 32px;
                 right: 8px;
                 width: 120px;
                 height: 35px;
@@ -267,6 +268,31 @@
         @keyframes scroll-left {
             from { transform: translateX(100%); }
             to { transform: translateX(-100%); }
+        }
+
+        #next-live-banner {
+            color: white;
+            font-size: 14px;
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            white-space: nowrap;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        #next-live-banner.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 767px) {
+            #next-live-banner {
+                font-size: 12px;
+                top: 12px;
+                left: 10px;
+            }
         }
 
         .share-container {
@@ -318,17 +344,102 @@
             line-height: 1.6;
         }
         
-        /* Calendar Styling */
-        .fc { font-family: Oswald, sans-serif !important; }
-        .fc-toolbar { margin-bottom: 20px !important; }
-        .fc-toolbar-title { font-size: 24px !important; font-weight: 300 !important; letter-spacing: 1px !important; color: #333 !important; }
-        .fc-button { background: #000 !important; border: 1px solid #000 !important; color: white !important; font-family: Oswald, sans-serif !important; font-weight: 400 !important; letter-spacing: 1px !important; text-transform: uppercase !important; }
-        .fc-button:hover { background: #333 !important; border-color: #333 !important; }
-        .fc-event { background: #000 !important; color: white !important; border: none !important; font-family: Oswald, sans-serif !important; font-weight: 400 !important; }
-        .fc-event:hover { background: #333 !important; color: white !important; }
-        .fc-daygrid-day-number { font-family: Oswald, sans-serif !important; font-weight: 400 !important; }
-        .fc-col-header-cell { font-family: Oswald, sans-serif !important; font-weight: 400 !important; letter-spacing: 1px !important; text-transform: uppercase !important; }
-        .fc-daygrid-event, .fc-event-title, .fc-event-time { color: white !important; }
+        /* Event Cards */
+        .event-card {
+            display: flex;
+            border: 1px solid #000;
+            margin-bottom: 15px;
+            font-family: Oswald, sans-serif;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .event-date {
+            background: #000;
+            color: #fff;
+            padding: 20px;
+            min-width: 80px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .event-date .month {
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .event-date .day {
+            font-size: 32px;
+            font-weight: 500;
+            line-height: 1;
+            margin: 4px 0;
+        }
+        .event-date .weekday {
+            font-size: 11px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+        .event-details {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .event-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0 0 6px 0;
+            letter-spacing: 0.5px;
+        }
+        .event-time {
+            font-size: 13px;
+            font-weight: 300;
+            color: #666;
+            margin: 0;
+        }
+        .event-actions {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            gap: 8px;
+        }
+        .event-actions a {
+            font-size: 10px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 12px;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+        .event-actions .add-gcal {
+            background: #000;
+            color: #fff;
+        }
+        .event-actions .add-gcal:hover {
+            background: #333;
+        }
+        .event-actions .add-ics {
+            background: #fff;
+            color: #000;
+            border: 1px solid #000;
+        }
+        .event-actions .add-ics:hover {
+            background: #f5f5f5;
+        }
+        @media (max-width: 500px) {
+            .event-card { flex-direction: column; }
+            .event-date { padding: 15px; flex-direction: row; gap: 10px; min-width: auto; }
+            .event-date .day { font-size: 24px; margin: 0; }
+            .event-actions { padding: 10px 15px; }
+        }
         
         /* LIVE Badge */
         #live-badge {
@@ -385,7 +496,7 @@
         }
 
         #programme-section h2 {
-            font-size: 36px;
+            font-size: 24px;
             font-weight: 300;
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -401,6 +512,7 @@
             text-transform: uppercase;
             margin-bottom: 16px;
         }
+
 
         .programme-item {
             display: flex;
@@ -560,6 +672,12 @@
             word-wrap: break-word;
         }
 
+        .chat-msg .chat-time {
+            font-size: 10px;
+            color: #999;
+            margin-right: 6px;
+        }
+
         .chat-msg .chat-nick {
             font-weight: 500;
             margin-right: 6px;
@@ -621,6 +739,214 @@
 
         #chat-discord-link a:hover {
             color: #000;
+        }
+
+        /* Featured Residents - Simple list with detail panel */
+        #featured-residents {
+            max-width: 600px;
+            margin: 40px auto 20px;
+            padding: 0 20px;
+        }
+
+        #featured-residents h2 {
+            font-size: 24px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        #residents-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resident-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .resident-row:first-child {
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .resident-row:hover {
+            background: #f8f8f8;
+        }
+
+        .resident-row img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .resident-row .name {
+            font-family: Oswald, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            flex: 1;
+        }
+
+        .resident-row .arrow {
+            color: #999;
+            font-size: 18px;
+        }
+
+        /* Detail panel (fullscreen overlay on click) */
+        .resident-detail-panel {
+            display: none;
+            background: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            overflow-y: auto;
+        }
+
+        .resident-detail-panel.active {
+            display: flex;
+        }
+
+        .detail-close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 36px;
+            color: #000;
+            cursor: pointer;
+            z-index: 10;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+
+        .detail-photo {
+            flex: 0 0 45%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .detail-content {
+            flex: 1;
+            padding: 80px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .detail-label {
+            font-family: Oswald, sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            color: #d4a32a;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .detail-name {
+            font-family: Oswald, sans-serif;
+            font-size: 42px;
+            font-weight: 500;
+            color: #000;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+        }
+
+        .detail-bio {
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 300;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            max-width: 480px;
+        }
+
+        .detail-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .detail-links a {
+            font-family: Oswald, sans-serif;
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #000;
+            text-decoration: none;
+            padding: 8px 14px;
+            border: 1px solid #000;
+            transition: all 0.2s;
+        }
+
+        .detail-links a:hover {
+            background: #000;
+            color: #fff;
+        }
+
+        .detail-sets-title {
+            font-family: Oswald, sans-serif;
+            font-size: 11px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        .detail-set-link {
+            display: inline-block;
+            font-family: Oswald, sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #000;
+            text-decoration: underline;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .detail-set-link:hover {
+            color: #666;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .resident-detail-panel.active {
+                flex-direction: column;
+            }
+
+            .detail-photo {
+                flex: 0 0 220px;
+                width: 100%;
+            }
+
+            .detail-content {
+                padding: 30px 20px;
+            }
+
+            .detail-name {
+                font-size: 28px;
+            }
+
+            .detail-bio {
+                font-size: 13px;
+            }
         }
 
         /* Staff Picks */
@@ -870,6 +1196,130 @@
             background: #333;
         }
 
+        /* Mini Player */
+        #mini-player {
+            position: fixed;
+            background: #000;
+            color: #fff;
+            font-family: Oswald, sans-serif;
+            z-index: 9998;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px 10px 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        #mini-player.visible {
+            display: flex;
+        }
+
+        #mini-player .mini-status {
+            font-size: 10px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ff4444;
+        }
+
+        #mini-player .mini-title {
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        #mini-player .mini-video-wrap {
+            width: 180px;
+            height: 101px;
+            background: #000;
+            overflow: hidden;
+            flex-shrink: 0;
+            margin: -10px 0 -10px 0;
+        }
+
+        #mini-player #mini-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            display: block;
+        }
+
+        #mini-player .mini-info {
+            cursor: pointer;
+        }
+
+        #mini-player .mini-info:hover .mini-title {
+            text-decoration: underline;
+        }
+
+        #mini-player .mini-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        #mini-player .mini-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            padding: 0;
+            opacity: 0.8;
+        }
+
+        #mini-player .mini-btn:hover {
+            opacity: 1;
+        }
+
+        #mini-player .mini-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: #fff;
+        }
+
+        /* Desktop: top-left */
+        @media (min-width: 768px) {
+            #mini-player {
+                top: 0;
+                left: 0;
+                padding: 0 15px 0 0;
+            }
+            #mini-player .mini-video-wrap {
+                margin: 0;
+            }
+        }
+
+        /* Mobile: bottom sticky bar */
+        @media (max-width: 767px) {
+            #mini-player {
+                bottom: 0;
+                left: 0;
+                right: 0;
+                justify-content: space-between;
+                border-top: 1px solid #333;
+                padding: 0 12px 0 0;
+            }
+            #mini-player .mini-video-wrap {
+                width: 120px;
+                height: 68px;
+                margin: 0;
+            }
+            #mini-player .mini-title {
+                max-width: none;
+                flex: 1;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 767px) {
             .main-title {
@@ -886,6 +1336,25 @@
     </style>
 </head>
 <body>
+    <!-- Mini Player (appears when scrolling) -->
+    <div id="mini-player">
+        <div class="mini-video-wrap">
+            <video id="mini-video" muted playsinline></video>
+        </div>
+        <div class="mini-info">
+            <div class="mini-status">LIVE</div>
+            <div class="mini-title">Loading...</div>
+        </div>
+        <div class="mini-controls">
+            <button class="mini-btn" id="mini-play-btn" title="Play/Pause">
+                <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+            </button>
+            <button class="mini-btn" id="mini-mute-btn" title="Mute/Unmute">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            </button>
+        </div>
+    </div>
+
     <div id="top-player-container">
         <div id="player-container">
             <video id="ronaut-player" class="video-js vjs-default-skin" controls autoplay muted playsinline webkit-playsinline x5-playsinline preload="none" crossorigin="anonymous">
@@ -903,6 +1372,7 @@
                 <div id="waveform-container">
                     <canvas id="waveform-canvas"></canvas>
                 </div>
+                <div id="next-live-banner"></div>
             </div>
         </div>
     </div>
@@ -939,6 +1409,10 @@
         <div id="chat-column">
             <h3>CHAT</h3>
             <button id="chat-toggle" onclick="document.getElementById('chat-body').classList.toggle('open'); this.textContent = document.getElementById('chat-body').classList.contains('open') ? 'Hide Chat' : 'Open Chat';">Open Chat</button>
+            <a href="https://discord.gg/rrnN2sSYAb" target="_blank" id="discord-btn" style="display: inline-flex; align-items: center; gap: 6px; background: #5865F2; color: #fff; font-family: Oswald, sans-serif; font-size: 11px; font-weight: 400; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; text-decoration: none; margin-left: 8px; vertical-align: middle;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+                Discord
+            </a>
             <div id="chat-body">
                 <div id="chat-widget">
                     <div id="chat-header">
@@ -952,18 +1426,32 @@
                     </div>
                 </div>
                 <div id="chat-discord-link">
-                    <a href="https://discord.gg/BCHVkUwT" target="_blank">Join our Discord</a>
+                    <a href="https://discord.gg/rrnN2sSYAb" target="_blank">Join our Discord</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- STAFF PICKS -->
-    <div id="staff-picks">
-        <h2>STAFF PICKS</h2>
-        <div id="picks-grid"></div>
+    <!-- FEATURED RESIDENTS -->
+    <div id="featured-residents">
+        <h2>FEATURED RESIDENTS</h2>
+        <div id="residents-list"></div>
     </div>
 
+    <!-- Resident Detail Panel (fullscreen overlay) -->
+    <div class="resident-detail-panel" id="resident-detail">
+        <button class="detail-close">&times;</button>
+        <div class="detail-photo" id="detail-photo"></div>
+        <div class="detail-content">
+            <div class="detail-label">RESIDENT</div>
+            <div class="detail-name" id="detail-name"></div>
+            <div class="detail-bio" id="detail-bio"></div>
+            <div class="detail-links" id="detail-links"></div>
+            <div class="detail-sets" id="detail-sets"></div>
+        </div>
+    </div>
+
+    <!-- ABOUT SECTION -->
     <div class="w-container" style="margin-top: 40px; margin-bottom: 30px;">
         <h1 class="main-title">RONAUT RADIO</h1>
         <p style="font-size: 14px; font-weight: 400; letter-spacing: 1px; margin: 10px 0 0 0; text-transform: uppercase;">Los Angeles • Vinyl Only • Live Shows</p>
@@ -992,16 +1480,32 @@
         <a href="https://twitter.com/ronautradiola" target="_blank" class="w-inline-block">
             <img src="assets/6065e48787c63189c61f2aab_social-twitter.svg" loading="lazy" alt="Twitter"/>
         </a>
+        <a href="https://discord.gg/rrnN2sSYAb" target="_blank" class="w-inline-block">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.6;"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+        </a>
     </div>
 
     <div class="w-container">
-        <p class="paragraph">We are an independent, non-profit, online radio station live streaming 24/7 from Los Angeles.<br/>Expect a continuous stream of the best and most varied music Los Angeles has to offer.<br/>‍<br/><strong>Please use this </strong><a href="mailto:ronautradiola@hotmail.com"><strong>form</strong></a><strong> to submit show proposal.</strong><br/><br/></p>
+        <p class="paragraph">We are an independent, non-profit online radio station streaming 24/7 from Los Angeles. We broadcast vinyl sets from selectors across Los Angeles and San Diego.</p>
+        <p class="paragraph">Ronaut Radio is a platform for local DJs and vinyl enthusiasts to share their sound, build community, and keep underground music moving.</p>
+        <p class="paragraph"><strong>If you'd like to be featured or collaborate, <a href="mailto:ronautradio@gmail.com">connect with us</a>.</strong></p>
     </div>
 
-    <!-- SCHEDULE SECTION -->
+    <!-- STAFF PICKS -->
+    <div id="staff-picks">
+        <h2>STAFF PICKS</h2>
+        <div id="picks-grid"></div>
+    </div>
+
+    <!-- UPCOMING SHOWS SECTION -->
     <div class="w-container" style="margin-top: 60px; margin-bottom: 40px;">
-      <h2 style="font-size: 36px; font-weight: 300; letter-spacing: 2px; margin-bottom: 30px;">UPCOMING SHOWS</h2>
-      <div id="calendar" style="max-width: 800px; margin: 0 auto;"></div>
+      <h2 style="font-size: 24px; font-weight: 300; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">UPCOMING SHOWS</h2>
+      <div style="text-align: center; margin-bottom: 30px;">
+        <a href="https://calendar.google.com/calendar/u/0?cid=cm9uYXV0cmFkaW9AZ21haWwuY29t" target="_blank" style="display: inline-block; background: #000; color: #fff; font-family: Oswald, sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 16px; text-decoration: none; margin: 3px;">Subscribe to All</a>
+        <a href="https://stream.ronautradio.la/api/calendar.ics" download="ronaut-radio.ics" style="display: inline-block; background: #fff; color: #000; border: 1px solid #000; font-family: Oswald, sans-serif; font-weight: 400; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 16px; text-decoration: none; margin: 3px;">Download .ics</a>
+      </div>
+      <div id="upcoming-events" style="max-width: 600px; margin: 0 auto;"></div>
+      <p id="no-upcoming" style="text-align: center; font-family: Oswald, sans-serif; font-weight: 300; font-size: 14px; color: #999; display: none;">No upcoming shows scheduled. Check back soon!</p>
     </div>
     
     <div class="section">
@@ -1012,8 +1516,6 @@
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/icalendar@6.1.15/index.global.min.js'></script>
     <script src='https://unpkg.com/popper.js/dist/umd/popper.min.js'></script>
     <script src='https://unpkg.com/tooltip.js/dist/umd/tooltip.min.js'></script>
 
@@ -1192,20 +1694,29 @@
                     var data = await res.json();
                     currentMode = data.mode || 'offline';
 
+                    var miniStatus = document.querySelector('#mini-player .mini-status');
+                    var miniTitle = document.querySelector('#mini-player .mini-title');
+
                     if (currentMode === 'live') {
                         liveBadge.classList.add('active');
                         liveBadge.style.display = 'flex';
                         ticker.textContent = 'LIVE BROADCAST';
                         ticker.style.display = 'block';
+                        if (miniStatus) miniStatus.textContent = 'LIVE';
+                        if (miniTitle) miniTitle.textContent = 'Live Broadcast';
                     } else {
                         liveBadge.classList.remove('active');
                         liveBadge.style.display = 'none';
                         if (data.now_playing && data.now_playing !== 'Offline') {
                             ticker.textContent = 'Now Playing: ' + data.now_playing;
                             ticker.style.display = 'block';
+                            if (miniStatus) miniStatus.textContent = 'NOW PLAYING';
+                            if (miniTitle) miniTitle.textContent = data.now_playing;
                         } else {
                             ticker.textContent = 'Stream offline';
                             ticker.style.display = 'block';
+                            if (miniStatus) miniStatus.textContent = 'OFFLINE';
+                            if (miniTitle) miniTitle.textContent = 'Stream offline';
                         }
                     }
                 } catch (err) {
@@ -1293,6 +1804,121 @@
             // Poll: now-playing every 10s, programme every 30s
             setInterval(updateNowPlaying, 10000);
             setInterval(updateProgramme, 30000);
+
+            // Mini Player - show when main player scrolls out of view
+            (function() {
+                var miniPlayer = document.getElementById('mini-player');
+                var playerContainer = document.getElementById('player-container');
+                var video = document.getElementById('ronaut-player');
+                var miniVideo = document.getElementById('mini-video');
+                var miniPlayBtn = document.getElementById('mini-play-btn');
+                var miniMuteBtn = document.getElementById('mini-mute-btn');
+                var miniHlsInitialized = false;
+                var miniHls = null;
+
+                function updateMiniPlayerButtons() {
+                    if (!video) return;
+                    // Play/Pause icon
+                    if (video.paused) {
+                        miniPlayBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
+                    } else {
+                        miniPlayBtn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+                    }
+                    // Mute icon
+                    if (video.muted) {
+                        miniMuteBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
+                    } else {
+                        miniMuteBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
+                    }
+                }
+
+                function initMiniHls() {
+                    if (miniHlsInitialized) return;
+                    miniHlsInitialized = true;
+
+                    var streamUrl = 'https://stream.ronautradio.la/live/hls/stream.m3u8';
+                    if (Hls.isSupported()) {
+                        miniHls = new Hls({ maxBufferLength: 5, maxMaxBufferLength: 10 });
+                        miniHls.loadSource(streamUrl);
+                        miniHls.attachMedia(miniVideo);
+                        miniHls.on(Hls.Events.MANIFEST_PARSED, function() {
+                            miniVideo.play().catch(function(e) {});
+                        });
+                    } else if (miniVideo.canPlayType('application/vnd.apple.mpegurl')) {
+                        miniVideo.src = streamUrl;
+                        miniVideo.play().catch(function(e) {});
+                    }
+                }
+
+                function destroyMiniHls() {
+                    if (miniHls) {
+                        miniHls.destroy();
+                        miniHls = null;
+                    }
+                    miniHlsInitialized = false;
+                    miniVideo.src = '';
+                }
+
+                // Scroll listener
+                var lastScrollY = 0;
+                var ticking = false;
+                var wasVisible = false;
+                window.addEventListener('scroll', function() {
+                    lastScrollY = window.scrollY;
+                    if (!ticking) {
+                        window.requestAnimationFrame(function() {
+                            var rect = playerContainer.getBoundingClientRect();
+                            var playerHidden = rect.bottom < 100;
+                            if (playerHidden) {
+                                miniPlayer.classList.add('visible');
+                                if (!wasVisible) {
+                                    initMiniHls();
+                                    wasVisible = true;
+                                }
+                            } else {
+                                miniPlayer.classList.remove('visible');
+                                if (wasVisible) {
+                                    destroyMiniHls();
+                                    wasVisible = false;
+                                }
+                            }
+                            ticking = false;
+                        });
+                        ticking = true;
+                    }
+                });
+
+                // Mini player controls
+                miniPlayBtn.addEventListener('click', function() {
+                    if (video.paused) {
+                        video.play().catch(function(e) { console.log('Play prevented', e); });
+                    } else {
+                        video.pause();
+                    }
+                    updateMiniPlayerButtons();
+                });
+
+                miniMuteBtn.addEventListener('click', function() {
+                    video.muted = !video.muted;
+                    updateMiniPlayerButtons();
+                });
+
+                // Update buttons when video state changes
+                video.addEventListener('play', updateMiniPlayerButtons);
+                video.addEventListener('pause', updateMiniPlayerButtons);
+                video.addEventListener('volumechange', updateMiniPlayerButtons);
+
+                // Click mini player to scroll to main player
+                miniPlayer.querySelector('.mini-info').addEventListener('click', function() {
+                    playerContainer.scrollIntoView({ behavior: 'smooth' });
+                });
+
+                // Click mini video to scroll to main player
+                miniVideo.addEventListener('click', function() {
+                    playerContainer.scrollIntoView({ behavior: 'smooth' });
+                });
+
+            })();
 
             // Initialize HLS Player
             video.crossOrigin = 'anonymous';
@@ -1608,6 +2234,125 @@
             })();
         })();
 
+        // Featured Residents - Simple list with detail panel
+        (function() {
+            var residentsList = document.getElementById('residents-list');
+            var detailPanel = document.getElementById('resident-detail');
+            var detailClose = detailPanel.querySelector('.detail-close');
+            var residentsData = [];
+
+            async function loadResidents() {
+                try {
+                    var res = await fetch('https://stream.ronautradio.la/api/residents');
+                    var data = await res.json();
+                    if (!data.residents || data.residents.length === 0) {
+                        document.getElementById('featured-residents').style.display = 'none';
+                        return;
+                    }
+
+                    residentsData = data.residents;
+
+                    var html = '';
+                    for (var i = 0; i < residentsData.length; i++) {
+                        var r = residentsData[i];
+                        html += '<div class="resident-row" data-index="' + i + '">';
+                        html += '<img src="https://stream.ronautradio.la' + r.photo + '" alt="' + escapeHtml(r.name) + '" onerror="this.src=\'https://stream.ronautradio.la/residents/logo.png\'" />';
+                        html += '<span class="name">' + escapeHtml(r.name) + '</span>';
+                        html += '<span class="arrow">&#8250;</span>';
+                        html += '</div>';
+                    }
+                    residentsList.innerHTML = html;
+
+                    // Click to open detail panel
+                    var rows = residentsList.querySelectorAll('.resident-row');
+                    rows.forEach(function(row) {
+                        row.addEventListener('click', function() {
+                            var idx = parseInt(this.getAttribute('data-index'));
+                            openDetail(idx);
+                        });
+                    });
+
+                } catch (err) {
+                    console.error('Failed to load residents:', err);
+                    document.getElementById('featured-residents').style.display = 'none';
+                }
+            }
+
+            function openDetail(idx) {
+                var r = residentsData[idx];
+                var photoUrl = 'https://stream.ronautradio.la' + r.photo;
+                var fallbackUrl = 'https://stream.ronautradio.la/residents/logo.png';
+                var detailPhoto = document.getElementById('detail-photo');
+
+                // Try to load image, use fallback if fails
+                var img = new Image();
+                img.onload = function() {
+                    detailPhoto.style.backgroundImage = 'url(' + photoUrl + ')';
+                };
+                img.onerror = function() {
+                    detailPhoto.style.backgroundImage = 'url(' + fallbackUrl + ')';
+                };
+                img.src = photoUrl;
+                document.getElementById('detail-name').textContent = r.name;
+                document.getElementById('detail-bio').textContent = r.bio || '';
+
+                // Social links
+                var linksHtml = '';
+                if (r.social) {
+                    if (r.social.instagram) linksHtml += '<a href="' + r.social.instagram + '" target="_blank">Instagram</a>';
+                    if (r.social.soundcloud) linksHtml += '<a href="' + r.social.soundcloud + '" target="_blank">Soundcloud</a>';
+                    if (r.social.ra) linksHtml += '<a href="' + r.social.ra + '" target="_blank">Resident Advisor</a>';
+                    if (r.social.mixcloud) linksHtml += '<a href="' + r.social.mixcloud + '" target="_blank">Mixcloud</a>';
+                    if (r.social.website) linksHtml += '<a href="' + r.social.website + '" target="_blank">Website</a>';
+                }
+                document.getElementById('detail-links').innerHTML = linksHtml;
+
+                // Sets
+                var setsHtml = '';
+                if (r.sets && r.sets.length > 0) {
+                    setsHtml += '<div class="detail-sets-title">Listen to their sets</div>';
+                    for (var j = 0; j < r.sets.length; j++) {
+                        var setFile = r.sets[j];
+                        var setName = setFile.replace('.mp4', '');
+                        setsHtml += '<span class="detail-set-link" data-url="/sets/' + setFile + '" data-title="' + escapeHtml(setName) + '">' + escapeHtml(setName) + '</span>';
+                    }
+                }
+                document.getElementById('detail-sets').innerHTML = setsHtml;
+
+                // Add click listeners for set links
+                var setLinks = document.querySelectorAll('#detail-sets .detail-set-link');
+                setLinks.forEach(function(link) {
+                    link.addEventListener('click', function() {
+                        var url = this.getAttribute('data-url');
+                        var title = this.getAttribute('data-title');
+                        closeDetail();
+                        if (typeof playPick === 'function') {
+                            playPick(url, title);
+                        }
+                    });
+                });
+
+                detailPanel.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeDetail() {
+                detailPanel.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            detailClose.addEventListener('click', closeDetail);
+
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && detailPanel.classList.contains('active')) {
+                    closeDetail();
+                }
+            });
+
+            loadResidents();
+        })();
+
         // Staff Picks
         (function() {
             var picksGrid = document.getElementById('picks-grid');
@@ -1756,15 +2501,29 @@
             // Restore nickname from localStorage
             nickInput.value = localStorage.getItem('ronaut_chat_nick') || '';
 
+            function formatChatTime(timestamp) {
+                var d = new Date(timestamp * 1000);
+                var hours = d.getHours().toString().padStart(2, '0');
+                var mins = d.getMinutes().toString().padStart(2, '0');
+                return hours + ':' + mins;
+            }
+
             function appendMessage(data) {
                 var div = document.createElement('div');
                 div.className = 'chat-msg';
+                // Timestamp
+                var timeSpan = document.createElement('span');
+                timeSpan.className = 'chat-time';
+                timeSpan.textContent = formatChatTime(data.timestamp);
+                div.appendChild(timeSpan);
+                // Nickname
                 var nick = document.createElement('span');
                 nick.className = 'chat-nick';
                 nick.style.color = data.color;
                 nick.textContent = data.nickname;
-                var text = document.createTextNode(data.message);
                 div.appendChild(nick);
+                // Message text
+                var text = document.createTextNode(data.message);
                 div.appendChild(text);
                 messagesDiv.appendChild(div);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -1791,7 +2550,7 @@
             });
 
             function sendMessage() {
-                var nick = nickInput.value.trim() || 'anon';
+                var nick = nickInput.value.trim(); // Empty string lets server generate unique anon name
                 var msg = msgInput.value.trim();
                 if (!msg) return;
                 localStorage.setItem('ronaut_chat_nick', nick);
@@ -1869,27 +2628,167 @@
             }
         })();
 
-        // Calendar
-        var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            timeZone: 'America/Los_Angeles',
-            headerToolbar: {
-                left: 'prev,next',
-                center: 'title',
-                right: 'today'
-            },
-            initialView: 'dayGridMonth',
-            firstDay: 1, // Monday
-            nowIndicator: true,
-            eventSources: [{
-                url: 'https://calendar.google.com/calendar/ical/heffcoi%40gmail.com/public/basic.ics',
-                format: 'ics'
-            }],
-            eventClick: function(info) {
-                info.jsEvent.preventDefault();
+        // Upcoming Events - Fetch ICS and render cards
+        var upcomingEvents = [];
+        var nextLiveBannerText = '';
+
+        function parseICS(icsText) {
+            var events = [];
+            var lines = icsText.split('\n');
+            var currentEvent = null;
+
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i].trim();
+                if (line === 'BEGIN:VEVENT') {
+                    currentEvent = {};
+                } else if (line === 'END:VEVENT' && currentEvent) {
+                    if (currentEvent.summary && currentEvent.dtstart) {
+                        events.push(currentEvent);
+                    }
+                    currentEvent = null;
+                } else if (currentEvent) {
+                    if (line.startsWith('SUMMARY:')) {
+                        currentEvent.summary = line.substring(8);
+                    } else if (line.startsWith('DTSTART:')) {
+                        var dtStr = line.substring(8).replace('Z', '');
+                        currentEvent.dtstart = new Date(
+                            dtStr.substring(0,4) + '-' + dtStr.substring(4,6) + '-' + dtStr.substring(6,8) + 'T' +
+                            dtStr.substring(9,11) + ':' + dtStr.substring(11,13) + ':' + dtStr.substring(13,15) + 'Z'
+                        );
+                    } else if (line.startsWith('DTEND:')) {
+                        var dtEndStr = line.substring(6).replace('Z', '');
+                        currentEvent.dtend = new Date(
+                            dtEndStr.substring(0,4) + '-' + dtEndStr.substring(4,6) + '-' + dtEndStr.substring(6,8) + 'T' +
+                            dtEndStr.substring(9,11) + ':' + dtEndStr.substring(11,13) + ':' + dtEndStr.substring(13,15) + 'Z'
+                        );
+                    }
+                }
             }
-        });
-        calendar.render();
+            return events;
+        }
+
+        function toGoogleDate(d) {
+            return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+        }
+
+        function createEventCard(event) {
+            var start = event.dtstart;
+            var end = event.dtend || new Date(start.getTime() + 3600000);
+
+            var monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+            var dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            // Convert to Pacific Time for display
+            var options = { timeZone: 'America/Los_Angeles' };
+            var ptDate = new Date(start.toLocaleString('en-US', options));
+            var month = start.toLocaleString('en-US', { month: 'short', timeZone: 'America/Los_Angeles' }).toUpperCase();
+            var day = start.toLocaleString('en-US', { day: 'numeric', timeZone: 'America/Los_Angeles' });
+            var weekday = start.toLocaleString('en-US', { weekday: 'short', timeZone: 'America/Los_Angeles' });
+            var timeStr = start.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' }) + ' PT';
+
+            var gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+                '&text=' + encodeURIComponent(event.summary) +
+                '&dates=' + toGoogleDate(start) + '/' + toGoogleDate(end) +
+                '&details=' + encodeURIComponent('Ronaut Radio Live Stream - ronautradio.la');
+
+            var icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\n' +
+                'DTSTART:' + toGoogleDate(start) + '\n' +
+                'DTEND:' + toGoogleDate(end) + '\n' +
+                'SUMMARY:' + event.summary + '\n' +
+                'DESCRIPTION:Ronaut Radio Live Stream - ronautradio.la\n' +
+                'END:VEVENT\nEND:VCALENDAR';
+            var icsBlob = new Blob([icsContent], { type: 'text/calendar' });
+            var icsUrl = URL.createObjectURL(icsBlob);
+
+            var card = document.createElement('div');
+            card.className = 'event-card';
+            card.innerHTML =
+                '<div class="event-date">' +
+                    '<span class="month">' + month + '</span>' +
+                    '<span class="day">' + day + '</span>' +
+                    '<span class="weekday">' + weekday + '</span>' +
+                '</div>' +
+                '<div class="event-details">' +
+                    '<h3 class="event-title">' + event.summary + '</h3>' +
+                    '<p class="event-time">' + timeStr + '</p>' +
+                '</div>' +
+                '<div class="event-actions">' +
+                    '<a href="' + gcalUrl + '" target="_blank" class="add-gcal">+ Google</a>' +
+                    '<a href="' + icsUrl + '" download="' + event.summary.replace(/[^a-z0-9]/gi, '-') + '.ics" class="add-ics">.ics</a>' +
+                '</div>';
+
+            return card;
+        }
+
+        function renderUpcomingEvents() {
+            var container = document.getElementById('upcoming-events');
+            var noUpcoming = document.getElementById('no-upcoming');
+            var now = new Date();
+
+            // Filter to future events and sort
+            var futureEvents = upcomingEvents.filter(function(e) { return e.dtstart > now; });
+            futureEvents.sort(function(a, b) { return a.dtstart - b.dtstart; });
+
+            container.innerHTML = '';
+
+            if (futureEvents.length === 0) {
+                noUpcoming.style.display = 'block';
+            } else {
+                noUpcoming.style.display = 'none';
+                futureEvents.forEach(function(event) {
+                    container.appendChild(createEventCard(event));
+                });
+            }
+
+            // Update banner with next event
+            if (futureEvents.length > 0) {
+                var nextEvent = futureEvents[0];
+                var startDate = nextEvent.dtstart;
+                var options = { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles' };
+                var dateStr = startDate.toLocaleString('en-US', options);
+                nextLiveBannerText = 'Next Live: ' + nextEvent.summary + ' — ' + dateStr;
+                document.getElementById('next-live-banner').textContent = nextLiveBannerText;
+                startBannerCycle();
+            }
+        }
+
+        // Fetch calendar
+        fetch('https://stream.ronautradio.la/api/calendar.ics')
+            .then(function(response) { return response.text(); })
+            .then(function(icsText) {
+                upcomingEvents = parseICS(icsText);
+                console.log('Calendar loaded, events:', upcomingEvents.length);
+                renderUpcomingEvents();
+            })
+            .catch(function(err) {
+                console.error('Calendar fetch error:', err);
+                document.getElementById('no-upcoming').style.display = 'block';
+            });
+
+        function startBannerCycle() {
+            var banner = document.getElementById('next-live-banner');
+            if (!nextLiveBannerText) return;
+
+            // Show banner immediately first time
+            showBanner();
+
+            // Then cycle: show for 5s, hide for 25s
+            setInterval(function() {
+                showBanner();
+            }, 60000); // Every 60 seconds
+        }
+
+        function showBanner() {
+            var banner = document.getElementById('next-live-banner');
+            if (!nextLiveBannerText) return;
+
+            banner.classList.add('visible');
+
+            // Hide after 5 seconds
+            setTimeout(function() {
+                banner.classList.remove('visible');
+            }, 5000);
+        }
     });
     </script>
 </body>
