@@ -1685,6 +1685,14 @@
         if (miniStatus) miniStatus.textContent = 'PLAYING';
         if (miniTitle) miniTitle.textContent = title;
 
+        // Preload mini video for faster mini player
+        var miniVideo = document.getElementById('mini-video');
+        if (miniVideo) {
+            miniVideo.src = video.src;
+            miniVideo.preload = 'auto';
+            miniVideo.muted = true; // Mute to allow preload
+        }
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
