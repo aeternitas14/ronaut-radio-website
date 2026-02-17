@@ -1684,6 +1684,14 @@
         isPlayingPick = true;
         currentPickTitle = title; // Store for mini player
 
+        // Log VOD play for analytics
+        var setName = url.replace('/sets/', '').replace('.mp4', '');
+        fetch('https://stream.ronautradio.la/api/vod-play', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ set_name: setName })
+        }).catch(function(e) { console.log('VOD tracking error', e); });
+
         // Update mini player title for VOD
         var miniStatus = document.querySelector('#mini-player .mini-status');
         var miniTitle = document.querySelector('#mini-player .mini-title');
