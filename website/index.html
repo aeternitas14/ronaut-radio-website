@@ -1725,6 +1725,19 @@
                     { src: 'https://ronautradio.la/assets/favicon.png', sizes: '512x512', type: 'image/png' }
                 ]
             });
+            // Re-register action handlers for VOD
+            navigator.mediaSession.setActionHandler('play', function() {
+                video.play().catch(function(e) { console.log('Play prevented', e); });
+            });
+            navigator.mediaSession.setActionHandler('pause', function() {
+                video.pause();
+            });
+            navigator.mediaSession.setActionHandler('seekbackward', function() {
+                video.currentTime = Math.max(video.currentTime - 10, 0);
+            });
+            navigator.mediaSession.setActionHandler('seekforward', function() {
+                video.currentTime = Math.min(video.currentTime + 10, video.duration);
+            });
         }
 
         // Log VOD play for analytics
