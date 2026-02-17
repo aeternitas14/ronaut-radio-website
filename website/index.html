@@ -1672,23 +1672,46 @@
             hlsInstance = null;
         }
 
-        // Set MP4 source directly
         video.crossOrigin = 'anonymous';
         video.muted = false;
         video.removeAttribute('muted');
         video.volume = 1;
-        // url already encoded by staff picks renderer
-        video.src = 'https://stream.ronautradio.la' + (url || '');
 
-        video.addEventListener('loadedmetadata', function onLoaded() {
-        // Seek to start time if provided
-        if (startTime && startTime > 0) {
-                video.currentTime = startTime;
-            }
+        var fullUrl = 'https://stream.ronautradio.la' + (url || '');
+        var isHls = url && url.indexOf('.m3u8') !== -1;
+
+        if (isHls && Hls.isSupported()) {
+            // Use HLS.js for m3u8 files
+            hlsInstance = new Hls();
+            hlsInstance.loadSource(fullUrl);
+            hlsInstance.attachMedia(video);
+            hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                if (startTime && startTime > 0) {
+                    video.currentTime = startTime;
+                }
+                video.play().catch(function(e) { console.log("Play prevented", e); });
+            });
+        } else if (isHls && video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Native HLS (Safari)
+            video.src = fullUrl;
+            video.addEventListener('loadedmetadata', function onLoaded() {
+                if (startTime && startTime > 0) {
+                    video.currentTime = startTime;
+                }
                 video.removeEventListener('loadedmetadata', onLoaded);
             });
-
-        video.play().catch(function(e) { console.log("Play prevented", e); });
+            video.play().catch(function(e) { console.log("Play prevented", e); });
+        } else {
+            // MP4 direct playback
+            video.src = fullUrl;
+            video.addEventListener('loadedmetadata', function onLoaded() {
+                if (startTime && startTime > 0) {
+                    video.currentTime = startTime;
+                }
+                video.removeEventListener('loadedmetadata', onLoaded);
+            });
+            video.play().catch(function(e) { console.log("Play prevented", e); });
+        }
         // Reset audio context for VOD - real waveform works with MP4
         if (window.RonautAudio && window.RonautAudio.resetForVOD) {
             setTimeout(function() {
