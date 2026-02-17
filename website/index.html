@@ -1620,6 +1620,7 @@
     var hlsInstance = null;
     var isPlayingPick = false;
     var currentPickTitle = '';
+    var currentVodUrl = ''; // Store VOD URL for mini player
 
     function escapeHtml(text) {
         var div = document.createElement('div');
@@ -1661,6 +1662,7 @@
 
         var fullUrl = 'https://stream.ronautradio.la' + (url || '');
         var isHls = url && url.indexOf('.m3u8') !== -1;
+        currentVodUrl = fullUrl; // Store for mini player
 
         if (isHls && Hls.isSupported()) {
             // Use HLS.js for m3u8 files
@@ -1843,6 +1845,7 @@
         backBtn.style.display = 'none';
         isPlayingPick = false;
         currentPickTitle = '';
+        currentVodUrl = ''; // Clear VOD URL
 
         // Switch to demo mode for HLS (real audio analysis often fails with MSE)
         if (window.RonautAudio && window.RonautAudio.setDemoMode) {
@@ -2181,18 +2184,37 @@
                         } catch (e) {}
                     }
 
-                    // Mobile: mini video is already preloaded and playing
-                    // Just sync time for VOD, live stream is already in sync
-                    if (isPlayingPick && video.src) {
-                        // VOD: need to load the same source
+                    // Mobile: mini video is already preloaded and playing for live
+                    // For VOD, we need to load the VOD source
+                    if (isPlayingPick && currentVodUrl) {
+                        // Destroy live HLS instance
                         if (miniHlsInstance) {
                             miniHlsInstance.destroy();
                             miniHlsInstance = null;
                         }
-                        miniVideo.src = video.src;
-                        miniVideo.currentTime = video.currentTime;
-                        miniVideo.muted = true;
-                        miniVideo.play().catch(function(e) {});
+
+                        var isVodHls = currentVodUrl.indexOf('.m3u8') !== -1;
+
+                        if (isVodHls && Hls.isSupported()) {
+                            // Use HLS.js for VOD
+                            miniHlsInstance = new Hls();
+                            miniHlsInstance.loadSource(currentVodUrl);
+                            miniHlsInstance.attachMedia(miniVideo);
+                            miniHlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                                miniVideo.currentTime = video.currentTime;
+                                miniVideo.muted = true;
+                                miniVideo.play().catch(function(e) {});
+                            });
+                        } else {
+                            // Native HLS (iOS Safari) or MP4
+                            miniVideo.src = currentVodUrl;
+                            miniVideo.addEventListener('loadedmetadata', function onLoaded() {
+                                miniVideo.currentTime = video.currentTime;
+                                miniVideo.removeEventListener('loadedmetadata', onLoaded);
+                            });
+                            miniVideo.muted = true;
+                            miniVideo.play().catch(function(e) {});
+                        }
                     }
                     // For live stream, mini video is already playing from preload
                 }
