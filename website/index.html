@@ -1429,7 +1429,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
+            z-index: -1;
             pointer-events: none;
         }
     </style>
@@ -3075,13 +3075,13 @@
 
         function resizeCanvas() {
             canvas.width = window.innerWidth;
-            canvas.height = Math.max(document.body.scrollHeight, window.innerHeight);
+            canvas.height = window.innerHeight;
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Speed line class
-        function SpeedLine(x, y, angle) {
+        // Speed line class (from cartoon HTML)
+        function SpeedLine(x, y, vx, vy, angle) {
             this.x = x;
             this.y = y;
             this.length = Math.random() * 20 + 10;
@@ -3100,7 +3100,7 @@
         SpeedLine.prototype.draw = function() {
             if (this.life <= 0) return;
             ctx.save();
-            ctx.globalAlpha = this.life * 0.5;
+            ctx.globalAlpha = this.life * 0.7;
             ctx.strokeStyle = isDarkMode() ? '#ffffff' : '#000000';
             ctx.lineWidth = this.width;
             ctx.lineCap = 'round';
@@ -3111,67 +3111,180 @@
             ctx.restore();
         };
 
-        // Asteroid class
-        function CartoonAsteroid() {
-            this.reset();
-        }
-        CartoonAsteroid.prototype.reset = function() {
-            this.startX = Math.random() * canvas.width;
-            this.x = this.startX;
-            this.baseY = Math.random() * canvas.height * 2;
-            this.y = this.baseY;
-            this.size = Math.random() * 20 + 10;
-            this.speed = (30 - this.size) / 50;
-            this.curveDirection = Math.random() > 0.5 ? 1 : -1;
-            this.curveIntensity = Math.random() * 0.2 + 0.1;
-            this.curvePhase = Math.random() * Math.PI * 2;
+        // Debris particle class (from cartoon HTML)
+        function DebrisParticle(x, y, vx, vy) {
+            this.x = x;
+            this.y = y;
+            this.vx = vx + (Math.random() - 0.5) * 2;
+            this.vy = vy + (Math.random() - 0.5) * 2;
+            this.size = Math.random() * 3 + 1;
+            this.life = 1.0;
+            this.decay = 0.015 + Math.random() * 0.015;
             this.rotation = Math.random() * Math.PI * 2;
-            this.rotationSpeed = (Math.random() - 0.5) * 0.03;
-            this.opacity = 0.4 + Math.random() * 0.3;
-            this.speedLines = [];
-            this.trailTimer = 0;
+            this.rotationSpeed = (Math.random() - 0.5) * 0.2;
+        }
+        DebrisParticle.prototype.update = function() {
+            this.x += this.vx;
+            this.y += this.vy;
+            this.rotation += this.rotationSpeed;
+            this.life -= this.decay;
+            this.vx *= 0.97;
+            this.vy *= 0.97;
+        };
+        DebrisParticle.prototype.draw = function() {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = this.life * 0.6;
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+            var dark = isDarkMode();
+            ctx.fillStyle = dark ? '#cccccc' : '#333333';
+            ctx.strokeStyle = dark ? '#ffffff' : '#000000';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(this.size, 0);
+            ctx.lineTo(this.size * 0.5, this.size * 0.5);
+            ctx.lineTo(-this.size * 0.5, this.size * 0.3);
+            ctx.lineTo(-this.size * 0.3, -this.size * 0.5);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+        };
+
+        // Cartoony Asteroid class (from cartoon HTML with slingshot movement)
+        function CartoonAsteroid() {
+            this.init();
+        }
+        CartoonAsteroid.prototype.init = function() {
+            // Spawn on sides for horizontal slingshot effect
+            var side = Math.random() > 0.5;
+            this.startX = side ? Math.random() * canvas.width * 0.3 : canvas.width * 0.7 + Math.random() * canvas.width * 0.3;
+            this.x = this.startX;
+            this.baseY = Math.random() * canvas.height;
+            this.y = this.baseY;
+            this.size = Math.random() * 30 + 20; // Bigger: 20-50px
+            this.speed = (50 - this.size) / 60;
+
+            // Slingshot parameters - more horizontal movement
+            this.curveDirection = side ? 1 : -1;
+            this.curveIntensity = Math.random() * 0.4 + 0.3; // Stronger curve
+            this.curvePhase = Math.random() * Math.PI * 2;
+
+            this.rotation = Math.random() * Math.PI * 2;
+            this.rotationSpeed = (Math.random() - 0.5) * 0.05;
+
+            // Cartoony features
+            this.craters = [];
+            var craterCount = Math.floor(Math.random() * 4) + 2;
+            for (var i = 0; i < craterCount; i++) {
+                this.craters.push({
+                    angle: Math.random() * Math.PI * 2,
+                    distance: Math.random() * 0.5,
+                    size: Math.random() * 0.3 + 0.15
+                });
+            }
             this.bumps = [];
             var bumpCount = Math.floor(Math.random() * 3) + 5;
             for (var i = 0; i < bumpCount; i++) {
-                this.bumps.push({ angle: (i / bumpCount) * Math.PI * 2, radius: 0.7 + Math.random() * 0.3 });
+                this.bumps.push({
+                    angle: (i / bumpCount) * Math.PI * 2,
+                    radius: 0.7 + Math.random() * 0.3
+                });
+            }
+            this.opacity = 0.7 + Math.random() * 0.2;
+
+            // Trails
+            this.speedLines = [];
+            this.debris = [];
+            this.trailTimer = 0;
+            this.trailInterval = 2;
+        };
+        CartoonAsteroid.prototype.emitSpeedLines = function() {
+            var angle = Math.atan2(-this.speed * 2, -Math.sin(this.curvePhase) * this.curveDirection * 0.5);
+            for (var i = 0; i < 3; i++) {
+                var offsetAngle = this.rotation + (Math.random() * Math.PI * 2);
+                var offsetDist = this.size * 0.8;
+                this.speedLines.push(new SpeedLine(
+                    this.x + Math.cos(offsetAngle) * offsetDist,
+                    this.y + Math.sin(offsetAngle) * offsetDist,
+                    0, 0, angle
+                ));
+            }
+        };
+        CartoonAsteroid.prototype.emitDebris = function() {
+            var vx = -Math.sin(this.curvePhase) * this.curveDirection * 0.5;
+            var vy = -this.speed * 3;
+            for (var i = 0; i < 2; i++) {
+                this.debris.push(new DebrisParticle(
+                    this.x + (Math.random() - 0.5) * this.size,
+                    this.y + (Math.random() - 0.5) * this.size,
+                    vx, vy
+                ));
             }
         };
         CartoonAsteroid.prototype.update = function(scrollOffset) {
+            // Slingshot trajectory - more horizontal
             var progress = scrollOffset * this.speed;
-            this.y = this.baseY - progress;
-            this.curvePhase = progress * 0.008;
-            var curveOffset = Math.sin(this.curvePhase) * this.curveIntensity * canvas.width * 0.2;
+            this.y = this.baseY - progress * 0.5; // Slower vertical
+            this.curvePhase = progress * 0.015;
+            var curveOffset = Math.sin(this.curvePhase) * this.curveIntensity * canvas.width * 0.4;
             this.x = this.startX + (curveOffset * this.curveDirection);
+
             this.rotation += this.rotationSpeed;
 
+            // Emit trails
             this.trailTimer++;
-            if (this.trailTimer >= 4) {
-                var angle = Math.atan2(-this.speed * 2, -Math.sin(this.curvePhase) * this.curveDirection * 0.3);
-                this.speedLines.push(new SpeedLine(this.x, this.y + this.size * 0.5, angle));
+            if (this.trailTimer >= this.trailInterval) {
+                this.emitSpeedLines();
+                this.emitDebris();
                 this.trailTimer = 0;
             }
 
+            // Update particles
             for (var i = this.speedLines.length - 1; i >= 0; i--) {
                 this.speedLines[i].update();
                 if (this.speedLines[i].life <= 0) this.speedLines.splice(i, 1);
             }
+            for (var i = this.debris.length - 1; i >= 0; i--) {
+                this.debris[i].update();
+                if (this.debris[i].life <= 0) this.debris.splice(i, 1);
+            }
 
-            if (this.y < -this.size - 200 || this.y > canvas.height + this.size + 200) {
-                this.reset();
-                this.baseY = this.y > 0 ? -this.size : canvas.height + this.size;
-                this.baseY += scrollOffset * this.speed;
+            // Wrap around vertically
+            if (this.y < -this.size - 100) {
+                this.y = canvas.height + this.size;
+                this.baseY = this.y + scrollOffset * this.speed * 0.5;
+                this.startX = Math.random() > 0.5 ? Math.random() * canvas.width * 0.3 : canvas.width * 0.7 + Math.random() * canvas.width * 0.3;
+                this.curvePhase = Math.random() * Math.PI * 2;
+                this.speedLines = [];
+                this.debris = [];
+            } else if (this.y > canvas.height + this.size + 100) {
+                this.y = -this.size;
+                this.baseY = this.y + scrollOffset * this.speed * 0.5;
+                this.startX = Math.random() > 0.5 ? Math.random() * canvas.width * 0.3 : canvas.width * 0.7 + Math.random() * canvas.width * 0.3;
+                this.curvePhase = Math.random() * Math.PI * 2;
+                this.speedLines = [];
+                this.debris = [];
             }
         };
         CartoonAsteroid.prototype.draw = function() {
+            // Draw speed lines first
             for (var i = 0; i < this.speedLines.length; i++) {
                 this.speedLines[i].draw();
             }
+            // Draw debris
+            for (var i = 0; i < this.debris.length; i++) {
+                this.debris[i].draw();
+            }
 
+            // Draw asteroid
             ctx.save();
             ctx.translate(this.x, this.y);
             ctx.rotate(this.rotation);
             ctx.globalAlpha = this.opacity;
 
+            // Draw main body with cartoon shading
             ctx.beginPath();
             for (var i = 0; i < this.bumps.length; i++) {
                 var bx = Math.cos(this.bumps[i].angle) * this.size * this.bumps[i].radius;
@@ -3181,23 +3294,61 @@
             }
             ctx.closePath();
 
+            // Fill with gradient for 3D effect
+            var gradient = ctx.createRadialGradient(-this.size * 0.3, -this.size * 0.3, 0, 0, 0, this.size * 1.2);
             var dark = isDarkMode();
-            ctx.fillStyle = dark ? '#444444' : '#666666';
+            if (dark) {
+                gradient.addColorStop(0, '#666666');
+                gradient.addColorStop(0.7, '#333333');
+                gradient.addColorStop(1, '#1a1a1a');
+            } else {
+                gradient.addColorStop(0, '#888888');
+                gradient.addColorStop(0.7, '#444444');
+                gradient.addColorStop(1, '#222222');
+            }
+            ctx.fillStyle = gradient;
             ctx.fill();
-            ctx.strokeStyle = dark ? '#888888' : '#333333';
-            ctx.lineWidth = 1.5;
+
+            // Bold outline
+            ctx.strokeStyle = dark ? '#ffffff' : '#000000';
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
             ctx.stroke();
 
+            // Draw craters
+            for (var i = 0; i < this.craters.length; i++) {
+                var crater = this.craters[i];
+                var cx = Math.cos(crater.angle) * this.size * crater.distance;
+                var cy = Math.sin(crater.angle) * this.size * crater.distance;
+                var radius = this.size * crater.size;
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                ctx.fillStyle = dark ? '#1a1a1a' : '#000000';
+                ctx.fill();
+                ctx.strokeStyle = dark ? '#ffffff' : '#000000';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Crater highlight
+                ctx.beginPath();
+                ctx.arc(cx - radius * 0.3, cy - radius * 0.3, radius * 0.3, 0, Math.PI * 2);
+                ctx.fillStyle = dark ? '#444444' : '#666666';
+                ctx.fill();
+            }
+
+            // Add cartoon shine
             ctx.beginPath();
-            ctx.arc(-this.size * 0.3, -this.size * 0.3, this.size * 0.15, 0, Math.PI * 2);
-            ctx.fillStyle = dark ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.3)';
+            ctx.arc(-this.size * 0.4, -this.size * 0.4, this.size * 0.25, 0, Math.PI * 2);
+            ctx.fillStyle = dark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.4)';
             ctx.fill();
 
             ctx.restore();
         };
 
+        // Create more asteroids (15)
         var asteroids = [];
-        for (var i = 0; i < 8; i++) {
+        for (var i = 0; i < 15; i++) {
             asteroids.push(new CartoonAsteroid());
         }
 
