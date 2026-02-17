@@ -3180,7 +3180,7 @@
             this.x = this.startX;
             this.baseY = Math.random() * canvas.height;
             this.y = this.baseY;
-            this.size = Math.random() * 30 + 20; // Bigger: 20-50px
+            this.size = Math.random() * 15 + 10; // Smaller: 10-25px
             this.speed = (50 - this.size) / 60;
 
             // Slingshot parameters - more horizontal movement
@@ -3209,7 +3209,7 @@
                     radius: 0.7 + Math.random() * 0.3
                 });
             }
-            this.opacity = 0.7 + Math.random() * 0.2;
+            this.opacity = 0.4 + Math.random() * 0.2;
 
             // Trails
             this.speedLines = [];
@@ -3363,9 +3363,9 @@
             ctx.restore();
         };
 
-        // Create more asteroids (15)
+        // Create asteroids (fewer for less distraction)
         var asteroids = [];
-        for (var i = 0; i < 15; i++) {
+        for (var i = 0; i < 6; i++) {
             asteroids.push(new CartoonAsteroid());
         }
 
