@@ -2024,8 +2024,7 @@
                 var miniVideo = document.getElementById('mini-video');
                 var miniPlayBtn = document.getElementById('mini-play-btn');
                 var miniMuteBtn = document.getElementById('mini-mute-btn');
-                var miniHlsInitialized = false;
-                var miniHls = null;
+                var miniActive = false;
 
                 function updateMiniPlayerButtons() {
                     if (!video) return;
@@ -2043,39 +2042,40 @@
                     }
                 }
 
-                function initMiniHls() {
-                    if (miniHlsInitialized) return;
-                    miniHlsInitialized = true;
+                function initMiniVideo() {
+                    if (miniActive) return;
+                    miniActive = true;
 
-                    // If playing a VOD (staff pick), mirror the main video source
-                    if (isPlayingPick && video.src) {
+                    // Mirror the main video using captureStream - instant, no buffering
+                    if (video.captureStream) {
+                        try {
+                            miniVideo.srcObject = video.captureStream();
+                            miniVideo.play().catch(function(e) {});
+                        } catch (e) {
+                            // Fallback: copy src directly for VOD
+                            if (video.src) {
+                                miniVideo.src = video.src;
+                                miniVideo.currentTime = video.currentTime;
+                                miniVideo.play().catch(function(e) {});
+                            }
+                        }
+                    } else if (video.mozCaptureStream) {
+                        // Firefox fallback
+                        try {
+                            miniVideo.srcObject = video.mozCaptureStream();
+                            miniVideo.play().catch(function(e) {});
+                        } catch (e) {}
+                    } else if (video.src) {
+                        // Final fallback: copy src
                         miniVideo.src = video.src;
                         miniVideo.currentTime = video.currentTime;
-                        miniVideo.play().catch(function(e) {});
-                        return;
-                    }
-
-                    // Otherwise use live HLS stream
-                    var streamUrl = 'https://stream.ronautradio.la/live/hls/stream.m3u8';
-                    if (Hls.isSupported()) {
-                        miniHls = new Hls({ maxBufferLength: 5, maxMaxBufferLength: 10 });
-                        miniHls.loadSource(streamUrl);
-                        miniHls.attachMedia(miniVideo);
-                        miniHls.on(Hls.Events.MANIFEST_PARSED, function() {
-                            miniVideo.play().catch(function(e) {});
-                        });
-                    } else if (miniVideo.canPlayType('application/vnd.apple.mpegurl')) {
-                        miniVideo.src = streamUrl;
                         miniVideo.play().catch(function(e) {});
                     }
                 }
 
-                function destroyMiniHls() {
-                    if (miniHls) {
-                        miniHls.destroy();
-                        miniHls = null;
-                    }
-                    miniHlsInitialized = false;
+                function hideMiniVideo() {
+                    miniActive = false;
+                    miniVideo.srcObject = null;
                     miniVideo.src = '';
                 }
 
@@ -2092,13 +2092,13 @@
                             if (playerHidden) {
                                 miniPlayer.classList.add('visible');
                                 if (!wasVisible) {
-                                    initMiniHls();
+                                    initMiniVideo();
                                     wasVisible = true;
                                 }
                             } else {
                                 miniPlayer.classList.remove('visible');
                                 if (wasVisible) {
-                                    destroyMiniHls();
+                                    hideMiniVideo();
                                     wasVisible = false;
                                 }
                             }
