@@ -119,130 +119,12 @@
             z-index: 1000;
         }
 
-        /* Placeholder maintains layout when player goes fixed */
-        #player-placeholder {
-            display: none;
-            width: 100%;
-            padding-top: 56.25%;
-            background: black;
-        }
-        #player-placeholder.active {
-            display: block;
-        }
-
         #player-container {
             position: relative;
             width: 100%;
             overflow: hidden;
             background: black;
             padding-top: 56.25%;
-            transition: transform 0.25s ease, width 0.25s ease, height 0.25s ease;
-        }
-
-        /* Mini mode - single video element transforms */
-        #player-container.mini-mode {
-            position: fixed;
-            padding-top: 0;
-            z-index: 9999;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-
-        /* Desktop mini: top-left */
-        @media (min-width: 768px) {
-            #player-container.mini-mode {
-                top: 10px;
-                left: 10px;
-                width: 320px;
-                height: 180px;
-            }
-        }
-
-        /* Mobile mini: bottom bar */
-        @media (max-width: 767px) {
-            #player-container.mini-mode {
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-                height: 60px;
-                top: auto;
-            }
-            #player-container.mini-mode #ronaut-player {
-                width: 107px;
-                height: 60px;
-                position: absolute;
-                left: 0;
-                top: 0;
-            }
-            #player-container.mini-mode #overlay {
-                display: none;
-            }
-        }
-
-        /* Mini controls overlay */
-        #mini-controls-overlay {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            display: none;
-            align-items: center;
-            justify-content: flex-end;
-            padding: 0 15px;
-            gap: 10px;
-            background: linear-gradient(to right, transparent, rgba(0,0,0,0.7));
-            z-index: 10;
-        }
-        #player-container.mini-mode #mini-controls-overlay {
-            display: flex;
-        }
-        #mini-controls-overlay .mini-info {
-            flex: 1;
-            padding-left: 15px;
-            color: #fff;
-            font-family: Oswald, sans-serif;
-            cursor: pointer;
-        }
-        #mini-controls-overlay .mini-status {
-            font-size: 10px;
-            color: #ff4444;
-            letter-spacing: 1px;
-        }
-        #mini-controls-overlay .mini-title {
-            font-size: 13px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 150px;
-        }
-        #mini-controls-overlay .mini-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            width: 36px;
-            height: 36px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.9;
-        }
-        #mini-controls-overlay .mini-btn:hover {
-            opacity: 1;
-        }
-        #mini-controls-overlay .mini-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: #fff;
-        }
-        @media (max-width: 767px) {
-            #mini-controls-overlay {
-                left: 107px;
-                background: #000;
-            }
-            #mini-controls-overlay .mini-title {
-                max-width: none;
-            }
         }
 
         #ronaut-player {
@@ -1377,6 +1259,130 @@
             background: #333;
         }
 
+        /* Mini Player */
+        #mini-player {
+            position: fixed;
+            background: #000;
+            color: #fff;
+            font-family: Oswald, sans-serif;
+            z-index: 9998;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 15px 10px 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        #mini-player.visible {
+            display: flex;
+        }
+
+        #mini-player .mini-status {
+            font-size: 10px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #ff4444;
+        }
+
+        #mini-player .mini-title {
+            font-size: 13px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+
+        #mini-player .mini-video-wrap {
+            width: 180px;
+            height: 101px;
+            background: #000;
+            overflow: hidden;
+            flex-shrink: 0;
+            margin: -10px 0 -10px 0;
+        }
+
+        #mini-player #mini-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            display: block;
+        }
+
+        #mini-player .mini-info {
+            cursor: pointer;
+        }
+
+        #mini-player .mini-info:hover .mini-title {
+            text-decoration: underline;
+        }
+
+        #mini-player .mini-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        #mini-player .mini-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            padding: 0;
+            opacity: 0.8;
+        }
+
+        #mini-player .mini-btn:hover {
+            opacity: 1;
+        }
+
+        #mini-player .mini-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: #fff;
+        }
+
+        /* Desktop: top-left */
+        @media (min-width: 768px) {
+            #mini-player {
+                top: 0;
+                left: 0;
+                padding: 0 15px 0 0;
+            }
+            #mini-player .mini-video-wrap {
+                margin: 0;
+            }
+        }
+
+        /* Mobile: bottom sticky bar */
+        @media (max-width: 767px) {
+            #mini-player {
+                bottom: 0;
+                left: 0;
+                right: 0;
+                justify-content: space-between;
+                border-top: 1px solid #333;
+                padding: 0 12px 0 0;
+            }
+            #mini-player .mini-video-wrap {
+                width: 120px;
+                height: 68px;
+                margin: 0;
+            }
+            #mini-player .mini-title {
+                max-width: none;
+                flex: 1;
+            }
+        }
+
         /* Responsive */
         @media (max-width: 767px) {
             .main-title {
@@ -1428,8 +1434,24 @@
         </button>
     </div>
 
-    <!-- Placeholder maintains layout when player goes mini -->
-    <div id="player-placeholder"></div>
+    <!-- Mini Player (appears when scrolling) -->
+    <div id="mini-player">
+        <div class="mini-video-wrap">
+            <video id="mini-video" muted playsinline></video>
+        </div>
+        <div class="mini-info">
+            <div class="mini-status">LIVE</div>
+            <div class="mini-title">Loading...</div>
+        </div>
+        <div class="mini-controls">
+            <button class="mini-btn" id="mini-play-btn" title="Play/Pause">
+                <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+            </button>
+            <button class="mini-btn" id="mini-mute-btn" title="Mute/Unmute">
+                <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+            </button>
+        </div>
+    </div>
 
     <div id="top-player-container">
         <div id="player-container">
@@ -1448,19 +1470,6 @@
                     <canvas id="waveform-canvas"></canvas>
                 </div>
                 <div id="next-live-banner"></div>
-            </div>
-            <!-- Mini controls overlay (shown when in mini mode) -->
-            <div id="mini-controls-overlay">
-                <div class="mini-info" onclick="scrollToPlayer()">
-                    <div class="mini-status">LIVE</div>
-                    <div class="mini-title">Loading...</div>
-                </div>
-                <button class="mini-btn" id="mini-play-btn" title="Play/Pause">
-                    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
-                </button>
-                <button class="mini-btn" id="mini-mute-btn" title="Mute/Unmute">
-                    <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
-                </button>
             </div>
         </div>
     </div>
@@ -1809,8 +1818,8 @@
         }).catch(function(e) { console.log('VOD tracking error', e); });
 
         // Update mini player title for VOD
-        var miniStatus = document.querySelector('#mini-controls-overlay .mini-status');
-        var miniTitle = document.querySelector('#mini-controls-overlay .mini-title');
+        var miniStatus = document.querySelector('#mini-player .mini-status');
+        var miniTitle = document.querySelector('#mini-player .mini-title');
         if (miniStatus) miniStatus.textContent = 'PLAYING';
         if (miniTitle) miniTitle.textContent = title;
 
@@ -1971,8 +1980,8 @@
                     var data = await res.json();
                     currentMode = data.mode || 'offline';
 
-                    var miniStatus = document.querySelector('#mini-controls-overlay .mini-status');
-                    var miniTitle = document.querySelector('#mini-controls-overlay .mini-title');
+                    var miniStatus = document.querySelector('#mini-player .mini-status');
+                    var miniTitle = document.querySelector('#mini-player .mini-title');
 
                     if (currentMode === 'live') {
                         liveBadge.classList.add('active');
@@ -2085,18 +2094,18 @@
             setInterval(updateNowPlaying, 10000);
             setInterval(updateProgramme, 30000);
 
-            // Mini Player - transforms the actual video element when scrolling
+            // Mini Player - show when main player scrolls out of view
             (function() {
+                var miniPlayer = document.getElementById('mini-player');
                 var playerContainer = document.getElementById('player-container');
-                var placeholder = document.getElementById('player-placeholder');
                 var video = document.getElementById('ronaut-player');
+                var miniVideo = document.getElementById('mini-video');
                 var miniPlayBtn = document.getElementById('mini-play-btn');
                 var miniMuteBtn = document.getElementById('mini-mute-btn');
-                var miniTitle = document.querySelector('#mini-controls-overlay .mini-title');
-                var miniStatus = document.querySelector('#mini-controls-overlay .mini-status');
+                var miniActive = false;
 
-                function updateMiniButtons() {
-                    if (!video || !miniPlayBtn || !miniMuteBtn) return;
+                function updateMiniPlayerButtons() {
+                    if (!video) return;
                     // Play/Pause icon
                     if (video.paused) {
                         miniPlayBtn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>';
@@ -2111,24 +2120,65 @@
                     }
                 }
 
-                // Scroll listener - toggle mini mode
+                function initMiniVideo() {
+                    if (miniActive) return;
+                    miniActive = true;
+
+                    // Mirror the main video using captureStream - instant, no buffering
+                    if (video.captureStream) {
+                        try {
+                            miniVideo.srcObject = video.captureStream();
+                            miniVideo.play().catch(function(e) {});
+                        } catch (e) {
+                            // Fallback: copy src directly for VOD
+                            if (video.src) {
+                                miniVideo.src = video.src;
+                                miniVideo.currentTime = video.currentTime;
+                                miniVideo.play().catch(function(e) {});
+                            }
+                        }
+                    } else if (video.mozCaptureStream) {
+                        // Firefox fallback
+                        try {
+                            miniVideo.srcObject = video.mozCaptureStream();
+                            miniVideo.play().catch(function(e) {});
+                        } catch (e) {}
+                    } else if (video.src) {
+                        // Final fallback: copy src
+                        miniVideo.src = video.src;
+                        miniVideo.currentTime = video.currentTime;
+                        miniVideo.play().catch(function(e) {});
+                    }
+                }
+
+                function hideMiniVideo() {
+                    miniActive = false;
+                    miniVideo.srcObject = null;
+                    miniVideo.src = '';
+                }
+
+                // Scroll listener
+                var lastScrollY = 0;
                 var ticking = false;
-                var isMinified = false;
+                var wasVisible = false;
                 window.addEventListener('scroll', function() {
+                    lastScrollY = window.scrollY;
                     if (!ticking) {
                         window.requestAnimationFrame(function() {
-                            var placeholderRect = placeholder.getBoundingClientRect();
-                            var shouldMinify = placeholderRect.bottom < 50;
-
-                            if (shouldMinify && !isMinified) {
-                                isMinified = true;
-                                placeholder.classList.add('active');
-                                playerContainer.classList.add('mini-mode');
-                                updateMiniButtons();
-                            } else if (!shouldMinify && isMinified) {
-                                isMinified = false;
-                                placeholder.classList.remove('active');
-                                playerContainer.classList.remove('mini-mode');
+                            var rect = playerContainer.getBoundingClientRect();
+                            var playerHidden = rect.bottom < 100;
+                            if (playerHidden) {
+                                miniPlayer.classList.add('visible');
+                                if (!wasVisible) {
+                                    initMiniVideo();
+                                    wasVisible = true;
+                                }
+                            } else {
+                                miniPlayer.classList.remove('visible');
+                                if (wasVisible) {
+                                    hideMiniVideo();
+                                    wasVisible = false;
+                                }
                             }
                             ticking = false;
                         });
@@ -2136,36 +2186,58 @@
                     }
                 });
 
-                // Mini controls
-                if (miniPlayBtn) {
-                    miniPlayBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        if (video.paused) {
-                            video.play().catch(function(err) { console.log('Play prevented', err); });
-                        } else {
-                            video.pause();
-                        }
-                        updateMiniButtons();
-                    });
-                }
+                // Mini player controls
+                miniPlayBtn.addEventListener('click', function() {
+                    if (video.paused) {
+                        video.play().catch(function(e) { console.log('Play prevented', e); });
+                    } else {
+                        video.pause();
+                    }
+                    updateMiniPlayerButtons();
+                });
 
-                if (miniMuteBtn) {
-                    miniMuteBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        video.muted = !video.muted;
-                        updateMiniButtons();
-                    });
-                }
+                miniMuteBtn.addEventListener('click', function() {
+                    video.muted = !video.muted;
+                    updateMiniPlayerButtons();
+                });
 
                 // Update buttons when video state changes
-                video.addEventListener('play', updateMiniButtons);
-                video.addEventListener('pause', updateMiniButtons);
-                video.addEventListener('volumechange', updateMiniButtons);
+                video.addEventListener('play', function() {
+                    updateMiniPlayerButtons();
+                    // Sync miniVideo play state for VOD
+                    if (isPlayingPick && miniVideo.src && miniVideo.paused) {
+                        miniVideo.play().catch(function(e) {});
+                    }
+                });
+                video.addEventListener('pause', function() {
+                    updateMiniPlayerButtons();
+                    // Sync miniVideo pause state for VOD
+                    if (isPlayingPick && miniVideo.src && !miniVideo.paused) {
+                        miniVideo.pause();
+                    }
+                });
+                video.addEventListener('volumechange', updateMiniPlayerButtons);
 
-                // Expose scroll function for mini info click
-                window.scrollToPlayer = function() {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                };
+                // Sync mini video time with main video for VOD playback
+                video.addEventListener('timeupdate', function() {
+                    if (isPlayingPick && wasVisible && miniVideo.src) {
+                        // Sync if more than 2 seconds apart
+                        if (Math.abs(video.currentTime - miniVideo.currentTime) > 2) {
+                            miniVideo.currentTime = video.currentTime;
+                        }
+                    }
+                });
+
+                // Click mini player to scroll to main player
+                miniPlayer.querySelector('.mini-info').addEventListener('click', function() {
+                    playerContainer.scrollIntoView({ behavior: 'smooth' });
+                });
+
+                // Click mini video to scroll to main player
+                miniVideo.addEventListener('click', function() {
+                    playerContainer.scrollIntoView({ behavior: 'smooth' });
+                });
+
             })();
 
             // Initialize HLS Player
