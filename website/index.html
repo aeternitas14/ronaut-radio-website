@@ -1727,6 +1727,8 @@
             });
             // Re-register action handlers for VOD
             navigator.mediaSession.setActionHandler('play', function() {
+                video.muted = false;
+                video.volume = 1;
                 video.play().catch(function(e) { console.log('Play prevented', e); });
             });
             navigator.mediaSession.setActionHandler('pause', function() {
