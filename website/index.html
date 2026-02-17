@@ -1736,6 +1736,10 @@
             navigator.mediaSession.setActionHandler('seekto', function(details) {
                 if (details.seekTime !== undefined) {
                     video.currentTime = details.seekTime;
+                    // Ensure audio continues after seek
+                    video.muted = false;
+                    video.volume = 1;
+                    video.play().catch(function(e) { console.log('Play after seek prevented', e); });
                     updatePositionState();
                 }
             });
