@@ -1750,7 +1750,46 @@
             navigator.mediaSession.setActionHandler('seekforward', function() {
                 video.currentTime = Math.min(video.currentTime + 10, video.duration);
             });
+            // Enable Control Center scrub bar
+            navigator.mediaSession.setActionHandler('seekto', function(details) {
+                if (details.seekTime !== undefined) {
+                    video.currentTime = details.seekTime;
+                    updatePositionState();
+                }
+            });
         }
+
+        // Update position state for iOS Control Center scrub bar
+        function updatePositionState() {
+            if ('mediaSession' in navigator && video.duration && !isNaN(video.duration)) {
+                try {
+                    navigator.mediaSession.setPositionState({
+                        duration: video.duration,
+                        playbackRate: video.playbackRate || 1,
+                        position: video.currentTime
+                    });
+                } catch (e) { /* ignore errors */ }
+            }
+        }
+
+        // Set position state when duration is known
+        video.addEventListener('loadedmetadata', function() {
+            updatePositionState();
+        });
+        video.addEventListener('durationchange', function() {
+            updatePositionState();
+        });
+
+        // Update position state periodically during playback
+        var positionInterval = setInterval(function() {
+            if (video.paused || video.ended) return;
+            updatePositionState();
+        }, 1000);
+
+        // Clean up interval when switching back to live
+        video.addEventListener('emptied', function() {
+            clearInterval(positionInterval);
+        }, { once: true });
 
         // Log VOD play for analytics
         var setName = url.replace('/sets/', '').replace('.mp4', '');
