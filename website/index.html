@@ -238,38 +238,24 @@
             transform: translateZ(0);
         }
 
-        /* Mobile: adjust waveform and energy meter position and size */
+        /* Mobile: hide waveform (doesn't work reliably on mobile) */
         @media (max-width: 767px) {
             #waveform-container {
-                bottom: 11px; /* Same stacking as desktop */
-                right: 10px;
-                width: 160px;
-                height: 45px;
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
+                display: none !important;
             }
 
             #waveform-canvas {
-                display: block !important;
-                opacity: 1 !important;
+                display: none !important;
             }
 
             #energy-meter {
-                bottom: 8px;
-                right: 10px;
-                width: 160px;
-                display: block !important;
-                visibility: visible !important;
+                display: none !important;
             }
         }
 
         @media (max-width: 480px) {
             #waveform-container {
-                bottom: 11px;
-                right: 8px;
-                width: 120px;
-                height: 35px;
+                display: none !important;
             }
 
             #energy-meter {
