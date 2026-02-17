@@ -1714,6 +1714,18 @@
         isPlayingPick = true;
         currentPickTitle = title; // Store for mini player
 
+        // Update Media Session for iOS Control Center
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: title,
+                artist: 'Ronaut Radio • Staff Pick',
+                album: 'Ronaut Radio',
+                artwork: [
+                    { src: 'https://ronautradio.la/assets/favicon.png', sizes: '512x512', type: 'image/png' }
+                ]
+            });
+        }
+
         // Log VOD play for analytics
         var setName = url.replace('/sets/', '').replace('.mp4', '');
         fetch('https://stream.ronautradio.la/api/vod-play', {
@@ -1813,6 +1825,34 @@
     });
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Media Session API for iOS Control Center / Lock Screen controls
+        function updateMediaSession(title, artist) {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: title || 'Ronaut Radio',
+                    artist: artist || 'Los Angeles • Vinyl Only',
+                    album: 'Ronaut Radio',
+                    artwork: [
+                        { src: 'https://ronautradio.la/assets/favicon.png', sizes: '512x512', type: 'image/png' }
+                    ]
+                });
+            }
+        }
+
+        function setupMediaSessionHandlers(video) {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.setActionHandler('play', function() {
+                    video.play().catch(function(e) { console.log('Play prevented', e); });
+                });
+                navigator.mediaSession.setActionHandler('pause', function() {
+                    video.pause();
+                });
+                navigator.mediaSession.setActionHandler('stop', function() {
+                    video.pause();
+                });
+            }
+        }
+
         // Player, Now Playing, and Programme
         (function() {
             const video = document.getElementById('ronaut-player');
@@ -1820,6 +1860,9 @@
             const liveBadge = document.getElementById('live-badge');
             const programmeList = document.getElementById('programme-list');
             const programmeLiveMsg = document.getElementById('programme-live-message');
+
+            // Setup Media Session handlers
+            setupMediaSessionHandlers(video);
 
             let currentMode = 'offline';
 
@@ -1864,6 +1907,7 @@
                         ticker.style.display = 'block';
                         if (miniStatus) miniStatus.textContent = 'LIVE';
                         if (miniTitle) miniTitle.textContent = 'Live Broadcast';
+                        updateMediaSession('Live Broadcast', 'Ronaut Radio');
                     } else {
                         liveBadge.classList.remove('active');
                         liveBadge.style.display = 'none';
@@ -1872,11 +1916,13 @@
                             ticker.style.display = 'block';
                             if (miniStatus) miniStatus.textContent = 'NOW PLAYING';
                             if (miniTitle) miniTitle.textContent = data.now_playing;
+                            updateMediaSession(data.now_playing, 'Ronaut Radio');
                         } else {
                             ticker.textContent = 'Stream offline';
                             ticker.style.display = 'block';
                             if (miniStatus) miniStatus.textContent = 'OFFLINE';
                             if (miniTitle) miniTitle.textContent = 'Stream offline';
+                            updateMediaSession('Stream Offline', 'Ronaut Radio');
                         }
                     }
                 } catch (err) {
