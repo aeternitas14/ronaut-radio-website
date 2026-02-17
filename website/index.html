@@ -1735,11 +1735,12 @@
             // Enable Control Center scrub bar
             navigator.mediaSession.setActionHandler('seekto', function(details) {
                 if (details.seekTime !== undefined) {
-                    video.currentTime = details.seekTime;
-                    // Ensure audio continues after seek
-                    video.muted = false;
-                    video.volume = 1;
-                    video.play().catch(function(e) { console.log('Play after seek prevented', e); });
+                    // Use fastSeek if available (better for scrubbing)
+                    if (details.fastSeek && typeof video.fastSeek === 'function') {
+                        video.fastSeek(details.seekTime);
+                    } else {
+                        video.currentTime = details.seekTime;
+                    }
                     updatePositionState();
                 }
             });
@@ -1762,6 +1763,37 @@
         video.addEventListener('loadedmetadata', function() {
             updatePositionState();
         });
+
+        // Resume playback after seek completes (critical for iOS background)
+        var wasPlayingBeforeSeek = false;
+        video.addEventListener('seeking', function() {
+            wasPlayingBeforeSeek = !video.paused;
+        });
+        video.addEventListener('seeked', function() {
+            updatePositionState();
+            // Always try to resume after seek in VOD mode
+            if (isPlayingPick) {
+                video.muted = false;
+                video.volume = 1;
+                video.play().then(function() {
+                    if ('mediaSession' in navigator) {
+                        navigator.mediaSession.playbackState = 'playing';
+                    }
+                }).catch(function(e) { console.log('Resume after seeked', e); });
+            }
+        });
+
+        // Handle iOS backgrounding - try to keep playing
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'hidden' && isPlayingPick && !video.paused) {
+                // Store that we were playing
+                video.dataset.wasPlaying = 'true';
+            } else if (document.visibilityState === 'visible' && video.dataset.wasPlaying === 'true') {
+                video.dataset.wasPlaying = '';
+                video.play().catch(function(e) {});
+            }
+        });
+
         video.addEventListener('durationchange', function() {
             updatePositionState();
         });
