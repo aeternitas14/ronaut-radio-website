@@ -1848,6 +1848,11 @@
         if (window.RonautAudio && window.RonautAudio.setDemoMode) {
             window.RonautAudio.setDemoMode();
         }
+
+        // Re-preload mini video for live stream (mobile)
+        if (window.preloadMiniVideo) {
+            window.preloadMiniVideo();
+        }
     }
 
     // Help ID Modal
@@ -2120,41 +2125,89 @@
                     }
                 }
 
-                function initMiniVideo() {
-                    if (miniActive) return;
-                    miniActive = true;
+                // Detect mobile (no captureStream support)
+                var isMobile = !video.captureStream && !video.mozCaptureStream;
+                var miniHlsInstance = null;
+                var miniPreloaded = false;
 
-                    // Mirror the main video using captureStream - instant, no buffering
-                    if (video.captureStream) {
-                        try {
-                            miniVideo.srcObject = video.captureStream();
+                // Pre-load mini video on mobile for instant display
+                function preloadMiniVideo() {
+                    if (!isMobile || miniPreloaded || isPlayingPick) return;
+                    miniPreloaded = true;
+
+                    if (Hls.isSupported()) {
+                        miniHlsInstance = new Hls();
+                        miniHlsInstance.loadSource('https://stream.ronautradio.la/live/hls/stream.m3u8');
+                        miniHlsInstance.attachMedia(miniVideo);
+                        miniHlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                            miniVideo.muted = true;
                             miniVideo.play().catch(function(e) {});
-                        } catch (e) {
-                            // Fallback: copy src directly for VOD
-                            if (video.src) {
-                                miniVideo.src = video.src;
-                                miniVideo.currentTime = video.currentTime;
-                                miniVideo.play().catch(function(e) {});
-                            }
-                        }
-                    } else if (video.mozCaptureStream) {
-                        // Firefox fallback
-                        try {
-                            miniVideo.srcObject = video.mozCaptureStream();
-                            miniVideo.play().catch(function(e) {});
-                        } catch (e) {}
-                    } else if (video.src) {
-                        // Final fallback: copy src
-                        miniVideo.src = video.src;
-                        miniVideo.currentTime = video.currentTime;
+                        });
+                    } else if (miniVideo.canPlayType('application/vnd.apple.mpegurl')) {
+                        // Native HLS (iOS Safari)
+                        miniVideo.src = 'https://stream.ronautradio.la/live/hls/stream.m3u8';
+                        miniVideo.muted = true;
                         miniVideo.play().catch(function(e) {});
                     }
                 }
 
+                // Pre-load after main video starts (give it a moment)
+                setTimeout(preloadMiniVideo, 2000);
+
+                // Expose for backToLive to re-trigger preload
+                window.preloadMiniVideo = function() {
+                    miniPreloaded = false;
+                    setTimeout(preloadMiniVideo, 1000);
+                };
+
+                function initMiniVideo() {
+                    if (miniActive) return;
+                    miniActive = true;
+
+                    // Desktop: use captureStream for instant mirroring
+                    if (video.captureStream) {
+                        try {
+                            miniVideo.srcObject = video.captureStream();
+                            miniVideo.play().catch(function(e) {});
+                            return;
+                        } catch (e) {}
+                    }
+
+                    if (video.mozCaptureStream) {
+                        try {
+                            miniVideo.srcObject = video.mozCaptureStream();
+                            miniVideo.play().catch(function(e) {});
+                            return;
+                        } catch (e) {}
+                    }
+
+                    // Mobile: mini video is already preloaded and playing
+                    // Just sync time for VOD, live stream is already in sync
+                    if (isPlayingPick && video.src) {
+                        // VOD: need to load the same source
+                        if (miniHlsInstance) {
+                            miniHlsInstance.destroy();
+                            miniHlsInstance = null;
+                        }
+                        miniVideo.src = video.src;
+                        miniVideo.currentTime = video.currentTime;
+                        miniVideo.muted = true;
+                        miniVideo.play().catch(function(e) {});
+                    }
+                    // For live stream, mini video is already playing from preload
+                }
+
                 function hideMiniVideo() {
                     miniActive = false;
-                    miniVideo.srcObject = null;
-                    miniVideo.src = '';
+                    // On mobile, don't destroy - keep preloaded for next time
+                    if (!isMobile) {
+                        miniVideo.srcObject = null;
+                        miniVideo.src = '';
+                    }
+                    // If we switched to VOD, reload live stream for next time
+                    if (isMobile && isPlayingPick) {
+                        miniPreloaded = false;
+                    }
                 }
 
                 // Scroll listener
