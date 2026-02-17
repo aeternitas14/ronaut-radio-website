@@ -1421,9 +1421,23 @@
                 left: 0;
             }
         }
+
+        /* Asteroid Canvas Background */
+        #asteroid-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
+    <!-- Asteroid Background Canvas -->
+    <canvas id="asteroid-canvas"></canvas>
+
     <!-- Theme Toggle Bar (fixed top) -->
     <div id="theme-toggle-bar">
         <button id="btn-theme" title="Toggle dark/light mode">
@@ -3046,6 +3060,162 @@
             }, 5000);
         }
     });
+    </script>
+
+    <!-- Asteroid Background Animation -->
+    <script>
+    (function() {
+        var canvas = document.getElementById('asteroid-canvas');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+
+        function isDarkMode() {
+            return document.documentElement.getAttribute('data-theme') === 'dark';
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = Math.max(document.body.scrollHeight, window.innerHeight);
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Speed line class
+        function SpeedLine(x, y, angle) {
+            this.x = x;
+            this.y = y;
+            this.length = Math.random() * 20 + 10;
+            this.width = Math.random() * 2 + 1;
+            this.angle = angle + (Math.random() - 0.5) * 0.3;
+            this.life = 1.0;
+            this.decay = 0.02 + Math.random() * 0.02;
+            this.speed = Math.random() * 2 + 1;
+        }
+        SpeedLine.prototype.update = function() {
+            this.x -= Math.cos(this.angle) * this.speed;
+            this.y -= Math.sin(this.angle) * this.speed;
+            this.life -= this.decay;
+            this.length *= 0.98;
+        };
+        SpeedLine.prototype.draw = function() {
+            if (this.life <= 0) return;
+            ctx.save();
+            ctx.globalAlpha = this.life * 0.5;
+            ctx.strokeStyle = isDarkMode() ? '#ffffff' : '#000000';
+            ctx.lineWidth = this.width;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x - Math.cos(this.angle) * this.length, this.y - Math.sin(this.angle) * this.length);
+            ctx.stroke();
+            ctx.restore();
+        };
+
+        // Asteroid class
+        function CartoonAsteroid() {
+            this.reset();
+        }
+        CartoonAsteroid.prototype.reset = function() {
+            this.startX = Math.random() * canvas.width;
+            this.x = this.startX;
+            this.baseY = Math.random() * canvas.height * 2;
+            this.y = this.baseY;
+            this.size = Math.random() * 20 + 10;
+            this.speed = (30 - this.size) / 50;
+            this.curveDirection = Math.random() > 0.5 ? 1 : -1;
+            this.curveIntensity = Math.random() * 0.2 + 0.1;
+            this.curvePhase = Math.random() * Math.PI * 2;
+            this.rotation = Math.random() * Math.PI * 2;
+            this.rotationSpeed = (Math.random() - 0.5) * 0.03;
+            this.opacity = 0.4 + Math.random() * 0.3;
+            this.speedLines = [];
+            this.trailTimer = 0;
+            this.bumps = [];
+            var bumpCount = Math.floor(Math.random() * 3) + 5;
+            for (var i = 0; i < bumpCount; i++) {
+                this.bumps.push({ angle: (i / bumpCount) * Math.PI * 2, radius: 0.7 + Math.random() * 0.3 });
+            }
+        };
+        CartoonAsteroid.prototype.update = function(scrollOffset) {
+            var progress = scrollOffset * this.speed;
+            this.y = this.baseY - progress;
+            this.curvePhase = progress * 0.008;
+            var curveOffset = Math.sin(this.curvePhase) * this.curveIntensity * canvas.width * 0.2;
+            this.x = this.startX + (curveOffset * this.curveDirection);
+            this.rotation += this.rotationSpeed;
+
+            this.trailTimer++;
+            if (this.trailTimer >= 4) {
+                var angle = Math.atan2(-this.speed * 2, -Math.sin(this.curvePhase) * this.curveDirection * 0.3);
+                this.speedLines.push(new SpeedLine(this.x, this.y + this.size * 0.5, angle));
+                this.trailTimer = 0;
+            }
+
+            for (var i = this.speedLines.length - 1; i >= 0; i--) {
+                this.speedLines[i].update();
+                if (this.speedLines[i].life <= 0) this.speedLines.splice(i, 1);
+            }
+
+            if (this.y < -this.size - 200 || this.y > canvas.height + this.size + 200) {
+                this.reset();
+                this.baseY = this.y > 0 ? -this.size : canvas.height + this.size;
+                this.baseY += scrollOffset * this.speed;
+            }
+        };
+        CartoonAsteroid.prototype.draw = function() {
+            for (var i = 0; i < this.speedLines.length; i++) {
+                this.speedLines[i].draw();
+            }
+
+            ctx.save();
+            ctx.translate(this.x, this.y);
+            ctx.rotate(this.rotation);
+            ctx.globalAlpha = this.opacity;
+
+            ctx.beginPath();
+            for (var i = 0; i < this.bumps.length; i++) {
+                var bx = Math.cos(this.bumps[i].angle) * this.size * this.bumps[i].radius;
+                var by = Math.sin(this.bumps[i].angle) * this.size * this.bumps[i].radius;
+                if (i === 0) ctx.moveTo(bx, by);
+                else ctx.lineTo(bx, by);
+            }
+            ctx.closePath();
+
+            var dark = isDarkMode();
+            ctx.fillStyle = dark ? '#444444' : '#666666';
+            ctx.fill();
+            ctx.strokeStyle = dark ? '#888888' : '#333333';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.arc(-this.size * 0.3, -this.size * 0.3, this.size * 0.15, 0, Math.PI * 2);
+            ctx.fillStyle = dark ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.3)';
+            ctx.fill();
+
+            ctx.restore();
+        };
+
+        var asteroids = [];
+        for (var i = 0; i < 8; i++) {
+            asteroids.push(new CartoonAsteroid());
+        }
+
+        var scrollOffset = 0;
+        window.addEventListener('scroll', function() {
+            scrollOffset = window.pageYOffset;
+        });
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (var i = 0; i < asteroids.length; i++) {
+                asteroids[i].update(scrollOffset);
+                asteroids[i].draw();
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    })();
     </script>
 </body>
 </html>
