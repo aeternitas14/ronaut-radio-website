@@ -3697,9 +3697,23 @@
             if (surferImage.complete) {
                 ctx.save();
                 ctx.globalAlpha = this.opacity;
-                // Draw image centered at position, facing travel direction
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.angle + Math.PI * 0.1); // Slight tilt to match trajectory
+
+                // Add shadow/glow for visibility on both themes
+                var dark = isDarkMode();
+                if (!dark) {
+                    // Light mode: add dark shadow for contrast
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+                    ctx.shadowBlur = 8;
+                    ctx.shadowOffsetX = 2;
+                    ctx.shadowOffsetY = 2;
+                } else {
+                    // Dark mode: add subtle glow
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.3)';
+                    ctx.shadowBlur = 10;
+                }
+
                 ctx.drawImage(surferImage, -this.size / 2, -this.size / 2, this.size, this.size);
                 ctx.restore();
             }
