@@ -3345,18 +3345,26 @@
             this.init();
         }
         CartoonAsteroid.prototype.init = function() {
-            // Spawn across the canvas, all moving counter-clockwise (left to right drift)
-            this.startX = Math.random() * canvas.width;
+            // Meteor shower: spawn from top-left area, move to bottom-right
+            // Spawn along top edge and left edge
+            if (Math.random() > 0.5) {
+                // Spawn from top
+                this.startX = Math.random() * canvas.width * 0.7;
+                this.startY = -this.size - Math.random() * 100;
+            } else {
+                // Spawn from left
+                this.startX = -this.size - Math.random() * 50;
+                this.startY = Math.random() * canvas.height * 0.5;
+            }
             this.x = this.startX;
-            this.baseY = Math.random() * canvas.height;
-            this.y = this.baseY;
-            this.size = Math.random() * 15 + 10; // Smaller: 10-25px
-            this.speed = (50 - this.size) / 60;
+            this.y = this.startY;
+            this.size = Math.random() * 15 + 10; // 10-25px
+            this.speed = (Math.random() * 1.5 + 0.5); // Diagonal speed
 
-            // All counter-clockwise - stardust spills left to right
-            this.curveDirection = 1; // Consistent direction
-            this.curveIntensity = Math.random() * 0.3 + 0.2; // Gentler curve
-            this.curvePhase = Math.random() * Math.PI * 2;
+            // Meteor angle (roughly 45 degrees, slight variation)
+            this.angle = Math.PI * 0.25 + (Math.random() - 0.5) * 0.2;
+            this.vx = Math.cos(this.angle) * this.speed;
+            this.vy = Math.sin(this.angle) * this.speed;
 
             this.rotation = Math.random() * Math.PI * 2;
             this.rotationSpeed = (Math.random() - 0.5) * 0.05;
@@ -3388,7 +3396,8 @@
             this.trailInterval = 2;
         };
         CartoonAsteroid.prototype.emitSpeedLines = function() {
-            var angle = Math.atan2(-this.speed * 2, -Math.sin(this.curvePhase) * this.curveDirection * 0.5);
+            // Speed lines trail behind meteor
+            var angle = Math.atan2(-this.vy, -this.vx);
             for (var i = 0; i < 3; i++) {
                 var offsetAngle = this.rotation + (Math.random() * Math.PI * 2);
                 var offsetDist = this.size * 0.8;
@@ -3400,9 +3409,9 @@
             }
         };
         CartoonAsteroid.prototype.emitDebris = function() {
-            // Debris trails left-to-right
-            var vx = Math.abs(Math.sin(this.curvePhase)) * 0.5 + 0.2;
-            var vy = -this.speed * 2;
+            // Debris trails behind meteor (opposite direction of travel)
+            var vx = -this.vx * 0.3 + (Math.random() - 0.5) * 0.3;
+            var vy = -this.vy * 0.3 + (Math.random() - 0.5) * 0.3;
             for (var i = 0; i < 2; i++) {
                 this.debris.push(new DebrisParticle(
                     this.x + (Math.random() - 0.5) * this.size,
@@ -3412,12 +3421,9 @@
             }
         };
         CartoonAsteroid.prototype.update = function(scrollOffset) {
-            // Slingshot trajectory - more horizontal
-            var progress = scrollOffset * this.speed;
-            this.y = this.baseY - progress * 0.5; // Slower vertical
-            this.curvePhase = progress * 0.015;
-            var curveOffset = Math.sin(this.curvePhase) * this.curveIntensity * canvas.width * 0.4;
-            this.x = this.startX + (curveOffset * this.curveDirection);
+            // Meteor shower: diagonal movement top-left to bottom-right
+            this.x += this.vx;
+            this.y += this.vy;
 
             this.rotation += this.rotationSpeed;
 
@@ -3439,19 +3445,20 @@
                 if (this.debris[i].life <= 0) this.debris.splice(i, 1);
             }
 
-            // Wrap around vertically
-            if (this.y < -this.size - 100) {
-                this.y = canvas.height + this.size;
-                this.baseY = this.y + scrollOffset * this.speed * 0.5;
-                this.startX = Math.random() > 0.5 ? Math.random() * canvas.width * 0.3 : canvas.width * 0.7 + Math.random() * canvas.width * 0.3;
-                this.curvePhase = Math.random() * Math.PI * 2;
-                this.speedLines = [];
-                this.debris = [];
-            } else if (this.y > canvas.height + this.size + 100) {
-                this.y = -this.size;
-                this.baseY = this.y + scrollOffset * this.speed * 0.5;
-                this.startX = Math.random() > 0.5 ? Math.random() * canvas.width * 0.3 : canvas.width * 0.7 + Math.random() * canvas.width * 0.3;
-                this.curvePhase = Math.random() * Math.PI * 2;
+            // Respawn from top-left when exiting bottom-right
+            if (this.x > canvas.width + this.size || this.y > canvas.height + this.size) {
+                // Respawn from top or left edge
+                if (Math.random() > 0.5) {
+                    this.x = Math.random() * canvas.width * 0.7;
+                    this.y = -this.size - Math.random() * 50;
+                } else {
+                    this.x = -this.size - Math.random() * 30;
+                    this.y = Math.random() * canvas.height * 0.5;
+                }
+                this.speed = Math.random() * 1.5 + 0.5;
+                this.angle = Math.PI * 0.25 + (Math.random() - 0.5) * 0.2;
+                this.vx = Math.cos(this.angle) * this.speed;
+                this.vy = Math.sin(this.angle) * this.speed;
                 this.speedLines = [];
                 this.debris = [];
             }
