@@ -3395,13 +3395,13 @@
             // Sort bumps by angle to maintain proper shape
             this.bumps.sort(function(a, b) { return a.angle - b.angle; });
 
-            // Multiple shine spots (can overlap)
+            // Multiple shine spots on leading edge (heated front as meteor burns)
             this.shines = [];
             var shineCount = Math.floor(Math.random() * 3) + 2; // 2-4 shines
             for (var i = 0; i < shineCount; i++) {
                 this.shines.push({
-                    x: -0.2 - Math.random() * 0.4, // Upper-left quadrant (-0.2 to -0.6)
-                    y: -0.2 - Math.random() * 0.4,
+                    x: 0.2 + Math.random() * 0.4, // Bottom-right quadrant (0.2 to 0.6)
+                    y: 0.2 + Math.random() * 0.4,
                     size: 0.1 + Math.random() * 0.2 // 10-30% of meteor size
                 });
             }
