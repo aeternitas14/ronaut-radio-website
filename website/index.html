@@ -3405,28 +3405,33 @@
         CartoonAsteroid.prototype.emitSpeedLines = function() {
             // Speed lines trail behind meteor (towards top-left)
             var trailAngle = this.angle + Math.PI; // Opposite of travel direction
+            var perpAngle = this.angle + Math.PI / 2; // Perpendicular to travel (the trailing edge)
             for (var i = 0; i < 3; i++) {
-                // Spawn behind the meteor with slight spread
-                var spawnAngle = trailAngle + (Math.random() - 0.5) * 0.5;
-                var spawnDist = this.size * 0.6;
+                // Spawn across the trailing surface of the meteor
+                var edgeOffset = (Math.random() - 0.5) * this.size * 1.4; // Spread across meteor width
+                var backOffset = this.size * 0.4 + Math.random() * this.size * 0.3; // Behind the meteor
+                var spawnX = this.x + Math.cos(trailAngle) * backOffset + Math.cos(perpAngle) * edgeOffset;
+                var spawnY = this.y + Math.sin(trailAngle) * backOffset + Math.sin(perpAngle) * edgeOffset;
                 this.speedLines.push(new SpeedLine(
-                    this.x + Math.cos(spawnAngle) * spawnDist,
-                    this.y + Math.sin(spawnAngle) * spawnDist,
-                    0, 0, trailAngle
+                    spawnX, spawnY,
+                    0, 0, trailAngle + (Math.random() - 0.5) * 0.3
                 ));
             }
         };
         CartoonAsteroid.prototype.emitDebris = function() {
-            // Debris spawns behind meteor (top-left side) and drifts that direction
+            // Debris spawns from trailing surface and drifts away
             var trailAngle = this.angle + Math.PI; // Opposite of travel direction
+            var perpAngle = this.angle + Math.PI / 2; // Perpendicular to travel
             for (var i = 0; i < 2; i++) {
-                // Spawn position: behind the meteor
-                var spawnDist = this.size * 0.5;
-                var spawnX = this.x + Math.cos(trailAngle) * spawnDist + (Math.random() - 0.5) * this.size * 0.5;
-                var spawnY = this.y + Math.sin(trailAngle) * spawnDist + (Math.random() - 0.5) * this.size * 0.5;
-                // Velocity: drift towards top-left
-                var vx = Math.cos(trailAngle) * (Math.random() * 0.5 + 0.2);
-                var vy = Math.sin(trailAngle) * (Math.random() * 0.5 + 0.2);
+                // Spawn across the trailing edge of the meteor
+                var edgeOffset = (Math.random() - 0.5) * this.size * 1.2; // Spread across meteor width
+                var backOffset = this.size * 0.3 + Math.random() * this.size * 0.2; // Behind the meteor
+                var spawnX = this.x + Math.cos(trailAngle) * backOffset + Math.cos(perpAngle) * edgeOffset;
+                var spawnY = this.y + Math.sin(trailAngle) * backOffset + Math.sin(perpAngle) * edgeOffset;
+                // Velocity: drift in trail direction with slight spread
+                var driftAngle = trailAngle + (Math.random() - 0.5) * 0.5;
+                var vx = Math.cos(driftAngle) * (Math.random() * 0.5 + 0.2);
+                var vy = Math.sin(driftAngle) * (Math.random() * 0.5 + 0.2);
                 this.debris.push(new DebrisParticle(spawnX, spawnY, vx, vy));
             }
         };
