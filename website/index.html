@@ -3360,7 +3360,7 @@
             }
             this.x = this.startX;
             this.y = this.startY;
-            this.size = Math.random() * 15 + 10; // 10-25px
+            this.size = Math.random() * 22 + 10; // 10-32px
             this.speed = (Math.random() * 1.5 + 0.5); // Diagonal speed
 
             // Meteor angle (roughly 45 degrees, slight variation)
@@ -3584,7 +3584,7 @@
 
         // Create asteroids (fewer for less distraction)
         var asteroids = [];
-        for (var i = 0; i < 6; i++) {
+        for (var i = 0; i < 7; i++) {
             asteroids.push(new CartoonAsteroid());
         }
 
