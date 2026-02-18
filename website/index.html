@@ -3380,13 +3380,18 @@
                 });
             }
             this.bumps = [];
-            var bumpCount = Math.floor(Math.random() * 3) + 5;
+            var bumpCount = Math.floor(Math.random() * 4) + 6; // More bumps for detail
             for (var i = 0; i < bumpCount; i++) {
+                // Add randomness to angles for irregular shape
+                var baseAngle = (i / bumpCount) * Math.PI * 2;
+                var angleVariation = (Math.random() - 0.5) * (Math.PI / bumpCount) * 0.8;
                 this.bumps.push({
-                    angle: (i / bumpCount) * Math.PI * 2,
-                    radius: 0.7 + Math.random() * 0.3
+                    angle: baseAngle + angleVariation,
+                    radius: 0.5 + Math.random() * 0.6 // More variation (0.5-1.1 instead of 0.7-1.0)
                 });
             }
+            // Sort bumps by angle to maintain proper shape
+            this.bumps.sort(function(a, b) { return a.angle - b.angle; });
             this.opacity = 0.4 + Math.random() * 0.2;
 
             // Trails
@@ -3409,23 +3414,27 @@
             }
         };
         CartoonAsteroid.prototype.emitDebris = function() {
-            // Debris trails behind meteor (opposite direction of travel)
-            var vx = -this.vx * 0.3 + (Math.random() - 0.5) * 0.3;
-            var vy = -this.vy * 0.3 + (Math.random() - 0.5) * 0.3;
+            // Debris spawns behind meteor (top-left side) and drifts that direction
+            var trailAngle = this.angle + Math.PI; // Opposite of travel direction
             for (var i = 0; i < 2; i++) {
-                this.debris.push(new DebrisParticle(
-                    this.x + (Math.random() - 0.5) * this.size,
-                    this.y + (Math.random() - 0.5) * this.size,
-                    vx, vy
-                ));
+                // Spawn position: behind the meteor
+                var spawnDist = this.size * 0.5;
+                var spawnX = this.x + Math.cos(trailAngle) * spawnDist + (Math.random() - 0.5) * this.size * 0.5;
+                var spawnY = this.y + Math.sin(trailAngle) * spawnDist + (Math.random() - 0.5) * this.size * 0.5;
+                // Velocity: drift towards top-left
+                var vx = Math.cos(trailAngle) * (Math.random() * 0.5 + 0.2);
+                var vy = Math.sin(trailAngle) * (Math.random() * 0.5 + 0.2);
+                this.debris.push(new DebrisParticle(spawnX, spawnY, vx, vy));
             }
         };
-        CartoonAsteroid.prototype.update = function(scrollOffset) {
+        CartoonAsteroid.prototype.update = function(scrollOffset, scrollDelta) {
             // Meteor shower: diagonal movement top-left to bottom-right
-            this.x += this.vx;
-            this.y += this.vy;
+            // Base movement + scroll boost
+            var scrollBoost = scrollDelta ? scrollDelta * 0.05 : 0;
+            this.x += this.vx + Math.cos(this.angle) * scrollBoost;
+            this.y += this.vy + Math.sin(this.angle) * scrollBoost;
 
-            this.rotation += this.rotationSpeed;
+            this.rotation += this.rotationSpeed + scrollBoost * 0.01;
 
             // Emit trails
             this.trailTimer++;
@@ -3479,14 +3488,38 @@
             ctx.rotate(this.rotation);
             ctx.globalAlpha = this.opacity;
 
-            // Draw main body with cartoon shading
+            // Draw main body with organic rocky shape using curves
             ctx.beginPath();
+            var firstX, firstY;
             for (var i = 0; i < this.bumps.length; i++) {
                 var bx = Math.cos(this.bumps[i].angle) * this.size * this.bumps[i].radius;
                 var by = Math.sin(this.bumps[i].angle) * this.size * this.bumps[i].radius;
-                if (i === 0) ctx.moveTo(bx, by);
-                else ctx.lineTo(bx, by);
+                if (i === 0) {
+                    firstX = bx;
+                    firstY = by;
+                    ctx.moveTo(bx, by);
+                } else {
+                    // Use quadratic curves for organic rocky look
+                    var prevBump = this.bumps[i - 1];
+                    var prevX = Math.cos(prevBump.angle) * this.size * prevBump.radius;
+                    var prevY = Math.sin(prevBump.angle) * this.size * prevBump.radius;
+                    // Control point slightly inward for jagged rock feel
+                    var midAngle = (prevBump.angle + this.bumps[i].angle) / 2;
+                    var cpRadius = this.size * (prevBump.radius + this.bumps[i].radius) / 2 * 0.85;
+                    var cpX = Math.cos(midAngle) * cpRadius;
+                    var cpY = Math.sin(midAngle) * cpRadius;
+                    ctx.quadraticCurveTo(cpX, cpY, bx, by);
+                }
             }
+            // Close path with curve back to first point
+            var lastBump = this.bumps[this.bumps.length - 1];
+            var lastX = Math.cos(lastBump.angle) * this.size * lastBump.radius;
+            var lastY = Math.sin(lastBump.angle) * this.size * lastBump.radius;
+            var closeMidAngle = (lastBump.angle + this.bumps[0].angle + Math.PI * 2) / 2;
+            var closeCpRadius = this.size * (lastBump.radius + this.bumps[0].radius) / 2 * 0.85;
+            var closeCpX = Math.cos(closeMidAngle) * closeCpRadius;
+            var closeCpY = Math.sin(closeMidAngle) * closeCpRadius;
+            ctx.quadraticCurveTo(closeCpX, closeCpY, firstX, firstY);
             ctx.closePath();
 
             // Fill with gradient for 3D effect
@@ -3548,14 +3581,21 @@
         }
 
         var scrollOffset = 0;
+        var lastScrollOffset = 0;
+        var scrollDelta = 0;
         window.addEventListener('scroll', function() {
-            scrollOffset = window.pageYOffset;
+            var newOffset = window.pageYOffset;
+            scrollDelta = newOffset - scrollOffset;
+            scrollOffset = newOffset;
         });
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Calculate delta for this frame
+            var frameDelta = scrollOffset - lastScrollOffset;
+            lastScrollOffset = scrollOffset;
             for (var i = 0; i < asteroids.length; i++) {
-                asteroids[i].update(scrollOffset);
+                asteroids[i].update(scrollOffset, frameDelta);
                 asteroids[i].draw();
             }
             requestAnimationFrame(animate);
