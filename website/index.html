@@ -3729,6 +3729,8 @@
             }
         }
         setInterval(checkSurferSpawn, surferSpawnInterval);
+        // TEST: Spawn immediately on page load (remove after testing)
+        setTimeout(function() { silverSurfer = new SilverSurfer(); console.log('🏄 TEST: Silver Surfer spawned!'); }, 2000);
 
         var scrollOffset = 0;
         var lastScrollOffset = 0;
