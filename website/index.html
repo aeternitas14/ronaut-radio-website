@@ -3659,7 +3659,7 @@
             }
         };
         SilverSurfer.prototype.update = function(scrollOffset, scrollDelta) {
-            var scrollBoost = scrollDelta ? scrollDelta * 0.08 : 0; // More reactive to scrolling
+            var scrollBoost = scrollDelta ? scrollDelta * 0.25 : 0; // Very reactive to scrolling
             this.x += this.vx + Math.cos(this.angle) * scrollBoost;
             this.y += this.vy + Math.sin(this.angle) * scrollBoost;
 
