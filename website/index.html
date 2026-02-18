@@ -3394,6 +3394,17 @@
             }
             // Sort bumps by angle to maintain proper shape
             this.bumps.sort(function(a, b) { return a.angle - b.angle; });
+
+            // Multiple shine spots (can overlap)
+            this.shines = [];
+            var shineCount = Math.floor(Math.random() * 3) + 2; // 2-4 shines
+            for (var i = 0; i < shineCount; i++) {
+                this.shines.push({
+                    x: -0.2 - Math.random() * 0.4, // Upper-left quadrant (-0.2 to -0.6)
+                    y: -0.2 - Math.random() * 0.4,
+                    size: 0.1 + Math.random() * 0.2 // 10-30% of meteor size
+                });
+            }
             this.opacity = 0.4 + Math.random() * 0.2;
 
             // Trails
@@ -3573,11 +3584,14 @@
                 ctx.fill();
             }
 
-            // Add cartoon shine
-            ctx.beginPath();
-            ctx.arc(-this.size * 0.4, -this.size * 0.4, this.size * 0.25, 0, Math.PI * 2);
-            ctx.fillStyle = dark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.4)';
-            ctx.fill();
+            // Add cartoon shines (multiple overlapping)
+            for (var i = 0; i < this.shines.length; i++) {
+                var shine = this.shines[i];
+                ctx.beginPath();
+                ctx.arc(this.size * shine.x, this.size * shine.y, this.size * shine.size, 0, Math.PI * 2);
+                ctx.fillStyle = dark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.35)';
+                ctx.fill();
+            }
 
             ctx.restore();
         };
