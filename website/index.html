@@ -3602,6 +3602,120 @@
             asteroids.push(new CartoonAsteroid());
         }
 
+        // Silver Surfer - rare sighting!
+        var surferImage = new Image();
+        surferImage.src = 'assets/silver-surfer.png';
+        var silverSurfer = null;
+        var surferSpawnInterval = 45000; // Check every 45 seconds
+        var surferSpawnChance = 0.05; // 5% chance
+
+        function SilverSurfer() {
+            this.init();
+        }
+        SilverSurfer.prototype.init = function() {
+            this.size = 60; // Larger than meteors
+            // Spawn from top or left
+            if (Math.random() > 0.5) {
+                this.x = Math.random() * canvas.width * 0.5;
+                this.y = -this.size - Math.random() * 100;
+            } else {
+                this.x = -this.size - Math.random() * 50;
+                this.y = Math.random() * canvas.height * 0.3;
+            }
+            this.speed = 1.2; // Smooth glide
+            this.angle = Math.PI * 0.25 + (Math.random() - 0.5) * 0.15;
+            this.vx = Math.cos(this.angle) * this.speed;
+            this.vy = Math.sin(this.angle) * this.speed;
+            this.opacity = 0.85;
+            this.speedLines = [];
+            this.debris = [];
+            this.trailTimer = 0;
+            this.trailInterval = 3;
+            this.active = true;
+        };
+        SilverSurfer.prototype.emitSpeedLines = function() {
+            var trailAngle = this.angle + Math.PI;
+            var perpAngle = this.angle + Math.PI / 2;
+            for (var i = 0; i < 2; i++) {
+                var edgeOffset = (Math.random() - 0.5) * this.size * 0.8;
+                var backOffset = this.size * 0.5 + Math.random() * this.size * 0.2;
+                var spawnX = this.x + Math.cos(trailAngle) * backOffset + Math.cos(perpAngle) * edgeOffset;
+                var spawnY = this.y + Math.sin(trailAngle) * backOffset + Math.sin(perpAngle) * edgeOffset;
+                this.speedLines.push(new SpeedLine(spawnX, spawnY, 0, 0, trailAngle + (Math.random() - 0.5) * 0.2));
+            }
+        };
+        SilverSurfer.prototype.emitDebris = function() {
+            var trailAngle = this.angle + Math.PI;
+            var perpAngle = this.angle + Math.PI / 2;
+            for (var i = 0; i < 1; i++) {
+                var edgeOffset = (Math.random() - 0.5) * this.size * 0.6;
+                var backOffset = this.size * 0.4 + Math.random() * this.size * 0.2;
+                var spawnX = this.x + Math.cos(trailAngle) * backOffset + Math.cos(perpAngle) * edgeOffset;
+                var spawnY = this.y + Math.sin(trailAngle) * backOffset + Math.sin(perpAngle) * edgeOffset;
+                var driftAngle = trailAngle + (Math.random() - 0.5) * 0.4;
+                var vx = Math.cos(driftAngle) * (Math.random() * 0.4 + 0.1);
+                var vy = Math.sin(driftAngle) * (Math.random() * 0.4 + 0.1);
+                this.debris.push(new DebrisParticle(spawnX, spawnY, vx, vy));
+            }
+        };
+        SilverSurfer.prototype.update = function(scrollOffset, scrollDelta) {
+            var scrollBoost = scrollDelta ? scrollDelta * 0.04 : 0;
+            this.x += this.vx + Math.cos(this.angle) * scrollBoost;
+            this.y += this.vy + Math.sin(this.angle) * scrollBoost;
+
+            this.trailTimer++;
+            if (this.trailTimer >= this.trailInterval) {
+                this.emitSpeedLines();
+                this.emitDebris();
+                this.trailTimer = 0;
+            }
+
+            for (var i = this.speedLines.length - 1; i >= 0; i--) {
+                this.speedLines[i].update();
+                if (this.speedLines[i].life <= 0) this.speedLines.splice(i, 1);
+            }
+            for (var i = this.debris.length - 1; i >= 0; i--) {
+                this.debris[i].update();
+                if (this.debris[i].life <= 0) this.debris.splice(i, 1);
+            }
+
+            // Deactivate when off screen
+            if (this.x > canvas.width + this.size * 2 || this.y > canvas.height + this.size * 2) {
+                this.active = false;
+            }
+        };
+        SilverSurfer.prototype.draw = function() {
+            // Draw trails first
+            for (var i = 0; i < this.speedLines.length; i++) {
+                this.speedLines[i].draw();
+            }
+            for (var i = 0; i < this.debris.length; i++) {
+                this.debris[i].draw();
+            }
+
+            // Draw surfer (no rotation)
+            if (surferImage.complete) {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                // Draw image centered at position, facing travel direction
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle + Math.PI * 0.1); // Slight tilt to match trajectory
+                ctx.drawImage(surferImage, -this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        };
+
+        // Spawn checker - 5% chance every 45 seconds
+        function checkSurferSpawn() {
+            if (!silverSurfer || !silverSurfer.active) {
+                if (Math.random() < surferSpawnChance) {
+                    silverSurfer = new SilverSurfer();
+                    console.log('🏄 Silver Surfer sighting!');
+                }
+            }
+        }
+        setInterval(checkSurferSpawn, surferSpawnInterval);
+
         var scrollOffset = 0;
         var lastScrollOffset = 0;
         var scrollDelta = 0;
@@ -3619,6 +3733,11 @@
             for (var i = 0; i < asteroids.length; i++) {
                 asteroids[i].update(scrollOffset, frameDelta);
                 asteroids[i].draw();
+            }
+            // Draw Silver Surfer if active
+            if (silverSurfer && silverSurfer.active) {
+                silverSurfer.update(scrollOffset, frameDelta);
+                silverSurfer.draw();
             }
             requestAnimationFrame(animate);
         }
