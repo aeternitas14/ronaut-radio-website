@@ -3345,18 +3345,17 @@
             this.init();
         }
         CartoonAsteroid.prototype.init = function() {
-            // Spawn on sides for horizontal slingshot effect
-            var side = Math.random() > 0.5;
-            this.startX = side ? Math.random() * canvas.width * 0.3 : canvas.width * 0.7 + Math.random() * canvas.width * 0.3;
+            // Spawn across the canvas, all moving counter-clockwise (left to right drift)
+            this.startX = Math.random() * canvas.width;
             this.x = this.startX;
             this.baseY = Math.random() * canvas.height;
             this.y = this.baseY;
             this.size = Math.random() * 15 + 10; // Smaller: 10-25px
             this.speed = (50 - this.size) / 60;
 
-            // Slingshot parameters - more horizontal movement
-            this.curveDirection = side ? 1 : -1;
-            this.curveIntensity = Math.random() * 0.4 + 0.3; // Stronger curve
+            // All counter-clockwise - stardust spills left to right
+            this.curveDirection = 1; // Consistent direction
+            this.curveIntensity = Math.random() * 0.3 + 0.2; // Gentler curve
             this.curvePhase = Math.random() * Math.PI * 2;
 
             this.rotation = Math.random() * Math.PI * 2;
@@ -3401,8 +3400,9 @@
             }
         };
         CartoonAsteroid.prototype.emitDebris = function() {
-            var vx = -Math.sin(this.curvePhase) * this.curveDirection * 0.5;
-            var vy = -this.speed * 3;
+            // Debris trails left-to-right
+            var vx = Math.abs(Math.sin(this.curvePhase)) * 0.5 + 0.2;
+            var vy = -this.speed * 2;
             for (var i = 0; i < 2; i++) {
                 this.debris.push(new DebrisParticle(
                     this.x + (Math.random() - 0.5) * this.size,
