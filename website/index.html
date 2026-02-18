@@ -3613,7 +3613,7 @@
             this.init();
         }
         SilverSurfer.prototype.init = function() {
-            this.size = 120; // Much larger than meteors
+            this.size = 150; // Much larger than meteors
             // Spawn from top or left
             if (Math.random() > 0.5) {
                 this.x = Math.random() * canvas.width * 0.5;
@@ -3659,7 +3659,7 @@
             }
         };
         SilverSurfer.prototype.update = function(scrollOffset, scrollDelta) {
-            var scrollBoost = scrollDelta ? scrollDelta * 0.04 : 0;
+            var scrollBoost = scrollDelta ? scrollDelta * 0.08 : 0; // More reactive to scrolling
             this.x += this.vx + Math.cos(this.angle) * scrollBoost;
             this.y += this.vy + Math.sin(this.angle) * scrollBoost;
 
