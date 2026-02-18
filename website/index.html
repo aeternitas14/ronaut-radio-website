@@ -3607,7 +3607,7 @@
         surferImage.src = 'assets/silver-surfer.png';
         var silverSurfer = null;
         var surferSpawnInterval = 45000; // Check every 45 seconds
-        var surferSpawnChance = 0.05; // 5% chance
+        var surferSpawnChance = 0.15; // 15% chance
 
         function SilverSurfer() {
             this.init();
@@ -3733,8 +3733,6 @@
             }
         }
         setInterval(checkSurferSpawn, surferSpawnInterval);
-        // TEST: Spawn immediately on page load (remove after testing)
-        setTimeout(function() { silverSurfer = new SilverSurfer(); console.log('🏄 TEST: Silver Surfer spawned!'); }, 2000);
 
         var scrollOffset = 0;
         var lastScrollOffset = 0;
