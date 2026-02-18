@@ -3541,56 +3541,28 @@
             ctx.quadraticCurveTo(closeCpX, closeCpY, firstX, firstY);
             ctx.closePath();
 
-            // Comic book style: solid fill with hatching for shading
+            // Fill with gradient for 3D effect
+            var gradient = ctx.createRadialGradient(-this.size * 0.3, -this.size * 0.3, 0, 0, 0, this.size * 1.2);
             var dark = isDarkMode();
-            var inkColor = dark ? '#ffffff' : '#000000';
-            var fillColor = dark ? '#1a1a1a' : '#ffffff';
-
-            // Solid base fill
-            ctx.fillStyle = fillColor;
+            if (dark) {
+                gradient.addColorStop(0, '#666666');
+                gradient.addColorStop(0.7, '#333333');
+                gradient.addColorStop(1, '#1a1a1a');
+            } else {
+                gradient.addColorStop(0, '#888888');
+                gradient.addColorStop(0.7, '#444444');
+                gradient.addColorStop(1, '#222222');
+            }
+            ctx.fillStyle = gradient;
             ctx.fill();
 
-            // Bold ink outline
-            ctx.strokeStyle = inkColor;
-            ctx.lineWidth = 3;
+            // Bold outline
+            ctx.strokeStyle = dark ? '#ffffff' : '#000000';
+            ctx.lineWidth = 2.5;
             ctx.lineJoin = 'round';
             ctx.stroke();
 
-            // Hatching lines for shading (on the trailing/shadow side - top-left)
-            ctx.save();
-            ctx.clip(); // Clip hatching to meteor shape
-            ctx.strokeStyle = inkColor;
-            ctx.lineWidth = 1.2;
-            var hatchSpacing = 4;
-            var hatchStart = -this.size * 1.5;
-            var hatchEnd = this.size * 0.3; // Only shade the back half
-            for (var h = hatchStart; h < hatchEnd; h += hatchSpacing) {
-                ctx.beginPath();
-                ctx.moveTo(h, -this.size * 1.5);
-                ctx.lineTo(h + this.size * 1.5, this.size * 1.5);
-                ctx.stroke();
-            }
-            ctx.restore();
-
-            // Re-draw outline after hatching
-            ctx.beginPath();
-            for (var i = 0; i < this.bumps.length; i++) {
-                var bx = Math.cos(this.bumps[i].angle) * this.size * this.bumps[i].radius;
-                var by = Math.sin(this.bumps[i].angle) * this.size * this.bumps[i].radius;
-                if (i === 0) ctx.moveTo(bx, by);
-                else {
-                    var prevBump = this.bumps[i - 1];
-                    var midAngle = (prevBump.angle + this.bumps[i].angle) / 2;
-                    var cpRadius = this.size * (prevBump.radius + this.bumps[i].radius) / 2 * 0.85;
-                    ctx.quadraticCurveTo(Math.cos(midAngle) * cpRadius, Math.sin(midAngle) * cpRadius, bx, by);
-                }
-            }
-            ctx.closePath();
-            ctx.strokeStyle = inkColor;
-            ctx.lineWidth = 3;
-            ctx.stroke();
-
-            // Draw craters as solid ink circles
+            // Draw craters
             for (var i = 0; i < this.craters.length; i++) {
                 var crater = this.craters[i];
                 var cx = Math.cos(crater.angle) * this.size * crater.distance;
@@ -3599,24 +3571,26 @@
 
                 ctx.beginPath();
                 ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-                ctx.fillStyle = inkColor;
+                ctx.fillStyle = dark ? '#1a1a1a' : '#000000';
                 ctx.fill();
+                ctx.strokeStyle = dark ? '#ffffff' : '#000000';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
 
-                // Small highlight dot (ink style)
+                // Crater highlight
                 ctx.beginPath();
-                ctx.arc(cx + radius * 0.3, cy + radius * 0.3, radius * 0.25, 0, Math.PI * 2);
-                ctx.fillStyle = fillColor;
+                ctx.arc(cx - radius * 0.3, cy - radius * 0.3, radius * 0.3, 0, Math.PI * 2);
+                ctx.fillStyle = dark ? '#444444' : '#666666';
                 ctx.fill();
             }
 
-            // Leading edge glow dots (stippling effect)
+            // Add cartoon shines (multiple overlapping)
             for (var i = 0; i < this.shines.length; i++) {
                 var shine = this.shines[i];
                 ctx.beginPath();
-                ctx.arc(this.size * shine.x, this.size * shine.y, this.size * shine.size * 0.5, 0, Math.PI * 2);
-                ctx.strokeStyle = inkColor;
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
+                ctx.arc(this.size * shine.x, this.size * shine.y, this.size * shine.size, 0, Math.PI * 2);
+                ctx.fillStyle = dark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.35)';
+                ctx.fill();
             }
 
             ctx.restore();
