@@ -3635,26 +3635,30 @@
         };
         SilverSurfer.prototype.emitSpeedLines = function() {
             var trailAngle = this.angle + Math.PI;
-            var perpAngle = this.angle + Math.PI / 2;
+            // Spawn from surfboard (bottom of image)
+            var boardY = this.y + this.size * 0.4; // Bottom area where surfboard is
+            var boardX = this.x;
             for (var i = 0; i < 2; i++) {
-                var edgeOffset = (Math.random() - 0.5) * this.size * 0.8;
-                var backOffset = this.size * 0.5 + Math.random() * this.size * 0.2;
-                var spawnX = this.x + Math.cos(trailAngle) * backOffset + Math.cos(perpAngle) * edgeOffset;
-                var spawnY = this.y + Math.sin(trailAngle) * backOffset + Math.sin(perpAngle) * edgeOffset;
+                var edgeOffset = (Math.random() - 0.5) * this.size * 0.5; // Narrower, just board width
+                var backOffset = this.size * 0.1 + Math.random() * this.size * 0.1;
+                var spawnX = boardX + Math.cos(trailAngle) * backOffset + edgeOffset;
+                var spawnY = boardY + Math.sin(trailAngle) * backOffset;
                 this.speedLines.push(new SpeedLine(spawnX, spawnY, 0, 0, trailAngle + (Math.random() - 0.5) * 0.2));
             }
         };
         SilverSurfer.prototype.emitDebris = function() {
             var trailAngle = this.angle + Math.PI;
-            var perpAngle = this.angle + Math.PI / 2;
-            for (var i = 0; i < 1; i++) {
-                var edgeOffset = (Math.random() - 0.5) * this.size * 0.6;
-                var backOffset = this.size * 0.4 + Math.random() * this.size * 0.2;
-                var spawnX = this.x + Math.cos(trailAngle) * backOffset + Math.cos(perpAngle) * edgeOffset;
-                var spawnY = this.y + Math.sin(trailAngle) * backOffset + Math.sin(perpAngle) * edgeOffset;
-                var driftAngle = trailAngle + (Math.random() - 0.5) * 0.4;
-                var vx = Math.cos(driftAngle) * (Math.random() * 0.4 + 0.1);
-                var vy = Math.sin(driftAngle) * (Math.random() * 0.4 + 0.1);
+            // Spawn from surfboard (bottom of image)
+            var boardY = this.y + this.size * 0.4;
+            var boardX = this.x;
+            for (var i = 0; i < 2; i++) {
+                var edgeOffset = (Math.random() - 0.5) * this.size * 0.4; // Board width
+                var backOffset = this.size * 0.05 + Math.random() * this.size * 0.1;
+                var spawnX = boardX + Math.cos(trailAngle) * backOffset + edgeOffset;
+                var spawnY = boardY + Math.sin(trailAngle) * backOffset;
+                var driftAngle = trailAngle + (Math.random() - 0.5) * 0.3;
+                var vx = Math.cos(driftAngle) * (Math.random() * 0.5 + 0.2);
+                var vy = Math.sin(driftAngle) * (Math.random() * 0.5 + 0.2);
                 this.debris.push(new DebrisParticle(spawnX, spawnY, vx, vy));
             }
         };
